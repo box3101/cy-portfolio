@@ -131,11 +131,47 @@
 }
 
 /* ============================================================
+   타이포그래피
+   영문 디스플레이는 Bricolage Grotesque, 한글은 IBM Plex Sans KR이
+   글리프 단위 폴백으로 이어받는다. 데이터·라벨은 JetBrains Mono.
+   ============================================================ */
+:root {
+  --font-display: 'Bricolage Grotesque', 'IBM Plex Sans KR', system-ui, sans-serif;
+  --font-body: 'IBM Plex Sans KR', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+  --step--1: clamp(0.75rem, 0.72rem + 0.12vw, 0.8125rem);
+  --step-0: clamp(0.875rem, 0.85rem + 0.14vw, 0.9375rem);
+  --step-1: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
+  --step-2: clamp(1.25rem, 1.16rem + 0.4vw, 1.5rem);
+  --step-3: clamp(1.6rem, 1.4rem + 0.9vw, 2.125rem);
+  --step-4: clamp(2.4rem, 1.7rem + 3.2vw, 4.25rem);
+}
+
+/* ============================================================
    기본 표면
    ============================================================ */
+* {
+  box-sizing: border-box;
+}
+
 body {
+  margin: 0;
   background: var(--brand-ground);
   color: var(--brand-ink);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 :focus-visible {

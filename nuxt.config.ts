@@ -21,10 +21,30 @@ export default defineNuxtConfig({
     '~/assets/css/tokens.css',
   ],
 
+  // Nuxt는 composables/ 최상위만 자동 임포트한다.
+  // api/ · store/ 하위 폴더까지 스캔하도록 명시한다.
+  imports: {
+    dirs: ['composables/**'],
+  },
+
   runtimeConfig: {
     public: {
       supabaseUrl: '',
       supabaseAnonKey: '',
+    },
+  },
+
+  app: {
+    head: {
+      htmlAttrs: { lang: 'ko' },
+      link: [
+        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
+        {
+          rel: 'stylesheet',
+          href: 'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap',
+        },
+      ],
     },
   },
 
