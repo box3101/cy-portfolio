@@ -88,7 +88,7 @@ useSeoMeta({
 .detail__back {
   display: inline-block;
   margin-bottom: 28px;
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: var(--step--1);
   color: var(--brand-ink-muted);
   text-decoration: none;
@@ -100,7 +100,7 @@ useSeoMeta({
 
 .detail__eyebrow {
   margin: 0 0 8px;
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: var(--step--1);
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -141,7 +141,7 @@ useSeoMeta({
 }
 
 .meta__row dt {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: var(--step--1);
   color: var(--brand-ink-muted);
   padding-top: 2px;
@@ -152,7 +152,7 @@ useSeoMeta({
 }
 
 .meta__mono {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-variant-numeric: tabular-nums;
 }
 
@@ -167,7 +167,7 @@ useSeoMeta({
 }
 
 .tags li {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 11px;
   color: var(--brand-ink-muted);
   background: color-mix(in oklab, var(--brand-line) 35%, transparent);
@@ -181,7 +181,7 @@ useSeoMeta({
 }
 
 .links a {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: var(--step--1);
   color: var(--brand-accent);
   text-decoration: none;

@@ -128,7 +128,7 @@ const skillGroups = computed(() => {
 }
 
 .career__period {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: var(--step--1);
   color: var(--brand-ink-muted);
   font-variant-numeric: tabular-nums;
@@ -161,7 +161,7 @@ const skillGroups = computed(() => {
 
 .skills__group h3 {
   margin: 0 0 10px;
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;

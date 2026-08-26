@@ -94,7 +94,7 @@ const categoryLabel: Record<string, string> = {
   position: relative;
   max-width: 80%;
   text-align: center;
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -120,7 +120,7 @@ const categoryLabel: Record<string, string> = {
 }
 
 .card__cat {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -136,7 +136,7 @@ const categoryLabel: Record<string, string> = {
 }
 
 .card__period {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: var(--step--1);
   color: var(--brand-ink-muted);
   font-variant-numeric: tabular-nums;

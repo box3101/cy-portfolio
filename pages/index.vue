@@ -107,12 +107,12 @@ definePageMeta({ layout: 'hero' })
 
 .hero__title {
   margin: 0 0 40px;
-  font-family: 'Poppins', var(--font-body);
+  font-family: var(--font-display);
   color: #fff;
   font-size: clamp(2rem, 5vw, 5rem);
   line-height: 1;
   font-weight: 900;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.03em;
 }
 
 /*
@@ -126,12 +126,12 @@ definePageMeta({ layout: 'hero' })
 }
 
 /*
-  타이틀이 기하학 산세리프(Poppins 900)라 태그라인은 등폭으로 역할을 나눈다.
+  타이틀이 Pretendard 900이라 태그라인은 등폭으로 역할을 나눈다.
   제목이 주연이므로 이 줄은 작게 두고, 대문자에는 넓은 자간을 준다.
 */
 .hero__script {
   margin: 0 0 44px;
-  font-family: 'JetBrains Mono', var(--font-mono), monospace;
+  font-family: var(--font-body);
   font-weight: 500;
   /* 자간이 넓어 실제 폭은 크게 늘어난다. 자간을 조금 줄여 폭을 상쇄한다. */
   font-size: 15px;
@@ -163,7 +163,7 @@ definePageMeta({ layout: 'hero' })
   border: 1px solid rgba(255, 255, 255, 0.85);
   border-radius: 999px;
   color: #fff;
-  font-family: 'Poppins', var(--font-body);
+  font-family: var(--font-display);
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -187,7 +187,7 @@ definePageMeta({ layout: 'hero' })
 
 .hero__link {
   color: rgba(255, 255, 255, 0.72);
-  font-family: 'Poppins', var(--font-body);
+  font-family: var(--font-display);
   font-size: 14px;
   font-weight: 500;
   letter-spacing: 0.04em;
@@ -212,7 +212,7 @@ definePageMeta({ layout: 'hero' })
 .side {
   position: absolute;
   top: 50%;
-  font-family: 'Poppins', var(--font-body);
+  font-family: var(--font-display);
   font-size: 17px;
   line-height: 20px;
   font-weight: 700;

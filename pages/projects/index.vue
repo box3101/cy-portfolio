@@ -119,7 +119,7 @@ useSeoMeta({
 }
 
 .page__count {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: var(--step--1);
   color: var(--brand-ink-muted);
   margin: 18px 0 14px;

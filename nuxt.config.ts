@@ -44,14 +44,10 @@ export default defineNuxtConfig({
     head: {
       htmlAttrs: { lang: 'ko' },
       link: [
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
+        // 웹폰트는 Pretendard 하나뿐이다. Google Fonts 는 더 이상 쓰지 않으므로
+        // 스타일시트와 preconnect 2개를 함께 걷어냈다.
         { rel: 'preconnect', href: 'https://cdn.jsdelivr.net', crossorigin: '' },
-        {
-          rel: 'stylesheet',
-          href: 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap',
-        },
-        // 본문 서체. dynamic-subset은 실제로 쓰인 한글 글리프 구간만 내려받는다.
+        // dynamic-subset은 실제로 쓰인 한글 글리프 구간만 내려받는다.
         // Google Fonts에 없는 서체라 jsDelivr로 받는다.
         {
           rel: 'stylesheet',

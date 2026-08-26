@@ -70,7 +70,7 @@ const channels = computed(() =>
 }
 
 .channels__label {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: var(--step--1);
   letter-spacing: 0.1em;
   text-transform: uppercase;

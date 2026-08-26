@@ -65,7 +65,7 @@ const links = computed(() =>
 .footer__links a {
   color: var(--brand-ink-muted);
   text-decoration: none;
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 0.8125rem;
 }
 
@@ -83,6 +83,6 @@ const links = computed(() =>
 .footer__note a {
   color: var(--brand-accent);
   text-decoration: none;
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
 }
 </style>
