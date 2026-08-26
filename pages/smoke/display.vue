@@ -7,6 +7,7 @@ import {
   UiAvatarGroup,
   UiTable,
   UiAccordion,
+  UiProgress,
   UiPagination,
   UiIcon,
 } from '@leechanyong/ispark-ui'
@@ -66,11 +67,10 @@ const page = ref(1)
       <UiAccordion :items="accordionItems" />
     </section>
 
-    <!--
-      UiProgress는 Storybook 문서에는 있으나 npm 0.5.16 패키지에 포함되어 있지 않다.
-      (ESM/CJS 번들 및 index.d.ts 전부에서 누락 — 레포보다 배포본이 뒤처진 상태)
-      ispark-ui 재배포 후 이 섹션을 복구한다.
-    -->
+    <!-- npm 0.6.12 배포로 사용 가능해짐 (0.5.16에는 미포함이었다) -->
+    <section data-c="UiProgress">
+      <UiProgress :value="60" variant="primary" label="진행률" show-value />
+    </section>
 
     <section data-c="UiPagination">
       <UiPagination v-model="page" :total-count="120" :page-size="10" />

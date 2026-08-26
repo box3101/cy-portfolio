@@ -33,7 +33,7 @@ describe('ispark-ui SSR 스모크', () => {
     expect(html).toContain('프로젝트명')   // UiTable 헤더
     expect(html).toContain('경력 사항')    // UiAccordion 제목
     expect(html).toContain('120')         // UiPagination totalCount
-    // UiProgress는 npm 0.5.16에 미포함 → 재배포 후 검증 추가
+    expect(html).toContain('진행률')      // UiProgress label (npm 0.6.12부터 사용 가능)
   })
 
   it('Overlay 그룹이 서버에서 렌더링된다', async () => {
