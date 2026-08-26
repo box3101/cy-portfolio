@@ -8,3 +8,6 @@ dist
 .vercel
 .DS_Store
 .gstack/
+
+# Playwright MCP 디버그 산출물 (콘솔 로그·페이지 스냅샷)
+.playwright-mcp/
