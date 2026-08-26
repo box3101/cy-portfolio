@@ -59,7 +59,17 @@ definePageMeta({ layout: 'hero' })
   position: relative;
   width: 100%;
   min-height: 100dvh;
-  display: block;
+  /*
+    중앙정렬을 transform 이 아니라 레이아웃(flex)으로 한다.
+    전에는 .hero__center 가 top:50% + translateY(-50%) 였는데,
+    콘텐츠 높이가 소수(223.09px)라 -50% 가 -111.547px 이 되어
+    하위 요소 전체가 픽셀 경계에 걸쳤다. DPR 1 에서 CTA 의 1px
+    테두리가 곡선 구간부터 갉히던 원인이다.
+    transform 은 픽셀 스냅을 받지 않지만 레이아웃 위치는 받는다.
+  */
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
   background-size: cover;
   background-position: center;
@@ -95,11 +105,8 @@ definePageMeta({ layout: 'hero' })
 
 /* ===== 중앙 콘텐츠 ===== */
 .hero__center {
-  position: absolute;
+  position: relative;
   width: 100%;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
   text-align: center;
   padding: 0 24px;
   z-index: 2;
@@ -159,7 +166,9 @@ definePageMeta({ layout: 'hero' })
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 13px 30px;
+  /* 세로 패딩 대신 정수 height. 위아래 테두리가 같은 픽셀 위상에 놓인다. */
+  height: 52px;
+  padding: 0 30px;
   border: 1px solid rgba(255, 255, 255, 0.85);
   border-radius: 999px;
   color: #fff;

@@ -64,23 +64,37 @@ useSeoMeta({
     />
 
     <div class="page">
-      <div class="page__search">
-        <UiInput
-          v-model="keyword"
-          type="search"
-          label="프로젝트 검색"
-          label-hidden
-          placeholder="프로젝트명 · 기술 스택으로 검색"
+      <!--
+        검색과 분류 탭은 둘 다 "목록 좁히기" 도구다. 세로로 떼어놓으면
+        서로 다른 단계처럼 읽혀서 한 줄에 둔다.
+      -->
+      <div class="toolbar">
+        <ProjectFilter
+          class="toolbar__filter"
+          :model-value="activeCategory"
+          :counts="categoryCounts"
+          @update:model-value="onFilterChangeWithReset"
         />
+
+        <div class="toolbar__search">
+          <UiInput
+            v-model="keyword"
+            type="search"
+            label="프로젝트 검색"
+            label-hidden
+            placeholder="프로젝트명 · 기술 스택으로 검색"
+          />
+        </div>
       </div>
 
-      <ProjectFilter
-        :model-value="activeCategory"
-        :counts="categoryCounts"
-        @update:model-value="onFilterChangeWithReset"
-      />
-
-      <p class="page__count">{{ filteredList.length }}건</p>
+      <!--
+        건수는 검색 중일 때만 띄운다.
+        검색어가 없으면 탭의 배지(categoryCounts)가 이미 같은 숫자를 보여주고,
+        결과가 0이면 아래 UiEmpty 가 이유까지 설명하므로 둘 다 중복이다.
+      -->
+      <p v-if="keyword.trim() && filteredList.length" class="page__count">
+        {{ filteredList.length }}건
+      </p>
 
       <ul v-if="filteredList.length" class="grid">
         <li v-for="(p, i) in filteredList" :key="p.id" v-reveal="{ delay: Math.min(i, 5) * 60 }">
@@ -110,19 +124,42 @@ useSeoMeta({
 .page {
   max-width: 1180px;
   margin: 0 auto;
-  padding: 36px 24px 20px;
+  padding: 28px 24px 20px;
 }
 
-.page__search {
-  max-width: 420px;
-  margin-bottom: 18px;
+/*
+  flex-end 로 맞춰야 입력 밑변과 탭 밑줄이 같은 선에 놓인다.
+  center 로 두면 탭의 밑줄만 아래로 처져 두 요소가 어긋나 보인다.
+*/
+.toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin-bottom: 20px;
+}
+
+.toolbar__filter {
+  flex: 1 1 320px;
+  min-width: 0;
+}
+
+.toolbar__search {
+  flex: 0 1 280px;
+}
+
+/* 좁아지면 검색이 한 줄을 통째로 쓴다 */
+@media (max-width: 720px) {
+  .toolbar__search {
+    flex: 1 1 100%;
+  }
 }
 
 .page__count {
-  font-family: var(--font-body);
   font-size: var(--step--1);
   color: var(--brand-ink-muted);
-  margin: 18px 0 14px;
+  margin: 0 0 16px;
 }
 
 .grid {

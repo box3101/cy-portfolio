@@ -16,9 +16,12 @@ export default defineNuxtConfig({
   },
 
   // 순서 중요: ispark-ui 기본 스타일 → 브랜드 토큰 오버라이드
+  // 순서가 곧 명시도 동점의 승부다.
+  // 라이브러리 → 토큰 → 라이브러리 오버라이드 → 모션
   css: [
     '@leechanyong/ispark-ui/style.css',
     '~/assets/css/tokens.css',
+    '~/assets/css/ispark-overrides.css',
     '~/assets/css/motion.css',
   ],
 

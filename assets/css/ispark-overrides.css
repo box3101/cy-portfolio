@@ -1,0 +1,50 @@
+/* assets/css/ispark-overrides.css
+ *
+ * ispark-ui 컴포넌트의 내장 스타일을 이 사이트 기준으로 덮는다.
+ * 라이브러리는 관리자 화면(정보 밀도 높음) 기준으로 잡혀 있어
+ * 포트폴리오처럼 읽는 화면에서는 글자가 작고 색이 흐리다.
+ *
+ * ⚠️ 명시도 규칙
+ *    라이브러리 규칙은 `.ui-empty-title[data-v-e6805b12]` 형태로 (0,2,0)이다.
+ *    여기서 `.ui-empty .ui-empty-title` 로 같은 (0,2,0)을 만들고,
+ *    nuxt.config.ts 의 css 배열에서 이 파일을 뒤에 로드해 동점을 이긴다.
+ *    (배열 순서: ispark-ui/style.css → tokens.css → 이 파일)
+ *    스코프 해시(data-v-*)는 라이브러리 버전이 오르면 바뀔 수 있으므로
+ *    해시를 직접 쓰지 않는다.
+ *
+ * nuxt.config.ts 의 css 배열에서 tokens.css 다음에 로드된다.
+ */
+
+/* ============================================================
+   UiEmpty — 빈 상태
+
+   원본: title .75rem(12px) / desc .625rem(10px), 둘 다 #6f7a93 고정.
+   본문이 15px인 화면에서 10px는 읽히지 않고, 하드코딩된 회색은
+   다크 테마에서 대비가 모자란다.
+
+   빈 상태는 "비활성 정보"가 아니라 사용자가 지금 읽어야 하는
+   유일한 내용이다. 본문급 크기와 색으로 올린다.
+   ============================================================ */
+.ui-empty .ui-empty-title {
+  font-size: var(--step-1);
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--brand-ink);
+}
+
+.ui-empty .ui-empty-desc {
+  font-size: var(--step-0);
+  line-height: 1.6;
+  color: var(--brand-ink-muted);
+}
+
+/* 아이콘도 테마를 타게 한다. 원본은 #6f7a93 + opacity .5 고정이다. */
+.ui-empty .ui-empty-icon {
+  color: var(--brand-ink-muted);
+  opacity: 0.65;
+}
+
+/* 글자가 커진 만큼 줄 간격도 함께 벌린다. */
+.ui-empty {
+  gap: 10px;
+}

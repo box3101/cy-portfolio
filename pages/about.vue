@@ -38,7 +38,6 @@ const skillGroups = computed(() => {
       eyebrow="Who I am"
       title="About"
       :description="profile?.headline ?? undefined"
-      width="narrow"
     />
 
     <div class="page">
@@ -88,10 +87,11 @@ const skillGroups = computed(() => {
 </template>
 
 <style scoped>
+/* 프로젝트 페이지와 같은 1180px. 페이지를 오갈 때 좌측 시작선이 어긋나지 않게 한다. */
 .page {
-  max-width: 800px;
+  max-width: 1180px;
   margin: 0 auto;
-  padding: 36px 24px 20px;
+  padding: 28px 24px 20px;
 }
 
 .page__bio {
@@ -151,14 +151,15 @@ const skillGroups = computed(() => {
 
 .career__desc {
   margin: 0;
+  max-width: 72ch;
   color: var(--brand-ink-muted);
   line-height: 1.7;
 }
 
 .skills {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 28px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 28px 32px;
 }
 
 .skills__group h3 {

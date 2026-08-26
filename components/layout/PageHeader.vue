@@ -51,7 +51,7 @@ withDefaults(
   left: 0;
   right: 0;
   bottom: 0;
-  height: 140px;
+  height: 96px;
   pointer-events: none;
   background: linear-gradient(to bottom, transparent, var(--brand-ground));
 }
@@ -112,7 +112,7 @@ withDefaults(
   /* ::after 페이드보다 위. 없으면 DOM 순서상 페이드가 제목을 덮는다. */
   z-index: 1;
   margin: 0 auto;
-  padding: 64px 24px 40px;
+  padding: 40px 24px 28px;
 }
 
 .ph__inner--wide {
@@ -124,7 +124,7 @@ withDefaults(
 }
 
 .ph__eyebrow {
-  margin: 0 0 14px;
+  margin: 0 0 10px;
   font-family: var(--font-body);
   font-size: var(--step--1);
   letter-spacing: 0.18em;
@@ -135,14 +135,14 @@ withDefaults(
 .ph__title {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  font-size: clamp(1.875rem, 3.6vw, 2.75rem);
   font-weight: 900;
   letter-spacing: -0.035em;
   line-height: 1;
 }
 
 .ph__desc {
-  margin: 16px 0 0;
+  margin: 12px 0 0;
   max-width: 52ch;
   color: var(--brand-ink-muted);
   font-size: var(--step-1);
@@ -151,7 +151,7 @@ withDefaults(
 
 @media (max-width: 640px) {
   .ph__inner {
-    padding: 44px 20px 32px;
+    padding: 32px 20px 24px;
   }
 }
 </style>

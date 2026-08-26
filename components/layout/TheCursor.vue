@@ -95,10 +95,16 @@ onBeforeUnmount(() => {
     background-color 0.3s ease-out;
 }
 
+/*
+  hover 시 꽉 찬 원으로 바꾸지 않는다.
+  difference 블렌드라 흰색을 100% 채우면 바탕색이 그대로 반전된다 —
+  다크에서는 흰 원이지만 라이트에서는 새까만 덩어리가 돼 글자를 덮었다.
+  옅게만 채워 두 테마 모두에서 "커서가 커졌다" 정도로 읽히게 한다.
+*/
 .cursor-ring.is-hover {
   transform: translateX(-50%) translateY(-50%) scale(1.8);
-  background: rgba(255, 255, 255, 1);
-  border-color: transparent;
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.9);
 }
 
 /* 좁은 화면·터치 기기에서는 숨긴다 */

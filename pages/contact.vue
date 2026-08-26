@@ -28,7 +28,6 @@ const channels = computed(() =>
       eyebrow="Get in touch"
       title="Contact"
       description="새로운 기회나 협업 제안은 언제든 환영합니다."
-      width="narrow"
     />
 
     <div class="page">
@@ -46,9 +45,9 @@ const channels = computed(() =>
 
 <style scoped>
 .page {
-  max-width: 800px;
+  max-width: 1180px;
   margin: 0 auto;
-  padding: 36px 24px 20px;
+  padding: 28px 24px 20px;
 }
 
 .channels {
