@@ -1,61 +1,72 @@
-# cy-portfolio
+<div align="center">
 
-이찬용 포트폴리오 사이트. Nuxt 3 + Supabase + [`@leechanyong/ispark-ui`](https://www.npmjs.com/package/@leechanyong/ispark-ui) 기반.
+# Cy's Code Canvas
 
-직접 만든 디자인 시스템 `ispark-ui`로 이 사이트를 만든다. 시스템을 만든 것과 그 시스템으로 제품을 만들 수 있는 것은 다르므로, 사이트 자체가 증거가 되게 한다.
+**이찬용 포트폴리오 — Nuxt 3 + Supabase + ispark-ui**
 
-## 스택
+[![Nuxt3](https://img.shields.io/badge/Nuxt_3-00DC82?style=flat-square&logo=nuxt.js&logoColor=white)](https://nuxt.com/)
+[![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?style=flat-square&logo=supabase&logoColor=white)](https://supabase.com/)
+[![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white)](https://vercel.com/)
 
-| 레이어 | 선택 |
-| --- | --- |
-| 프레임워크 | Nuxt 3 (SSR / ISR) |
-| UI | `@leechanyong/ispark-ui` (Vue 3 + radix-vue) |
-| 데이터 | Supabase (Postgres + Auth + Storage) |
-| 배포 | Vercel |
+</div>
 
-## 개발
+---
+
+## Overview
+
+직접 만든 디자인 시스템 [ispark-ui](https://github.com/box3101/ispark-ui)로 구축한 포트폴리오 사이트입니다.  
+시스템을 만드는 것과, 그 시스템으로 제품을 만드는 것은 다릅니다. 이 사이트 자체가 그 증거입니다.
+
+## Tech Stack
+
+| 영역 | 기술 |
+|------|------|
+| **Framework** | Nuxt 3 (SSR/ISR) |
+| **Database** | Supabase (PostgreSQL + RLS) |
+| **UI** | [@leechanyong/ispark-ui](https://www.npmjs.com/package/@leechanyong/ispark-ui) |
+| **Deploy** | Vercel |
+| **Test** | Vitest + Playwright |
+
+## Key Features
+
+- **프로젝트 갤러리** — 카테고리 필터, 검색, 상세 페이지
+- **경력 타임라인** — 회사별 경력 + 프로젝트 이력
+- **아카이브** — 인증서·자료 PDF 뷰어
+- **다크 모드** — 테마 전환
+- **SSR + ISR** — SEO 최적화 + 빠른 응답
+
+## Project Structure
+
+```
+├── pages/              # 라우트 페이지
+├── components/         # UI 컴포넌트
+├── composables/
+│   ├── api/            # Supabase 쿼리
+│   └── store/          # useState 스토어
+├── layouts/            # default, hero
+└── supabase/
+    ├── migrations/     # DB 스키마
+    └── seed.sql        # 초기 데이터
+```
+
+## Getting Started
 
 ```bash
+# .env 설정
+cp .env.example .env
+# NUXT_PUBLIC_SUPABASE_URL, NUXT_PUBLIC_SUPABASE_ANON_KEY 입력
+
 npm install
-cp .env.example .env     # Supabase URL / publishable key 입력
-npm run dev              # http://localhost:3000
+npm run dev
 ```
 
-## 스크립트
+## Links
 
-| 명령 | 설명 |
-| --- | --- |
-| `npm run dev` | 개발 서버 |
-| `npm run build` | 프로덕션 빌드 (템플릿 타입체크 포함) |
-| `npm test` | SSR + 하이드레이션 검증 (빌드 후 실제 서버에 요청) |
-| `SKIP_BUILD=1 npx vitest run` | 기존 빌드 재사용, 빠른 반복 |
-| `npm run db:check` | 마이그레이션·seed를 PGlite에서 실행 검증 (Docker 불필요) |
+- **Live** — [포트폴리오 사이트](https://cy-portfolio.vercel.app/)
+- **Design System** — [ispark-ui Storybook](https://box3101.github.io/ispark-ui/)
 
-## 테스트
+---
 
-`test/`는 `ispark-ui` 33개 컴포넌트가 Nuxt 3 SSR에서 정상 동작하는지 검증한다.
-
-- `ssr-smoke.test.ts` — 서버가 실제 마크업을 생성하는지
-- `hydration.test.ts` — 브라우저 콘솔 오류 0건인지 (Playwright)
-
-`@nuxt/test-utils`의 인프로세스 빌드 대신 자식 프로세스에서 `nuxt build` 후 Nitro 서버에
-요청한다. 배포되는 프로덕션 출력을 그대로 검증하기 위해서다.
-
-## 데이터베이스
-
-```
-supabase/migrations/0001_init.sql   테이블 6개 + 인덱스 + 트리거
-supabase/migrations/0002_rls.sql    RLS 정책 12개
-supabase/seed.sql                   초기 데이터 (멱등)
-```
-
-스키마를 바꾸면 `npm run db:check`로 먼저 검증한 뒤 대시보드 SQL Editor에서 적용하고,
-`types/database.ts`를 함께 갱신한다.
-
-## 문서
-
-| 문서 | 내용 |
-| --- | --- |
-| [설계](docs/superpowers/specs/2026-08-26-portfolio-design.md) | 목적·범위·아키텍처·데이터 모델·로드맵 |
-| [Phase 0 계획](docs/superpowers/plans/2026-08-26-phase0-foundation.md) | 기반 구축 작업 단위 |
-| [SSR 검증 결과](docs/superpowers/notes/2026-08-26-ssr-verification.md) | 컴포넌트별 SSR 판정, ispark-ui 개선 권고 |
+<div align="center">
+  <sub>Built by <a href="https://github.com/box3101">@box3101</a></sub>
+</div>
