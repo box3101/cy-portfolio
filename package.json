@@ -10,7 +10,8 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "db:check": "node scripts/check-sql.mjs"
   },
   "dependencies": {
     "@internationalized/date": "^3.12.3",
@@ -23,6 +24,7 @@
     "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.7",
     "playwright": "^1.62.1",
     "typescript": "^5.9.3",
     "vitest": "^3.2.7",
