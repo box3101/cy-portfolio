@@ -65,9 +65,14 @@ Phase 0에서 발견한 라이브러리 이슈. 포트폴리오 서사("SSR 대�
 `UiProgress`는 ESM·CJS·`index.d.ts` 어디에도 없어, Storybook 문서를 보고 설치한 사용자는
 `"UiProgress" is not exported by dist/ispark-ui.js`로 빌드가 실패했다.
 
-**근본 원인:** `scripts/release.mjs`에 `npm publish`가 없다. 8단계 중 6단계가
-`npm install github:box3101/ispark-ui#<hash>`로 **소비 앱에 Git 커밋 해시로 설치**하는 방식이라
-npm 레지스트리를 거치지 않는다. 예전 README의 "Git URL 직접 설치(현재 권장)" 정책에 맞춰 설계된 파이프라인이다.
+**근본 원인:** 배포 로직은 있었으나 **방아쇠가 없었다.**
+
+`.github/workflows/publish.yml`이 `v*` 태그 push에 반응해 `npm publish`를 실행하도록 되어 있었는데,
+`scripts/release.mjs`는 버전 bump → 커밋 → main push까지만 하고 **태그를 만들지 않았다.**
+그래서 CI가 한 번도 트리거되지 않았고, 릴리스가 git에만 쌓였다.
+
+릴리스 스크립트는 대신 `npm install github:box3101/ispark-ui#<hash>`로 소비 앱에 Git 커밋 해시로 직접
+설치한다. 이 경로만으로 개발이 돌아갔기 때문에 npm이 멈춰 있다는 사실이 드러나지 않았다.
 
 **함께 누락되어 있던 것들:** `UiConfirm`·`UiModal` Dialog 접근성(DialogDescription, v0.6.10),
 `UiTable` draggable 모드(v0.6.0), `UiButton` variant 4종 추가, size 토큰 재배치(v0.6.8), `icon-upload`.
@@ -76,8 +81,10 @@ npm 레지스트리를 거치지 않는다. 예전 README의 "Git URL 직접 설
 `UiProgress` 포함 33개 전부 SSR·하이드레이션 통과했다. `vuedraggable`이 peer dependency로
 추가되었으므로(v0.6.1) 소비측에 함께 설치해야 한다.
 
-**후속 권고:** `release.mjs`에 `npm publish` 단계를 넣어 재발을 막는다.
-현재는 릴리스를 돌려도 npm에 반영되지 않는다.
+**재발 방지 (완료):** `release.mjs`에 `v{version}` 태그 생성·push 단계를 추가해
+`publish.yml`이 실제로 트리거되도록 연결했다(`a209b91`). 배포 없이 커밋만 올릴 때를 위한 `--no-tag` 플래그도 있다.
+`publish.yml`은 Node 24 및 npm Trusted Publishing(OIDC)로 상향했다(`b666253`).
+이제 `npm run release` 한 번으로 git 커밋 → 태그 → CI → npm 배포가 끝까지 이어진다.
 
 ### 3-2. `UiFileList`의 `getUrl` 누락 시 오류 메시지가 불친절 🟡
 
