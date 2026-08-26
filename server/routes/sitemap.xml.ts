@@ -13,7 +13,7 @@ import type { Database } from '~/types/database'
  */
 
 /** 라우트가 실제로 존재하는 정적 페이지만 넣는다. */
-const STATIC_PATHS = ['/', '/projects', '/about', '/contact']
+const STATIC_PATHS = ['/', '/projects', '/archive', '/about', '/contact']
 
 const escapeXml = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')

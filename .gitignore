@@ -11,3 +11,6 @@ dist
 
 # Playwright MCP 디버그 산출물 (콘솔 로그·페이지 스냅샷)
 .playwright-mcp/
+
+# Supabase CLI 임시 디렉터리
+supabase/.temp/

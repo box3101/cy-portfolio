@@ -11,6 +11,7 @@ const { toggleTheme, restoreTheme } = useTheme()
 const navItems = [
   { to: '/', label: 'Home' },
   { to: '/projects', label: 'Projects' },
+  { to: '/archive', label: 'Archive' },
   { to: '/about', label: 'About' },
   { to: '/contact', label: 'Contact' },
 ]
