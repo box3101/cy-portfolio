@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UiBadge, UiBadgeGroup } from '@leechanyong/ispark-ui'
 import type { Project } from '~/types/database'
 
 const props = defineProps<{ project: Project }>()
@@ -24,7 +25,9 @@ const categoryLabel: Record<string, string> = {
 <template>
   <NuxtLink :to="`/projects/${project.slug}`" class="card">
     <div class="card__thumb" :class="{ 'is-accent': Boolean(badge) }">
-      <span v-if="badge" class="card__badge">{{ badge }}</span>
+      <span v-if="badge" class="card__badge">
+        <UiBadge variant="primary" size="xs">{{ badge }}</UiBadge>
+      </span>
       <span class="card__glyph">{{ project.title }}</span>
     </div>
 
@@ -33,9 +36,15 @@ const categoryLabel: Record<string, string> = {
       <h3 class="card__title">{{ project.title }}</h3>
       <span class="card__period">{{ period }}</span>
 
-      <ul v-if="project.tags.length" class="card__tags">
-        <li v-for="tag in project.tags.slice(0, 4)" :key="tag">{{ tag }}</li>
-      </ul>
+      <UiBadgeGroup
+        v-if="project.tags.length"
+        class="card__tags"
+        :gap="5"
+        wrap
+        aria-label="사용 기술"
+      >
+        <UiBadge v-for="tag in project.tags.slice(0, 4)" :key="tag" size="xs">{{ tag }}</UiBadge>
+      </UiBadgeGroup>
     </div>
   </NuxtLink>
 </template>
@@ -95,19 +104,12 @@ const categoryLabel: Record<string, string> = {
   border-radius: 8px;
 }
 
+/* 배지 자체의 모양은 UiBadge가 갖는다. 여기서는 위치만 잡는다. */
 .card__badge {
   position: absolute;
   top: 10px;
   right: 10px;
   z-index: 1;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  background: var(--brand-accent);
-  color: var(--brand-accent-ink);
-  padding: 3px 8px;
-  border-radius: 5px;
 }
 
 .card__body {
@@ -140,22 +142,8 @@ const categoryLabel: Record<string, string> = {
   font-variant-numeric: tabular-nums;
 }
 
+/* 배치는 UiBadgeGroup(flex + wrap + gap)이 맡는다. 여백만 얹는다. */
 .card__tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  list-style: none;
-  margin: 4px 0 0;
-  padding: 0;
-}
-
-.card__tags li {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--brand-ink-muted);
-  background: color-mix(in oklab, var(--brand-line) 35%, transparent);
-  border: 1px solid var(--brand-line);
-  padding: 2px 8px;
-  border-radius: 5px;
+  margin-top: 4px;
 }
 </style>

@@ -29,14 +29,18 @@ const skillGroups = computed(() => {
 </script>
 
 <template>
-  <div class="page">
-    <header v-reveal class="page__head">
-      <h1>소개</h1>
-      <p v-if="profile?.headline" class="page__headline">{{ profile.headline }}</p>
-      <p v-if="profile?.bio" class="page__bio">{{ profile.bio }}</p>
-    </header>
+  <div>
+    <LayoutPageHeader
+      eyebrow="About"
+      title="소개"
+      :description="profile?.headline ?? undefined"
+      width="narrow"
+    />
 
-    <section v-if="careerList.length" v-reveal class="block">
+    <div class="page">
+      <p v-if="profile?.bio" v-reveal class="page__bio">{{ profile.bio }}</p>
+
+      <section v-if="careerList.length" v-reveal class="block">
       <h2>경력</h2>
       <ul class="career">
         <li v-for="c in careerList" :key="c.id">
@@ -50,7 +54,8 @@ const skillGroups = computed(() => {
       </ul>
     </section>
 
-    <section v-if="skillGroups.length" v-reveal="{ delay: 80 }" class="block">
+    <!-- 히어로의 'Skill Inventory' 링크가 이 앵커로 들어온다 -->
+    <section id="skills" v-if="skillGroups.length" v-reveal="{ delay: 80 }" class="block">
       <h2>기술</h2>
       <div class="skills">
         <div v-for="g in skillGroups" :key="g.key" class="skills__group">
@@ -64,8 +69,9 @@ const skillGroups = computed(() => {
             </li>
           </ul>
         </div>
-      </div>
-    </section>
+        </div>
+      </section>
+    </div>
   </div>
 </template>
 
@@ -73,25 +79,12 @@ const skillGroups = computed(() => {
 .page {
   max-width: 800px;
   margin: 0 auto;
-  padding: 56px 24px 20px;
-}
-
-.page__head h1 {
-  margin: 0 0 14px;
-  font-family: var(--font-display);
-  font-size: var(--step-3);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-}
-
-.page__headline {
-  margin: 0 0 12px;
-  font-size: var(--step-1);
-  font-weight: 500;
+  padding: 36px 24px 20px;
 }
 
 .page__bio {
   margin: 0;
+  max-width: 62ch;
   color: var(--brand-ink-muted);
   line-height: 1.8;
 }

@@ -24,17 +24,21 @@ definePageMeta({ layout: 'hero' })
 
     <!-- 좌우 세로 링크. 원본의 슬라이드 전환 대신 실제 라우트로 이동한다. -->
     <NuxtLink to="/about" class="side side--left enter-fade enter-d3" aria-label="소개 보기">About</NuxtLink>
-    <NuxtLink to="/contact" class="side side--right enter-fade enter-d3" aria-label="연락처 보기">contact</NuxtLink>
+    <NuxtLink to="/contact" class="side side--right enter-fade enter-d3" aria-label="연락처 보기">Contact</NuxtLink>
 
     <div class="hero__center">
       <h1 class="hero__title enter-drop">Cy's Code Canvas</h1>
 
       <p class="hero__script enter-rise enter-d1">Creative Web Publisher &amp; FrontEnd</p>
 
-      <p class="hero__links enter-rise enter-d2">
-        <NuxtLink to="/about"><span>Skill Inventory</span></NuxtLink>
-        <NuxtLink to="/projects"><span>portfolio</span></NuxtLink>
-      </p>
+      <!--
+        주된 행동은 Portfolio 하나다. Skill Inventory 는 about 의 기술 섹션 앵커로
+        보내 About 사이드 링크와 목적지가 겹치지 않게 한다.
+      -->
+      <div class="hero__actions enter-rise enter-d2">
+        <NuxtLink to="/projects" class="hero__cta">Portfolio</NuxtLink>
+        <NuxtLink to="/about#skills" class="hero__link">Skill Inventory</NuxtLink>
+      </div>
     </div>
   </section>
 </template>
@@ -82,11 +86,15 @@ definePageMeta({ layout: 'hero' })
 */
 
 /* ===== 중앙 콘텐츠 ===== */
+/*
+  좌우 세로 링크는 50% 에 그대로 두고 중앙 블록만 44% 로 올린다.
+  넷이 한 축에 모이면 완전 대칭이 되어 위계가 사라진다.
+*/
 .hero__center {
   position: absolute;
   width: 100%;
   left: 0;
-  top: 50%;
+  top: 44%;
   transform: translateY(-50%);
   text-align: center;
   padding: 0 24px;
@@ -119,45 +127,70 @@ definePageMeta({ layout: 'hero' })
   text-wrap: balance;
 }
 
-.hero__links {
-  margin: 0;
-  font-size: 15px;
-  line-height: 20px;
-  font-weight: 500;
-  color: #fff;
-  letter-spacing: 1px;
+/* ===== 행동 =====
+  아래 화살표(∨)를 쓰지 않는다. 히어로는 100dvh 라 스크롤할 것이 없는데
+  ∨ 는 "아래로 더 있음"을 뜻해 실제 동작(라우트 이동)과 어긋난다.
+  방향을 뜻하는 → 만 CTA 안에 둔다.
+*/
+.hero__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px 28px;
 }
 
-.hero__links a {
+.hero__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 30px;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 999px;
   color: #fff;
+  font-family: 'Poppins', var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   text-decoration: none;
+  transition: background-color 200ms ease-out, color 200ms ease-out;
 }
 
-.hero__links span {
-  margin: 0 15px;
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-  padding-bottom: 35px;
+.hero__cta::after {
+  content: '→';
+  transition: transform 200ms ease-out;
 }
 
-/* 아래 화살표 — 호버 시 나타난다 */
-.hero__links span::before {
-  position: absolute;
-  content: '';
-  bottom: 10px;
-  left: 50%;
-  height: 30px;
-  width: 30px;
-  margin-left: -15px;
-  background: url('/icons/arrow-down.svg') no-repeat center / 30px 30px;
-  opacity: 0.45;
-  transition: all 200ms linear;
+.hero__cta:hover {
+  background-color: #fff;
+  color: #14151c;
 }
 
-.hero__links span:hover::before {
-  opacity: 1;
-  bottom: 5px;
+.hero__cta:hover::after {
+  transform: translateX(4px);
+}
+
+.hero__link {
+  color: rgba(255, 255, 255, 0.72);
+  font-family: 'Poppins', var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  padding-bottom: 2px;
+  border-bottom: 1px solid transparent;
+  transition: color 200ms ease-out, border-color 200ms ease-out;
+}
+
+.hero__link:hover {
+  color: #fff;
+  border-bottom-color: rgba(255, 255, 255, 0.6);
+}
+
+.hero__cta:focus-visible,
+.hero__link:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
 }
 
 /* ===== 좌우 세로 링크 ===== */

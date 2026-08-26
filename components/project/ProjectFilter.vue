@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { UiTab } from '@leechanyong/ispark-ui'
+import type { TabItem } from '@leechanyong/ispark-ui'
 import type { CategoryFilter } from '~/composables/store/useProjectStore'
 
 const props = defineProps<{
@@ -17,67 +19,27 @@ const filters: { value: CategoryFilter; label: string }[] = [
 ]
 
 // 건수가 0인 분류는 노출하지 않는다. 빈 필터를 누르게 하지 않기 위함이다.
-const visible = computed(() =>
-  filters.filter((f) => f.value === 'all' || (props.counts[f.value] ?? 0) > 0),
+// UiTab의 count가 칩 안의 건수 배지를 대신한다.
+const tabs = computed<TabItem[]>(() =>
+  filters
+    .filter((f) => f.value === 'all' || (props.counts[f.value] ?? 0) > 0)
+    .map((f) => ({
+      label: f.label,
+      value: f.value,
+      count: props.counts[f.value] ?? 0,
+    })),
 )
 
-const onSelect = (value: CategoryFilter) => emit('update:modelValue', value)
+const onTabChange = (value: string) => emit('update:modelValue', value as CategoryFilter)
 </script>
 
 <template>
-  <div class="filters" role="group" aria-label="프로젝트 분류 필터">
-    <button
-      v-for="f in visible"
-      :key="f.value"
-      type="button"
-      class="chip"
-      :aria-pressed="modelValue === f.value"
-      @click="onSelect(f.value)"
-    >
-      {{ f.label }}
-      <span class="chip__cnt">{{ counts[f.value] ?? 0 }}</span>
-    </button>
-  </div>
+  <UiTab
+    :model-value="modelValue"
+    :tabs="tabs"
+    size="md"
+    align="left"
+    aria-label="프로젝트 분류 필터"
+    @update:model-value="onTabChange"
+  />
 </template>
-
-<style scoped>
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  padding-bottom: 20px;
-  margin-bottom: 22px;
-  border-bottom: 1px solid var(--brand-line);
-}
-
-.chip {
-  font-family: inherit;
-  font-size: var(--step-0);
-  font-weight: 500;
-  padding: 7px 15px;
-  border-radius: 999px;
-  border: 1px solid var(--brand-line);
-  background: var(--brand-surface);
-  color: var(--brand-ink-muted);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.chip:hover {
-  border-color: var(--brand-accent);
-  color: var(--brand-ink);
-}
-
-.chip[aria-pressed='true'] {
-  background: var(--brand-accent);
-  border-color: var(--brand-accent);
-  color: var(--brand-accent-ink);
-}
-
-.chip__cnt {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  opacity: 0.7;
-  margin-left: 6px;
-}
-</style>

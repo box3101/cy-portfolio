@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UiInput, UiEmpty } from '@leechanyong/ispark-ui'
 import type { CategoryFilter } from '~/composables/store/useProjectStore'
 
 const route = useRoute()
@@ -27,6 +28,27 @@ const onFilterChange = async (category: CategoryFilter) => {
   await onCategoryChange(category)
 }
 
+/*
+  검색은 서버를 다시 타지 않고 현재 분류로 받아온 목록 안에서 거른다.
+  프로젝트 수가 수십 건 규모라 왕복할 이유가 없다.
+*/
+const keyword = ref('')
+
+const filteredList = computed(() => {
+  const k = keyword.value.trim().toLowerCase()
+  if (!k) return projectList.value
+
+  return projectList.value.filter((p) =>
+    [p.title, p.subtitle ?? '', ...p.tags].some((t) => t.toLowerCase().includes(k)),
+  )
+})
+
+// 분류를 바꾸면 검색어는 비운다. 결과가 0인 이유가 둘로 겹쳐 보이지 않게 한다.
+const onFilterChangeWithReset = async (category: CategoryFilter) => {
+  keyword.value = ''
+  await onFilterChange(category)
+}
+
 useSeoMeta({
   title: '프로젝트 — Cy\'s Code Canvas',
   description: '공공기관 웹사이트부터 엔터프라이즈 솔루션, 디자인 시스템까지.',
@@ -34,29 +56,53 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="page">
-    <header v-reveal class="page__head">
-      <h1>프로젝트</h1>
-      <p>공공기관 웹사이트부터 엔터프라이즈 솔루션, 디자인 시스템까지.</p>
-    </header>
-
-    <ProjectFilter
-      :model-value="activeCategory"
-      :counts="categoryCounts"
-      @update:model-value="onFilterChange"
+  <div>
+    <LayoutPageHeader
+      eyebrow="Work"
+      title="프로젝트"
+      description="공공기관 웹사이트부터 엔터프라이즈 솔루션, 디자인 시스템까지."
     />
 
-    <p class="page__count">{{ projectList.length }}건</p>
+    <div class="page">
+      <div class="page__search">
+        <UiInput
+          v-model="keyword"
+          type="search"
+          label="프로젝트 검색"
+          label-hidden
+          placeholder="프로젝트명 · 기술 스택으로 검색"
+        />
+      </div>
 
-    <ul v-if="projectList.length" class="grid">
-      <li v-for="(p, i) in projectList" :key="p.id" v-reveal="{ delay: Math.min(i, 5) * 60 }">
-        <ProjectCard :project="p" />
-      </li>
-    </ul>
+      <ProjectFilter
+        :model-value="activeCategory"
+        :counts="categoryCounts"
+        @update:model-value="onFilterChangeWithReset"
+      />
 
-    <p v-else class="page__empty">
-      아직 공개된 프로젝트가 없습니다.
-    </p>
+      <p class="page__count">{{ filteredList.length }}건</p>
+
+      <ul v-if="filteredList.length" class="grid">
+        <li v-for="(p, i) in filteredList" :key="p.id" v-reveal="{ delay: Math.min(i, 5) * 60 }">
+          <ProjectCard :project="p" />
+        </li>
+      </ul>
+
+      <!-- 결과 0의 원인이 검색어인지 데이터 부재인지 구분해서 안내한다 -->
+      <div v-else class="page__empty">
+        <UiEmpty
+          v-if="keyword.trim()"
+          icon="icon-search"
+          title="검색 결과가 없습니다"
+          :description="`'${keyword.trim()}' 와 일치하는 프로젝트를 찾지 못했습니다.`"
+        />
+        <UiEmpty
+          v-else
+          title="아직 공개된 프로젝트가 없습니다"
+          description="정리되는 대로 이곳에 올라옵니다."
+        />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -64,27 +110,19 @@ useSeoMeta({
 .page {
   max-width: 1180px;
   margin: 0 auto;
-  padding: 56px 24px 20px;
+  padding: 36px 24px 20px;
 }
 
-.page__head h1 {
-  margin: 0 0 6px;
-  font-family: var(--font-display);
-  font-size: var(--step-3);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-}
-
-.page__head p {
-  margin: 0 0 26px;
-  color: var(--brand-ink-muted);
+.page__search {
+  max-width: 420px;
+  margin-bottom: 18px;
 }
 
 .page__count {
   font-family: var(--font-mono);
   font-size: var(--step--1);
   color: var(--brand-ink-muted);
-  margin: 0 0 14px;
+  margin: 18px 0 14px;
 }
 
 .grid {
@@ -97,8 +135,7 @@ useSeoMeta({
 }
 
 .page__empty {
-  color: var(--brand-ink-muted);
-  padding: 40px 0;
+  padding: 32px 0 48px;
   border-top: 1px solid var(--brand-line);
 }
 

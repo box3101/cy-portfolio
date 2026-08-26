@@ -21,20 +21,24 @@ const channels = computed(() =>
 </script>
 
 <template>
-  <div class="page">
-    <header v-reveal class="page__head">
-      <h1>Contact</h1>
-      <p>새로운 기회나 협업 제안은 언제든 환영합니다.</p>
-    </header>
+  <div>
+    <LayoutPageHeader
+      eyebrow="Get in touch"
+      title="Contact"
+      description="새로운 기회나 협업 제안은 언제든 환영합니다."
+      width="narrow"
+    />
 
-    <ul v-if="channels.length" v-reveal="{ delay: 80 }" class="channels">
+    <div class="page">
+      <ul v-if="channels.length" v-reveal="{ delay: 80 }" class="channels">
       <li v-for="c in channels" :key="c.label">
         <span class="channels__label">{{ c.label }}</span>
         <a :href="c.href" target="_blank" rel="noopener noreferrer">{{ c.value }}</a>
       </li>
     </ul>
 
-    <p v-else class="page__empty">등록된 연락처가 없습니다.</p>
+      <p v-else class="page__empty">등록된 연락처가 없습니다.</p>
+    </div>
   </div>
 </template>
 
@@ -42,20 +46,7 @@ const channels = computed(() =>
 .page {
   max-width: 800px;
   margin: 0 auto;
-  padding: 56px 24px 20px;
-}
-
-.page__head h1 {
-  margin: 0 0 10px;
-  font-family: var(--font-display);
-  font-size: var(--step-3);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-}
-
-.page__head p {
-  margin: 0 0 36px;
-  color: var(--brand-ink-muted);
+  padding: 36px 24px 20px;
 }
 
 .channels {

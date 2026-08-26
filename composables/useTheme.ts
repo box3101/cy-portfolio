@@ -3,9 +3,8 @@ type Theme = 'light' | 'dark'
 /**
  * 테마 토글.
  *
- * 서버에서는 사용자의 OS 설정을 알 수 없으므로 아무것도 스탬프하지 않는다.
- * 그 상태에서는 tokens.css의 prefers-color-scheme 미디어쿼리가 동작하고,
- * 사용자가 토글하면 data-theme 속성이 그것을 이긴다.
+ * 이 사이트는 다크가 기본이다(tokens.css의 :root = 다크).
+ * 스탬프가 없으면 다크다. 사용자가 토글하면 data-theme="light" 가 붙는다.
  */
 export const useTheme = () => {
   const theme = useState<Theme | null>('theme', () => null)
@@ -35,8 +34,8 @@ export const useTheme = () => {
 
   const isDark = (): boolean => {
     if (theme.value) return theme.value === 'dark'
-    if (!import.meta.client) return false
-    return matchMedia('(prefers-color-scheme: dark)').matches
+    // 스탬프가 없으면 항상 다크다. OS 설정은 따르지 않는다.
+    return true
   }
 
   const toggleTheme = () => {
