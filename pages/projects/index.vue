@@ -50,7 +50,7 @@ const onFilterChangeWithReset = async (category: CategoryFilter) => {
 }
 
 useSeoMeta({
-  title: '프로젝트 — Cy\'s Code Canvas',
+  title: 'Projects — Cy\'s Code Canvas',
   description: '공공기관 웹사이트부터 엔터프라이즈 솔루션, 디자인 시스템까지.',
 })
 </script>
@@ -58,8 +58,8 @@ useSeoMeta({
 <template>
   <div>
     <LayoutPageHeader
-      eyebrow="Work"
-      title="프로젝트"
+      eyebrow="What I've built"
+      title="Projects"
       description="공공기관 웹사이트부터 엔터프라이즈 솔루션, 디자인 시스템까지."
     />
 
@@ -134,9 +134,9 @@ useSeoMeta({
   padding: 0;
 }
 
+/* 탭이 이미 아래쪽 구분선을 갖고 있어 여기서 또 그으면 줄이 두 개가 된다 */
 .page__empty {
   padding: 32px 0 48px;
-  border-top: 1px solid var(--brand-line);
 }
 
 @media (max-width: 860px) {

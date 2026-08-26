@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { UiEmpty } from '@leechanyong/ispark-ui'
+
 const { profile, handleSelectProfile } = useProfileStore()
 
 await useAsyncData('contact', async () => {
@@ -7,7 +9,7 @@ await useAsyncData('contact', async () => {
 })
 
 useSeoMeta({
-  title: "연락처 — Cy's Code Canvas",
+  title: "Contact — Cy's Code Canvas",
   description: '이찬용에게 연락하기',
 })
 
@@ -37,7 +39,7 @@ const channels = computed(() =>
       </li>
     </ul>
 
-      <p v-else class="page__empty">등록된 연락처가 없습니다.</p>
+      <UiEmpty v-else class="page__empty" title="등록된 연락처가 없습니다" />
     </div>
   </div>
 </template>

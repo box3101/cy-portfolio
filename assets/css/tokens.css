@@ -18,11 +18,12 @@
    타이포그래피
    히어로가 Poppins 900을 쓴다. 디스플레이 서체를 Poppins로 통일해
    히어로와 내부 페이지의 제목이 같은 목소리를 내게 한다.
-   한글은 IBM Plex Sans KR이 글리프 단위로 이어받는다.
+   본문과 한글은 Pretendard가 받는다. 가변 폰트(Variable) 우선,
+   미지원 환경은 정적 Pretendard로 떨어진다.
    ============================================================ */
 :root {
-  --font-display: 'Poppins', 'IBM Plex Sans KR', system-ui, sans-serif;
-  --font-body: 'IBM Plex Sans KR', system-ui, -apple-system, sans-serif;
+  --font-display: 'Poppins', 'Pretendard Variable', Pretendard, system-ui, sans-serif;
+  --font-body: 'Pretendard Variable', Pretendard, system-ui, -apple-system, sans-serif;
   --font-serif: 'Instrument Serif', Georgia, serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 
@@ -36,16 +37,24 @@
 
 /* ============================================================
    다크 (기본) — 브랜드 원색
+
+   중성색 스케일은 saveticker.com 다크 팔레트를 기준으로 잡았다.
+   기존 보라 기운(#14101a·#342b40)을 걷어내고 차가운 뉴트럴로 간다.
+   바탕이 거의 검정에 가까워져 액센트와 카드가 또렷하게 떠오른다.
+     ground  #09090a  = background-base   (페이지 바탕)
+     surface #131619  = background-secondary
+     line    #252b30  = surface 한 단계 위 경계
+   액센트(핑크)는 이 사이트의 아이덴티티라 그대로 둔다.
    ============================================================ */
 :root {
-  --brand-ground: #14101a;
-  --brand-surface: #1c1724;
-  --brand-line: #342b40;
-  --brand-ink: #f1ecf6;
-  --brand-ink-muted: #a79cb6;
+  --brand-ground: #09090a;
+  --brand-surface: #131619;
+  --brand-line: #252b30;
+  --brand-ink: #f5f7fa;
+  --brand-ink-muted: #9dadbc;
   --brand-accent: #ec5cc0;
   --brand-accent-rgb: 236, 92, 192;
-  --brand-accent-ink: #14101a;
+  --brand-accent-ink: #09090a;
   --brand-focus: #5fe0e8;
 }
 
@@ -59,21 +68,22 @@
   --color-primary-hover: #f27ccd;
   --color-primary-dark: #c93fa0;
   --color-primary-dark-hover: #b03489;
-  --color-primary-bg: #3a1730;
+  --color-primary-bg: #2c1226;
   --color-primary-rgb: var(--brand-accent-rgb);
 
   --color-background: var(--brand-ground);
   --color-surface: var(--brand-surface);
-  --color-bg-elevated: #251e2e;
+  /* 카드처럼 한 겹 떠오르는 면. saveticker background-primary 와 같다. */
+  --color-bg-elevated: #1f2428;
   --color-border: var(--brand-line);
-  --color-border-light: #272031;
-  --color-text-primary: #cfc6d9;
-  --color-text-secondary: #a99fb6;
+  --color-border-light: #1b2024;
+  --color-text-primary: #c6c9ce;
+  --color-text-secondary: #9dadbc;
   --color-text-heading: var(--brand-ink);
-  --color-text-heading-sub: #ded6e6;
-  --color-text-dark: #b8aec6;
-  --color-text-muted: var(--brand-ink-muted);
-  --color-text-disabled: #6b6178;
+  --color-text-heading-sub: #eceef4;
+  --color-text-dark: #b4bcc4;
+  --color-text-muted: #898d99;
+  --color-text-disabled: #6b7076;
 
   /* 어두운 바탕에서 대비를 확보하도록 시맨틱 색을 밝게 조정 */
   --color-danger: #f87171;

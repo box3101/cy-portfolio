@@ -30,7 +30,7 @@ const onConfirmClick = async () => {
 
     <section data-c="UiEmpty">
       <h2>빈 상태</h2>
-      <UiEmpty text="등록된 프로젝트가 없습니다" />
+      <UiEmpty title="등록된 프로젝트가 없습니다" description="새 프로젝트를 추가해 보세요" />
     </section>
 
     <section data-c="UiLoading">

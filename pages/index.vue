@@ -4,10 +4,10 @@ const { profile } = useProfileStore()
 useSeoMeta({
   title: "Cy's Code Canvas",
   description: () =>
-    profile.value?.headline ?? 'Creative Web Publisher & FrontEnd — 이찬용 포트폴리오',
+    profile.value?.headline ?? 'Chanyong Lee — Frontend & Web Publishing',
   ogTitle: "Cy's Code Canvas",
   ogDescription: () =>
-    profile.value?.headline ?? 'Creative Web Publisher & FrontEnd — 이찬용 포트폴리오',
+    profile.value?.headline ?? 'Chanyong Lee — Frontend & Web Publishing',
   ogType: 'website',
 })
 
@@ -27,17 +27,25 @@ definePageMeta({ layout: 'hero' })
     <NuxtLink to="/contact" class="side side--right enter-fade enter-d3" aria-label="연락처 보기">Contact</NuxtLink>
 
     <div class="hero__center">
-      <h1 class="hero__title enter-drop">Cy's Code Canvas</h1>
-
-      <p class="hero__script enter-rise enter-d1">Creative Web Publisher &amp; FrontEnd</p>
+      <!--
+        소유격 "Cy's"를 한 덩어리로 강조한다. Cy 만 칠하면 뒤따르는
+        아포스트로피가 흰색으로 남아 글자가 잘린 것처럼 보인다.
+      -->
+      <h1 class="hero__title enter-drop"><span class="hero__title-me">Cy's</span> Code Canvas</h1>
 
       <!--
-        주된 행동은 Portfolio 하나다. Skill Inventory 는 about 의 기술 섹션 앵커로
+        좁은 화면에서 두 줄이 될 때 이름 중간이 끊기지 않도록 각 덩어리는
+        &nbsp;로 묶는다. 줄바꿈은 대시 뒤의 일반 공백에서만 일어난다.
+      -->
+      <p class="hero__script enter-rise enter-d1">Chanyong&nbsp;Lee&nbsp;&mdash; Frontend&nbsp;&amp;&nbsp;Web&nbsp;Publishing</p>
+
+      <!--
+        주된 행동은 Portfolio 하나다. Skills 는 about 의 기술 섹션 앵커로
         보내 About 사이드 링크와 목적지가 겹치지 않게 한다.
       -->
       <div class="hero__actions enter-rise enter-d2">
         <NuxtLink to="/projects" class="hero__cta">Portfolio</NuxtLink>
-        <NuxtLink to="/about#skills" class="hero__link">Skill Inventory</NuxtLink>
+        <NuxtLink to="/about#skills" class="hero__link">Skills</NuxtLink>
       </div>
     </div>
   </section>
@@ -86,15 +94,11 @@ definePageMeta({ layout: 'hero' })
 */
 
 /* ===== 중앙 콘텐츠 ===== */
-/*
-  좌우 세로 링크는 50% 에 그대로 두고 중앙 블록만 44% 로 올린다.
-  넷이 한 축에 모이면 완전 대칭이 되어 위계가 사라진다.
-*/
 .hero__center {
   position: absolute;
   width: 100%;
   left: 0;
-  top: 44%;
+  top: 50%;
   transform: translateY(-50%);
   text-align: center;
   padding: 0 24px;
@@ -112,6 +116,16 @@ definePageMeta({ layout: 'hero' })
 }
 
 /*
+  히어로에서 브랜드 액센트가 등장하는 유일한 자리다.
+  내부 페이지가 같은 핑크를 쓰므로 여기서 한 번 눌러줘야 톤이 이어진다.
+  영상 위라 대비가 흔들릴 수 있어 옅은 그림자로 색을 붙잡는다.
+*/
+.hero__title-me {
+  color: var(--brand-accent);
+  text-shadow: 0 2px 24px rgba(var(--brand-accent-rgb), 0.35);
+}
+
+/*
   타이틀이 기하학 산세리프(Poppins 900)라 태그라인은 등폭으로 역할을 나눈다.
   제목이 주연이므로 이 줄은 작게 두고, 대문자에는 넓은 자간을 준다.
 */
@@ -119,10 +133,11 @@ definePageMeta({ layout: 'hero' })
   margin: 0 0 44px;
   font-family: 'JetBrains Mono', var(--font-mono), monospace;
   font-weight: 500;
-  font-size: 13px;
-  letter-spacing: 0.32em;
+  /* 자간이 넓어 실제 폭은 크게 늘어난다. 자간을 조금 줄여 폭을 상쇄한다. */
+  font-size: 15px;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.78);
   line-height: 1.6;
   text-wrap: balance;
 }
@@ -262,8 +277,8 @@ definePageMeta({ layout: 'hero' })
   }
   /* 좁은 화면에서는 넓은 자간이 줄바꿈을 유발하므로 함께 줄인다 */
   .hero__script {
-    font-size: 11px;
-    letter-spacing: 0.22em;
+    font-size: 12.5px;
+    letter-spacing: 0.14em;
   }
 }
 

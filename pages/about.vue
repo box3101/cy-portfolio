@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { UiProgress } from '@leechanyong/ispark-ui'
+
 const { profile, careerList, skillList, handleSelectAbout } = useProfileStore()
 
 await useAsyncData('about', async () => {
@@ -7,7 +9,7 @@ await useAsyncData('about', async () => {
 })
 
 useSeoMeta({
-  title: "소개 — Cy's Code Canvas",
+  title: "About — Cy's Code Canvas",
   description: () => profile.value?.headline ?? '이찬용 프론트엔드 개발자 소개',
 })
 
@@ -31,8 +33,8 @@ const skillGroups = computed(() => {
 <template>
   <div>
     <LayoutPageHeader
-      eyebrow="About"
-      title="소개"
+      eyebrow="Who I am"
+      title="About"
       :description="profile?.headline ?? undefined"
       width="narrow"
     />
@@ -54,7 +56,7 @@ const skillGroups = computed(() => {
       </ul>
     </section>
 
-    <!-- 히어로의 'Skill Inventory' 링크가 이 앵커로 들어온다 -->
+    <!-- 히어로의 'Skills' 링크가 이 앵커로 들어온다 -->
     <section id="skills" v-if="skillGroups.length" v-reveal="{ delay: 80 }" class="block">
       <h2>기술</h2>
       <div class="skills">
@@ -62,10 +64,18 @@ const skillGroups = computed(() => {
           <h3>{{ g.label }}</h3>
           <ul>
             <li v-for="s in g.items" :key="s.id">
-              <span>{{ s.name }}</span>
-              <span class="skills__level" :aria-label="`5점 만점에 ${s.level}점`">
-                <i v-for="n in 5" :key="n" :class="{ 'is-on': n <= s.level }" aria-hidden="true"></i>
-              </span>
+              <span class="skills__name">{{ s.name }}</span>
+              <!--
+                label prop은 화면에 보이는 라벨이다. 이름은 왼쪽 칸에 이미 있으므로
+                중복 노출을 피하고 스크린리더용 설명만 aria-label로 준다.
+              -->
+              <UiProgress
+                class="skills__bar"
+                :value="s.level"
+                :max="5"
+                size="sm"
+                :aria-label="`${s.name} 숙련도 5점 만점에 ${s.level}점`"
+              />
             </li>
           </ul>
         </div>
@@ -168,27 +178,20 @@ const skillGroups = computed(() => {
 }
 
 .skills__group li {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 96px;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  gap: 14px;
   font-size: var(--step-0);
 }
 
-.skills__level {
-  display: flex;
-  gap: 3px;
+.skills__name {
+  min-width: 0;
 }
 
-.skills__level i {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--brand-line);
-}
-
-.skills__level i.is-on {
-  background: var(--brand-accent);
+/* 막대 자체의 모양은 UiProgress가 갖는다. 여기서는 폭만 잡는다. */
+.skills__bar {
+  width: 96px;
 }
 
 @media (max-width: 640px) {
