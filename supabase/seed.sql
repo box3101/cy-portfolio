@@ -130,11 +130,120 @@ values
 on conflict (slug) do nothing;
 
 -- ===== 경력 =====
+-- sort_order 는 최신순이다(작을수록 위).
+-- 여기만 do nothing 대신 do update 다. 이미 들어간 행(이즈파크 AX Group)의
+-- position·description 을 고쳐야 해서, do nothing 이면 영원히 옛 값이 남는다.
 insert into public.careers (company, position, period_start, period_end, description, sort_order)
 values
-  ('이즈파크 AX Group', '프론트엔드 개발', '2025-03-01', null,
-   'Sgate 성과관리 솔루션 개발. Vue3/Nuxt3 기반 디자인 컴포넌트 시스템 구축 및 UI/UX 최적화.', 10)
-on conflict (company, period_start) do nothing;
+  ('이즈파크 AX Group', '책임연구원', '2025-03-01', null,
+   'AI 플랫폼과 성과관리 솔루션의 프론트엔드를 맡고 있다. 사내 디자인시스템 ispark-ui를 설계·배포한다.', 10),
+
+  ('프레임아웃 (LG유플러스 파견)', '프리랜서', '2024-06-01', '2025-03-01',
+   '레거시 jQuery 기반 사전예약 시스템을 모듈화하고 성능을 개선했다.', 20),
+
+  ('포켓컴퍼니 UI개발팀', '과장', '2024-02-01', '2024-06-01',
+   'CRM 고객경험 플랫폼의 대시보드와 디자인 시스템을 구축했다.', 30),
+
+  ('이즈파크 공공/금융사업본부', '대리', '2020-01-01', '2024-02-01',
+   '인천광역시 통합 웹사이트 20개를 구축·운영하며 웹 접근성 인증을 담당했다.', 40),
+
+  ('KynNetworks', '대리', '2019-01-01', '2019-12-01',
+   '대규모 인력 중개 플랫폼 WEEP의 UI/UX 퍼블리싱을 담당했다.', 50)
+on conflict (company, period_start) do update
+  set position    = excluded.position,
+      period_end  = excluded.period_end,
+      description = excluded.description,
+      sort_order  = excluded.sort_order;
+
+-- ===== 경력 프로젝트 =====
+-- career_id 는 자연키(company, period_start)로 되찾는다.
+-- UUID 를 seed 에 하드코딩하면 환경마다 달라져 재실행이 깨진다.
+insert into public.career_projects (career_id, title, tech_stack, outcome, highlights, sort_order)
+values
+  -- ----- 이즈파크 AX Group -----
+  ((select id from public.careers where company = '이즈파크 AX Group' and period_start = '2025-03-01'),
+   'TeamAgent AI 플랫폼 프론트엔드 개발',
+   array['Vue3', 'TypeScript', 'Element Plus', 'Pinia'],
+   null,
+   array[
+     '제조 현장 문서·데이터를 통합한 RAG 기반 AI 플랫폼 프론트엔드 개발',
+     '자연어 질의 → 문서 검색 → 데이터 조회 → 보고서 생성으로 이어지는 단일 워크플로우 UI 설계 및 구현',
+     'AI 챗봇 인터페이스 및 PDF 문서 시각화 대시보드 개발'
+   ], 10),
+
+  ((select id from public.careers where company = '이즈파크 AX Group' and period_start = '2025-03-01'),
+   'SGATE 성과관리 솔루션 개발',
+   array['Vue3', 'Nuxt.js', 'TypeScript', 'Pinia'],
+   '개발 속도 30% 향상',
+   array[
+     '서비스 리뉴얼 기획 단계부터 참여, 프론트엔드 메인 설계 담당 (기여도 100%)',
+     '재사용 가능한 UI 컴포넌트 30종을 사내 디자인시스템 ispark-ui로 설계·패키징, npm 배포로 사내 공통 적용',
+     '시맨틱 버저닝 기반 릴리즈 체계 수립으로 다중 프로젝트 동시 운영 시 버전 충돌 방지',
+     'Pinia 상태관리 도입으로 기존 Vuex 대비 코드 복잡도 30% 감소',
+     'AI 워크플로우 도입으로 개발 효율 40% 향상 및 코드 품질 개선'
+   ], 20),
+
+  ((select id from public.careers where company = '이즈파크 AX Group' and period_start = '2025-03-01'),
+   '마케팅 업무 프로세스 최적화',
+   array['React', 'Next.js', 'TypeScript'],
+   '랜딩페이지 제작 시간 75% 단축',
+   array[
+     'Cursor.ai와 Figma MCP를 결합한 디자인-코드 자동화로 마케팅 랜딩페이지 제작 시간 75% 단축 (기여도 100%)',
+     'Lazy Loading, Code Splitting 적용으로 페이지 로딩 속도 40% 개선',
+     'Notion MCP 기반 요청사항 관리 체계 구축으로 마케팅팀 협업 프로세스 개선'
+   ], 30),
+
+  -- ----- 프레임아웃 (LG유플러스 파견) -----
+  ((select id from public.careers where company = '프레임아웃 (LG유플러스 파견)' and period_start = '2024-06-01'),
+   '갤럭시 S25 사전예약 시스템 최적화',
+   array['React', 'Vue3', 'JavaScript', 'SCSS'],
+   '사전예약 목표 달성률 135% 기여',
+   array[
+     'jQuery → ES6 모듈화 리팩토링으로 성능 개선하여 사전 예약 목표 달성률 135% 기여',
+     'Cursor.ai 활용 레거시 jQuery 코드를 ES6 모던 JavaScript로 전환',
+     '코드 모듈화로 유지보수성 향상 및 개발 환경 개선',
+     'Astro 기반 이벤트 관리 대시보드 개발로 운영팀 효율성 향상 (기여도 100%)'
+   ], 10),
+
+  -- ----- 포켓컴퍼니 -----
+  ((select id from public.careers where company = '포켓컴퍼니 UI개발팀' and period_start = '2024-02-01'),
+   'PoketCRM 고객경험 플랫폼 개발',
+   array['Vue.js', 'Vuex', 'Vuetify', 'SCSS'],
+   null,
+   array[
+     'CRM 대시보드 컴포넌트 설계 및 구현',
+     'Vuetify 기반 일관된 디자인 시스템 구축',
+     '고객 데이터 시각화 차트 개발'
+   ], 10),
+
+  -- ----- 이즈파크 공공/금융사업본부 -----
+  ((select id from public.careers where company = '이즈파크 공공/금융사업본부' and period_start = '2020-01-01'),
+   '인천광역시 통합 웹사이트 운영',
+   array['JavaScript', 'SCSS', 'Astro', 'jQuery'],
+   '웹 접근성 인증 8회 취득 · 로딩속도 70% 개선 (6초 → 2초)',
+   array[
+     '20개 사이트 구축·운영 및 웹 접근성 인증 담당',
+     '프론트엔드팀 관리 및 팀원 JavaScript/SPA 프레임워크 교육 진행',
+     'Astro 프레임워크 도입으로 자바 개발자와의 협업 효율성 개선',
+     '대규모 SI 프로젝트 수행: 금융감독원, 한국은행, 삼성SDI, 인천 중구청',
+     'Git 활용 협업 환경 구축 및 팀 생산성 향상'
+   ], 10),
+
+  -- ----- KynNetworks -----
+  ((select id from public.careers where company = 'KynNetworks' and period_start = '2019-01-01'),
+   'WEEP — 대규모 인력 중개사이트 UI/UX 구축',
+   array['HTML', 'CSS', 'JavaScript', 'jQuery'],
+   null,
+   array[
+     '인력관리 중개 플랫폼 퍼블리싱 담당',
+     '복잡한 인력 관리 시스템의 사용자 경험 최적화',
+     '반응형 웹 디자인 적용으로 다양한 디바이스 지원'
+   ], 10)
+on conflict (career_id, title) do update
+  set tech_stack = excluded.tech_stack,
+      outcome    = excluded.outcome,
+      highlights = excluded.highlights,
+      sort_order = excluded.sort_order;
 
 -- ===== 스킬 =====
 insert into public.skills (name, category, level, sort_order)

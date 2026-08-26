@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { UiProgress } from '@leechanyong/ispark-ui'
 
-const { profile, careerList, skillList, handleSelectAbout } = useProfileStore()
+const { profile, careerList, careerWithProjects, skillList, handleSelectAbout } = useProfileStore()
 
 await useAsyncData('about', async () => {
   await handleSelectAbout()
@@ -46,12 +46,29 @@ const skillGroups = computed(() => {
       <section v-if="careerList.length" v-reveal class="block">
       <h2>Career</h2>
       <ul class="career">
-        <li v-for="c in careerList" :key="c.id">
+        <li v-for="c in careerWithProjects" :key="c.id">
           <div class="career__period">{{ formatPeriod(c.period_start, c.period_end) }}</div>
           <div class="career__body">
             <h3>{{ c.company }}</h3>
             <p class="career__role">{{ c.position }}</p>
             <p v-if="c.description" class="career__desc">{{ c.description }}</p>
+
+            <!-- 회사 안의 프로젝트. 없으면 통째로 렌더하지 않는다. -->
+            <ol v-if="c.projects.length" class="proj">
+              <li v-for="p in c.projects" :key="p.id" class="proj__item">
+                <h4 class="proj__title">{{ p.title }}</h4>
+
+                <p v-if="p.outcome" class="proj__outcome">{{ p.outcome }}</p>
+
+                <ul v-if="p.tech_stack.length" class="proj__stack">
+                  <li v-for="t in p.tech_stack" :key="t">{{ t }}</li>
+                </ul>
+
+                <ul v-if="p.highlights.length" class="proj__points">
+                  <li v-for="(h, i) in p.highlights" :key="i">{{ h }}</li>
+                </ul>
+              </li>
+            </ol>
           </div>
         </li>
       </ul>
@@ -123,7 +140,7 @@ const skillGroups = computed(() => {
   gap: 24px;
 }
 
-.career li {
+.career > li {
   display: grid;
   grid-template-columns: 160px 1fr;
   gap: 20px;
@@ -154,6 +171,71 @@ const skillGroups = computed(() => {
   max-width: 72ch;
   color: var(--brand-ink-muted);
   line-height: 1.7;
+}
+
+/* ===== 경력 안의 프로젝트 ===== */
+.proj {
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 20px;
+}
+
+/*
+  회사와 프로젝트를 들여쓰기가 아니라 왼쪽 선으로 나눈다.
+  들여쓰기만으로는 프로젝트가 3개 붙었을 때 어디까지가 한 덩어리인지
+  눈으로 안 잡힌다.
+*/
+.proj__item {
+  padding-left: 14px;
+  border-left: 2px solid var(--brand-line);
+}
+
+.proj__title {
+  margin: 0 0 6px;
+  font-size: var(--step-0);
+  font-weight: 600;
+}
+
+.proj__outcome {
+  margin: 0 0 8px;
+  font-size: var(--step--1);
+  color: var(--brand-accent);
+  font-weight: 500;
+}
+
+.proj__stack {
+  list-style: none;
+  margin: 0 0 10px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.proj__stack li {
+  padding: 2px 8px;
+  border: 1px solid var(--brand-line);
+  border-radius: 999px;
+  font-size: var(--step--1);
+  color: var(--brand-ink-muted);
+  white-space: nowrap;
+}
+
+.proj__points {
+  margin: 0;
+  padding-left: 16px;
+  max-width: 72ch;
+  display: grid;
+  gap: 4px;
+  color: var(--brand-ink-muted);
+  font-size: var(--step--1);
+  line-height: 1.7;
+}
+
+.proj__points li::marker {
+  color: var(--brand-line);
 }
 
 .skills {
@@ -198,7 +280,7 @@ const skillGroups = computed(() => {
 }
 
 @media (max-width: 640px) {
-  .career li {
+  .career > li {
     grid-template-columns: 1fr;
     gap: 6px;
   }

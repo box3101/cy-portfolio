@@ -165,6 +165,38 @@ export interface Database {
         Relationships: []
       }
 
+      career_projects: {
+        Row: {
+          id: string
+          career_id: string
+          title: string
+          tech_stack: string[]
+          /** 한 줄 대표 성과. 없으면 null */
+          outcome: string | null
+          highlights: string[]
+          sort_order: number
+        }
+        Insert: {
+          id?: string
+          career_id: string
+          title: string
+          tech_stack?: string[]
+          outcome?: string | null
+          highlights?: string[]
+          sort_order?: number
+        }
+        Update: {
+          id?: string
+          career_id?: string
+          title?: string
+          tech_stack?: string[]
+          outcome?: string | null
+          highlights?: string[]
+          sort_order?: number
+        }
+        Relationships: []
+      }
+
       skills: {
         Row: {
           id: string
@@ -272,6 +304,7 @@ export type TablesUpdate<T extends keyof PublicSchema['Tables']> = PublicSchema[
 export type Project = Tables<'projects'>
 export type Archive = Tables<'archives'>
 export type Career = Tables<'careers'>
+export type CareerProject = Tables<'career_projects'>
 export type Skill = Tables<'skills'>
 export type Profile = Tables<'profile'>
 export type PageView = Tables<'page_views'>
