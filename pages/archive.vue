@@ -19,7 +19,7 @@ const {
 await useAsyncData('archive/list', async () => {
   await handleSelectArchiveList()
   return true
-})
+}, { getCachedData: () => undefined })
 
 const DOC_TYPES: ArchiveDocType[] = ['증명서', '포트폴리오', '기타']
 

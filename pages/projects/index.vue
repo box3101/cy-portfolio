@@ -18,7 +18,7 @@ const categoryFromQuery = (): CategoryFilter => {
 await useAsyncData('projects/list', async () => {
   await handleSelectProjectPage(categoryFromQuery())
   return true
-})
+}, { getCachedData: () => undefined })
 
 // 필터를 누르면 URL에 반영한다. 그래야 이력서에 특정 필터 상태를 링크할 수 있다.
 const onFilterChange = async (category: CategoryFilter) => {

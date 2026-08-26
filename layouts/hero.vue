@@ -4,7 +4,7 @@ const { handleSelectProfile } = useProfileStore()
 await useAsyncData('layout/profile', async () => {
   await handleSelectProfile()
   return true
-})
+}, { dedupe: 'cancel', getCachedData: () => undefined })
 </script>
 
 <template>

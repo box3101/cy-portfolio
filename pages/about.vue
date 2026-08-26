@@ -6,7 +6,7 @@ const { profile, careerList, careerWithProjects, skillList, handleSelectAbout } 
 await useAsyncData('about', async () => {
   await handleSelectAbout()
   return true
-})
+}, { getCachedData: () => undefined })
 
 useSeoMeta({
   title: "About — Cy's Code Canvas",

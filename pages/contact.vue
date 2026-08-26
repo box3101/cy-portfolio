@@ -6,7 +6,7 @@ const { profile, handleSelectProfile } = useProfileStore()
 await useAsyncData('contact', async () => {
   await handleSelectProfile()
   return true
-})
+}, { getCachedData: () => undefined })
 
 useSeoMeta({
   title: "Contact — Cy's Code Canvas",

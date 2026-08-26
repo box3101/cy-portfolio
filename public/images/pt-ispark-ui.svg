@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240">
+  <rect width="400" height="240" fill="white"/>
+  <!-- 컴포넌트 블록 그리드 -->
+  <g transform="translate(80, 55)">
+    <rect x="0" y="0" width="56" height="56" rx="14" fill="#6366f1"/>
+    <rect x="64" y="0" width="26" height="26" rx="7" fill="#a78bfa"/>
+    <rect x="64" y="30" width="26" height="26" rx="7" fill="#c4b5fd"/>
+    <rect x="0" y="64" width="26" height="26" rx="7" fill="#c4b5fd"/>
+    <rect x="30" y="64" width="26" height="26" rx="7" fill="#a78bfa"/>
+    <rect x="64" y="64" width="26" height="26" rx="7" fill="#ddd6fe"/>
+    <!-- 메인 블록 안 점 -->
+    <circle cx="28" cy="28" r="5" fill="rgba(255,255,255,0.7)"/>
+  </g>
+  <!-- 타이포 -->
+  <text x="195" y="100" font-family="'Segoe UI', system-ui, sans-serif" font-size="50" font-weight="800" letter-spacing="-2" fill="#1e1b4b">ispark</text>
+  <text x="195" y="148" font-family="'Segoe UI', system-ui, sans-serif" font-size="40" font-weight="300" letter-spacing="10" fill="#6366f1">UI</text>
+  <!-- 하단 디테일 -->
+  <line x1="80" y1="180" x2="340" y2="180" stroke="#e0e7ff" stroke-width="1.5"/>
+  <text x="80" y="198" font-family="'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="500" letter-spacing="4" fill="#94a3b8">DESIGN SYSTEM</text>
+</svg>
