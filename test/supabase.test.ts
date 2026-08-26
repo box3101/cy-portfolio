@@ -25,8 +25,13 @@ describe('Supabase 연동', () => {
   it('홈 히어로가 서버에서 렌더된다', async () => {
     const html = await fetchHtml('/')
     expect(html).toContain("Cy's Code Canvas")
-    expect(html).toContain('Creative Web Publisher')
     expect(html).toContain('/video/main.mp4')
+
+    // 태그라인 문구는 DB가 아니라 마크업에 박힌 카피라 자주 바뀐다.
+    // 문구 자체를 단언하면 카피를 고칠 때마다 테스트가 깨지므로,
+    // 히어로가 서버에서 그려졌음을 증명하는 구조만 확인한다.
+    expect(html).toContain('hero__script')
+    expect(html).toContain('href="/projects"')
   })
 
   it('미공개 프로젝트는 목록에 노출되지 않는다', async () => {
