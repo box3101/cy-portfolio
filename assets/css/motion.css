@@ -1,0 +1,134 @@
+/* assets/css/motion.css
+ *
+ * 페이지 전환과 스크롤 리빌. 과하지 않게, 짧고 낮은 진폭으로 유지한다.
+ * 값의 기준: 이동 12~16px, 시간 260~460ms, easing은 감속 위주.
+ */
+
+/* ============================================================
+   페이지 전환 — 라우트 이동 시 페이드
+   ============================================================ */
+.page-enter-active {
+  transition: opacity 260ms ease-out, transform 260ms ease-out;
+}
+
+.page-leave-active {
+  transition: opacity 160ms ease-in;
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.page-leave-to {
+  opacity: 0;
+}
+
+/* ============================================================
+   스크롤 리빌 — v-reveal 디렉티브가 마운트 후에만 .reveal 을 붙인다.
+   즉 SSR HTML과 JS 미동작 환경에서는 이 규칙이 적용되지 않아 콘텐츠가 보인다.
+   ============================================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 460ms ease-out, transform 460ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.reveal.is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+/* ============================================================
+   히어로 등장 — 원본의 AOS(fade-down / fade-up / zoom-in) 스태거를 재현
+   ============================================================ */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* transform 으로 위치를 잡는 요소(예: translateY(-50%) rotate(180deg))는
+   transform 애니메이션을 쓰면 위치가 깨진다. 투명도만 다룬다. */
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes drop {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.enter-fade,
+.enter-drop,
+.enter-rise {
+  opacity: 0;
+  animation-duration: 620ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-fill-mode: forwards;
+}
+
+.enter-drop {
+  animation-name: drop;
+}
+
+.enter-rise {
+  animation-name: rise;
+}
+
+.enter-fade {
+  animation-name: fade;
+}
+
+.enter-d1 {
+  animation-delay: 120ms;
+}
+
+.enter-d2 {
+  animation-delay: 260ms;
+}
+
+.enter-d3 {
+  animation-delay: 400ms;
+}
+
+/* ============================================================
+   모션 감소 설정 존중
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .page-enter-active,
+  .page-leave-active {
+    transition: none;
+  }
+
+  .reveal,
+  .reveal.is-revealed {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .enter-fade,
+  .enter-drop,
+  .enter-rise {
+    opacity: 1;
+    animation: none;
+  }
+}

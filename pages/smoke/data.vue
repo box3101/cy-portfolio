@@ -19,6 +19,7 @@ import type {
   TabItem,
   DateRange,
 } from '@leechanyong/ispark-ui'
+import type { DateValue } from '@internationalized/date'
 
 // ===== 파일 =====
 // FileItem은 { id, filename, path, mimetype } 이다.
@@ -51,16 +52,23 @@ const tagOptions: MultiSelectOption[] = [
 ]
 
 // ===== 날짜 =====
-// DateRange는 @internationalized/date의 DateValue를 받는다. 문자열이 아니다.
-const startedOn = ref('')
-const range = ref<DateRange>({ start: undefined, end: undefined })
+// 날짜 컴포넌트는 @internationalized/date의 DateValue를 받는다. 문자열이 아니다.
+const startedOn = shallowRef<DateValue | undefined>(undefined)
+const range = shallowRef<DateRange>({ start: undefined, end: undefined })
 
 // ===== 탭 =====
 const activeTab = ref('all')
-const tabItems: TabItem[] = [
+const tabList: TabItem[] = [
   { label: '전체', value: 'all' },
   { label: '진행중', value: 'ongoing' },
 ]
+
+// ===== 차트 =====
+// UiChart는 data가 아니라 config(Chart.js 설정 객체)를 받는다.
+const chartConfig = {
+  labels: ['월', '화'],
+  datasets: [{ label: '방문', data: [12, 19] }],
+}
 
 // ===== 마크다운 =====
 const content = ref('')
@@ -102,22 +110,19 @@ const content = ref('')
 
     <section data-c="UiTab">
       <h2>탭</h2>
-      <UiTab v-model="activeTab" :items="tabItems" />
+      <UiTab v-model="activeTab" :tabs="tabList" />
     </section>
 
     <section data-c="UiCalendarMonth">
       <h2>월 캘린더</h2>
-      <UiCalendarMonth :events="[]" />
+      <UiCalendarMonth :year="2026" :month="8" :events="[]" />
     </section>
 
     <!-- Chart.js는 canvas 의존이라 서버 렌더를 기대하지 않는다 -->
     <section data-c="UiChart">
       <h2>방문 통계</h2>
       <ClientOnly>
-        <UiChart
-          type="bar"
-          :data="{ labels: ['월', '화'], datasets: [{ label: '방문', data: [12, 19] }] }"
-        />
+        <UiChart type="bar" :config="chartConfig" />
         <template #fallback><div>차트 로딩 중…</div></template>
       </ClientOnly>
     </section>
