@@ -8,7 +8,11 @@ export default defineNuxtConfig({
     transpile: ['@leechanyong/ispark-ui'],
   },
 
-  css: ['~/assets/css/tokens.css'],
+  // 순서 중요: ispark-ui 기본 스타일 → 브랜드 토큰 오버라이드
+  css: [
+    '@leechanyong/ispark-ui/style.css',
+    '~/assets/css/tokens.css',
+  ],
 
   runtimeConfig: {
     public: {

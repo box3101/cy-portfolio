@@ -1,6 +1,16 @@
-/* assets/css/tokens.css */
+/* assets/css/tokens.css
+ *
+ * ispark-ui는 라이트 테마 팔레트(:root 27개 변수)만 제공한다.
+ * 이 파일이 두 가지를 담당한다.
+ *   1) 포트폴리오 브랜드 원색 정의 (--brand-*)
+ *   2) ispark-ui 토큰(--color-*)에 브랜드 색 주입 + 다크 팔레트 보강
+ *
+ * nuxt.config.ts의 css 배열에서 ispark-ui/style.css 다음에 로드된다.
+ */
 
-/* ===== 라이트 (기본) ===== */
+/* ============================================================
+   브랜드 원색 — 라이트 (기본)
+   ============================================================ */
 :root {
   --brand-ground: #f6f3f8;
   --brand-surface: #ffffff;
@@ -8,23 +18,77 @@
   --brand-ink: #16111c;
   --brand-ink-muted: #7c7288;
   --brand-accent: #b4148f;
+  --brand-accent-rgb: 180, 20, 143;
   --brand-focus: #0e7c86;
 }
 
-/* ===== 다크 (시스템 설정) ===== */
+/* ============================================================
+   ispark-ui 브릿지 — 라이트
+   primary 계열은 6개가 한 세트다. 하나만 바꾸면 hover/투명도가 어긋난다.
+   ============================================================ */
+:root {
+  --color-primary: var(--brand-accent);
+  --color-primary-hover: #9a1079;
+  --color-primary-dark: #7e0d63;
+  --color-primary-dark-hover: #660a50;
+  --color-primary-bg: #fae6f5;
+  --color-primary-rgb: var(--brand-accent-rgb);
+}
+
+/* ============================================================
+   다크 — 시스템 설정 (data-theme 미지정 상태)
+   ============================================================ */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
+    /* 브랜드 원색 */
     --brand-ground: #14101a;
     --brand-surface: #1c1724;
     --brand-line: #342b40;
     --brand-ink: #f1ecf6;
     --brand-ink-muted: #857a94;
     --brand-accent: #ec5cc0;
+    --brand-accent-rgb: 236, 92, 192;
     --brand-focus: #5fe0e8;
+
+    /* ispark-ui primary 계열 */
+    --color-primary: var(--brand-accent);
+    --color-primary-hover: #f27ccd;
+    --color-primary-dark: #c93fa0;
+    --color-primary-dark-hover: #b03489;
+    --color-primary-bg: #3a1730;
+    --color-primary-rgb: var(--brand-accent-rgb);
+
+    /* ispark-ui 중성색 — 라이브러리에 다크 세트가 없어 여기서 보강한다 */
+    --color-background: var(--brand-ground);
+    --color-surface: var(--brand-surface);
+    --color-bg-elevated: #251e2e;
+    --color-border: var(--brand-line);
+    --color-border-light: #272031;
+    --color-text-primary: #cfc6d9;
+    --color-text-secondary: #a99fb6;
+    --color-text-heading: var(--brand-ink);
+    --color-text-heading-sub: #ded6e6;
+    --color-text-dark: #b8aec6;
+    --color-text-muted: var(--brand-ink-muted);
+    --color-text-disabled: #6b6178;
+
+    /* 시맨틱 색은 어두운 바탕에서 대비를 확보하도록 밝게 조정 */
+    --color-danger: #f87171;
+    --color-danger-hover: #ef4444;
+    --color-danger-dark: #dc2626;
+    --color-success: #4ade80;
+    --color-success-hover: #22c55e;
+    --color-warning: #fbbf24;
+    --color-warning-hover: #f59e0b;
+    --color-info: #60a5fa;
+    --color-info-hover: #3b82f6;
   }
 }
 
-/* ===== 다크 (명시적 선택) ===== */
+/* ============================================================
+   다크 — 명시적 선택 (테마 토글)
+   위 미디어 쿼리와 동일한 값. 토글이 OS 설정을 이기도록 한 번 더 선언한다.
+   ============================================================ */
 :root[data-theme='dark'] {
   --brand-ground: #14101a;
   --brand-surface: #1c1724;
@@ -32,9 +96,43 @@
   --brand-ink: #f1ecf6;
   --brand-ink-muted: #857a94;
   --brand-accent: #ec5cc0;
+  --brand-accent-rgb: 236, 92, 192;
   --brand-focus: #5fe0e8;
+
+  --color-primary: var(--brand-accent);
+  --color-primary-hover: #f27ccd;
+  --color-primary-dark: #c93fa0;
+  --color-primary-dark-hover: #b03489;
+  --color-primary-bg: #3a1730;
+  --color-primary-rgb: var(--brand-accent-rgb);
+
+  --color-background: var(--brand-ground);
+  --color-surface: var(--brand-surface);
+  --color-bg-elevated: #251e2e;
+  --color-border: var(--brand-line);
+  --color-border-light: #272031;
+  --color-text-primary: #cfc6d9;
+  --color-text-secondary: #a99fb6;
+  --color-text-heading: var(--brand-ink);
+  --color-text-heading-sub: #ded6e6;
+  --color-text-dark: #b8aec6;
+  --color-text-muted: var(--brand-ink-muted);
+  --color-text-disabled: #6b6178;
+
+  --color-danger: #f87171;
+  --color-danger-hover: #ef4444;
+  --color-danger-dark: #dc2626;
+  --color-success: #4ade80;
+  --color-success-hover: #22c55e;
+  --color-warning: #fbbf24;
+  --color-warning-hover: #f59e0b;
+  --color-info: #60a5fa;
+  --color-info-hover: #3b82f6;
 }
 
+/* ============================================================
+   기본 표면
+   ============================================================ */
 body {
   background: var(--brand-ground);
   color: var(--brand-ink);
