@@ -30,13 +30,13 @@ const skillGroups = computed(() => {
 
 <template>
   <div class="page">
-    <header class="page__head">
+    <header v-reveal class="page__head">
       <h1>소개</h1>
       <p v-if="profile?.headline" class="page__headline">{{ profile.headline }}</p>
       <p v-if="profile?.bio" class="page__bio">{{ profile.bio }}</p>
     </header>
 
-    <section v-if="careerList.length" class="block">
+    <section v-if="careerList.length" v-reveal class="block">
       <h2>경력</h2>
       <ul class="career">
         <li v-for="c in careerList" :key="c.id">
@@ -50,7 +50,7 @@ const skillGroups = computed(() => {
       </ul>
     </section>
 
-    <section v-if="skillGroups.length" class="block">
+    <section v-if="skillGroups.length" v-reveal="{ delay: 80 }" class="block">
       <h2>기술</h2>
       <div class="skills">
         <div v-for="g in skillGroups" :key="g.key" class="skills__group">

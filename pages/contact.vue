@@ -22,12 +22,12 @@ const channels = computed(() =>
 
 <template>
   <div class="page">
-    <header class="page__head">
+    <header v-reveal class="page__head">
       <h1>Contact</h1>
       <p>새로운 기회나 협업 제안은 언제든 환영합니다.</p>
     </header>
 
-    <ul v-if="channels.length" class="channels">
+    <ul v-if="channels.length" v-reveal="{ delay: 80 }" class="channels">
       <li v-for="c in channels" :key="c.label">
         <span class="channels__label">{{ c.label }}</span>
         <a :href="c.href" target="_blank" rel="noopener noreferrer">{{ c.value }}</a>

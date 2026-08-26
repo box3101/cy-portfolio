@@ -35,7 +35,7 @@ useSeoMeta({
 
 <template>
   <div class="page">
-    <header class="page__head">
+    <header v-reveal class="page__head">
       <h1>프로젝트</h1>
       <p>공공기관 웹사이트부터 엔터프라이즈 솔루션, 디자인 시스템까지.</p>
     </header>
@@ -49,7 +49,7 @@ useSeoMeta({
     <p class="page__count">{{ projectList.length }}건</p>
 
     <ul v-if="projectList.length" class="grid">
-      <li v-for="p in projectList" :key="p.id">
+      <li v-for="(p, i) in projectList" :key="p.id" v-reveal="{ delay: Math.min(i, 5) * 60 }">
         <ProjectCard :project="p" />
       </li>
     </ul>

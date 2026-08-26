@@ -37,13 +37,13 @@ useSeoMeta({
   <article class="detail">
     <NuxtLink to="/projects" class="detail__back">← 프로젝트 목록</NuxtLink>
 
-    <header class="detail__head">
+    <header v-reveal class="detail__head">
       <p v-if="project.subtitle" class="detail__eyebrow">{{ project.subtitle }}</p>
       <h1>{{ project.title }}</h1>
       <p v-if="project.summary" class="detail__summary">{{ project.summary }}</p>
     </header>
 
-    <dl class="meta">
+    <dl v-reveal="{ delay: 80 }" class="meta">
       <div class="meta__row">
         <dt>기간</dt>
         <dd class="meta__mono">{{ period }}</dd>

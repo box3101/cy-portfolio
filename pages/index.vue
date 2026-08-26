@@ -23,15 +23,15 @@ definePageMeta({ layout: 'hero' })
     </video>
 
     <!-- 좌우 세로 링크. 원본의 슬라이드 전환 대신 실제 라우트로 이동한다. -->
-    <NuxtLink to="/about" class="side side--left" aria-label="소개 보기">About</NuxtLink>
-    <NuxtLink to="/contact" class="side side--right" aria-label="연락처 보기">contact</NuxtLink>
+    <NuxtLink to="/about" class="side side--left enter-fade enter-d3" aria-label="소개 보기">About</NuxtLink>
+    <NuxtLink to="/contact" class="side side--right enter-fade enter-d3" aria-label="연락처 보기">contact</NuxtLink>
 
     <div class="hero__center">
-      <h1 class="hero__title">Cy's Code Canvas</h1>
+      <h1 class="hero__title enter-drop">Cy's Code Canvas</h1>
 
-      <p class="hero__script">Creative Web Publisher &amp; FrontEnd</p>
+      <p class="hero__script enter-rise enter-d1">Creative Web Publisher &amp; FrontEnd</p>
 
-      <p class="hero__links">
+      <p class="hero__links enter-rise enter-d2">
         <NuxtLink to="/about"><span>Skill Inventory</span></NuxtLink>
         <NuxtLink to="/projects"><span>portfolio</span></NuxtLink>
       </p>
@@ -103,14 +103,20 @@ definePageMeta({ layout: 'hero' })
   letter-spacing: -0.01em;
 }
 
+/*
+  타이틀이 기하학 산세리프(Poppins 900)라 태그라인은 등폭으로 역할을 나눈다.
+  제목이 주연이므로 이 줄은 작게 두고, 대문자에는 넓은 자간을 준다.
+*/
 .hero__script {
   margin: 0 0 44px;
-  font-family: 'Dancing Script', cursive;
-  letter-spacing: 1px;
-  color: #866baf;
-  font-size: 26px;
-  line-height: 1;
-  font-weight: 700;
+  font-family: 'JetBrains Mono', var(--font-mono), monospace;
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  text-wrap: balance;
 }
 
 .hero__links {
@@ -221,8 +227,10 @@ definePageMeta({ layout: 'hero' })
   .side {
     display: none;
   }
+  /* 좁은 화면에서는 넓은 자간이 줄바꿈을 유발하므로 함께 줄인다 */
   .hero__script {
-    font-size: 20px;
+    font-size: 11px;
+    letter-spacing: 0.22em;
   }
 }
 

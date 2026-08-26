@@ -7,3 +7,4 @@ dist
 !.env.example
 .vercel
 .DS_Store
+.gstack/
