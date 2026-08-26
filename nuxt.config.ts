@@ -3,6 +3,13 @@ export default defineNuxtConfig({
   compatibilityDate: '2026-08-26',
   devtools: { enabled: true },
 
+  // 템플릿 타입체크. ispark-ui의 필수 prop 누락(예: UiFileList의 getUrl)을
+  // SSR 500이 아니라 빌드 단계에서 잡는다.
+  typescript: {
+    typeCheck: true,
+    strict: true,
+  },
+
   // ispark-ui는 Vue SFC를 포함한 ESM 라이브러리 → 트랜스파일 필요
   build: {
     transpile: ['@leechanyong/ispark-ui'],
