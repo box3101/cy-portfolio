@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { marked } from 'marked'
+
 const route = useRoute()
 const slug = computed(() => String(route.params.slug))
 
@@ -7,7 +9,7 @@ const { selectedProject, handleSelectProject } = useProjectStore()
 await useAsyncData(`project/${slug.value}`, async () => {
   await handleSelectProject(slug.value)
   return true
-})
+}, { getCachedData: () => undefined })
 
 // 없는 slug는 404로 응답한다. 빈 화면을 200으로 주면 검색엔진이 색인해버린다.
 if (!selectedProject.value) {
@@ -16,6 +18,7 @@ if (!selectedProject.value) {
 
 const project = computed(() => selectedProject.value!)
 const period = computed(() => formatPeriod(project.value.period_start, project.value.period_end))
+const renderedContent = computed(() => project.value.content ? marked(project.value.content) : '')
 
 const links = computed(() =>
   [
@@ -72,9 +75,7 @@ useSeoMeta({
       </div>
     </dl>
 
-    <div v-if="project.content" class="detail__body">
-      <p v-for="(para, i) in project.content.split('\n\n')" :key="i">{{ para }}</p>
-    </div>
+    <div v-if="project.content" class="detail__body" v-html="renderedContent" />
   </article>
 </template>
 
@@ -187,8 +188,41 @@ useSeoMeta({
   text-decoration: none;
 }
 
-.detail__body p {
+.detail__body :deep(h2) {
+  margin: 1.6em 0 0.6em;
+  font-size: var(--step-1);
+  font-weight: 700;
+}
+
+.detail__body :deep(p) {
   margin: 0 0 1.1em;
   line-height: 1.8;
+}
+
+.detail__body :deep(ul) {
+  margin: 0 0 1.1em;
+  padding-left: 1.4em;
+  line-height: 1.8;
+}
+
+.detail__body :deep(blockquote) {
+  margin: 0.8em 0;
+  padding: 12px 16px;
+  border-left: 3px solid var(--brand-accent);
+  background: color-mix(in oklab, var(--brand-line) 20%, transparent);
+  border-radius: 4px;
+}
+
+.detail__body :deep(blockquote strong) {
+  font-weight: 700;
+}
+
+.detail__body :deep(a) {
+  color: var(--brand-accent);
+  text-decoration: none;
+}
+
+.detail__body :deep(a:hover) {
+  text-decoration: underline;
 }
 </style>
