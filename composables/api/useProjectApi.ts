@@ -18,18 +18,6 @@ export const useProjectApi = () => {
     return runQuery<Project[]>('프로젝트 목록 조회', query)
   }
 
-  /** 홈에 노출할 대표 작업 */
-  const fetchFeaturedProjects = () =>
-    runQuery<Project[]>(
-      '대표 프로젝트 조회',
-      client
-        .from('projects')
-        .select('*')
-        .eq('is_published', true)
-        .eq('is_featured', true)
-        .order('sort_order', { ascending: true }),
-    )
-
   /** 상세 1건. 없으면 null. */
   const fetchProject = (slug: string) =>
     runQuery<Project>(
@@ -52,5 +40,5 @@ export const useProjectApi = () => {
     return counts
   }
 
-  return { fetchProjectList, fetchFeaturedProjects, fetchProject, fetchCategoryCounts }
+  return { fetchProjectList, fetchProject, fetchCategoryCounts }
 }
