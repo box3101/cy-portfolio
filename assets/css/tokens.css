@@ -1,0 +1,46 @@
+/* assets/css/tokens.css */
+
+/* ===== 라이트 (기본) ===== */
+:root {
+  --brand-ground: #f6f3f8;
+  --brand-surface: #ffffff;
+  --brand-line: #e2d9ea;
+  --brand-ink: #16111c;
+  --brand-ink-muted: #7c7288;
+  --brand-accent: #b4148f;
+  --brand-focus: #0e7c86;
+}
+
+/* ===== 다크 (시스템 설정) ===== */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --brand-ground: #14101a;
+    --brand-surface: #1c1724;
+    --brand-line: #342b40;
+    --brand-ink: #f1ecf6;
+    --brand-ink-muted: #857a94;
+    --brand-accent: #ec5cc0;
+    --brand-focus: #5fe0e8;
+  }
+}
+
+/* ===== 다크 (명시적 선택) ===== */
+:root[data-theme='dark'] {
+  --brand-ground: #14101a;
+  --brand-surface: #1c1724;
+  --brand-line: #342b40;
+  --brand-ink: #f1ecf6;
+  --brand-ink-muted: #857a94;
+  --brand-accent: #ec5cc0;
+  --brand-focus: #5fe0e8;
+}
+
+body {
+  background: var(--brand-ground);
+  color: var(--brand-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand-focus);
+  outline-offset: 2px;
+}
