@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# 스모크 페이지는 ispark-ui SSR 검증용이라 색인 대상이 아니다
+Disallow: /smoke/
+
+Sitemap: https://cy-portfolio-eight.vercel.app/sitemap.xml

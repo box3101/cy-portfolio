@@ -32,6 +32,8 @@ export default defineNuxtConfig({
     public: {
       supabaseUrl: '',
       supabaseAnonKey: '',
+      // sitemap.xml은 절대 URL을 요구한다. NUXT_PUBLIC_SITE_URL 로 덮어쓸 수 있다.
+      siteUrl: 'https://cy-portfolio-eight.vercel.app',
     },
   },
 
@@ -44,9 +46,16 @@ export default defineNuxtConfig({
       link: [
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
+        { rel: 'preconnect', href: 'https://cdn.jsdelivr.net', crossorigin: '' },
         {
           rel: 'stylesheet',
-          href: 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;900&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap',
+          href: 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap',
+        },
+        // 본문 서체. dynamic-subset은 실제로 쓰인 한글 글리프 구간만 내려받는다.
+        // Google Fonts에 없는 서체라 jsDelivr로 받는다.
+        {
+          rel: 'stylesheet',
+          href: 'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css',
         },
       ],
     },
@@ -60,7 +69,14 @@ export default defineNuxtConfig({
     '/about': { isr: 3600 },
     '/design-system': { ssr: true },
     '/admin/**': { ssr: false },
-    // 스모크 페이지는 SSR 검증 대상이므로 캐시하지 않는다
-    '/smoke/**': { ssr: true },
+    /*
+      스모크 페이지는 ispark-ui SSR 검증용이라 공개 사이트의 일부가 아니다.
+      라우트는 살려둔다(테스트가 실제로 요청한다). 대신 색인만 막는다.
+      캐시하지 않는 이유: 검증 대상이라 항상 갓 렌더된 HTML이어야 한다.
+    */
+    '/smoke/**': {
+      ssr: true,
+      headers: { 'x-robots-tag': 'noindex, nofollow' },
+    },
   },
 })
