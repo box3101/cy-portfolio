@@ -7,8 +7,21 @@
 --            로컬 스테이징 폴더: .archive-upload/
 --
 -- 다시 실행해도 안전하도록 file_path 기준으로 upsert 한다.
---            (0004_archives_file_path_unique.sql 을 먼저 적용해야 한다)
+-- 필요한 유일 제약을 이 파일이 직접 보장하므로 통째로 한 번에 붙여넣으면 된다.
 
+-- ===== 선행: file_path 유일 제약 =====
+-- Postgres 는 ADD CONSTRAINT IF NOT EXISTS 를 지원하지 않아 존재 여부를 직접 본다.
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint where conname = 'archives_file_path_key'
+  ) then
+    alter table public.archives
+      add constraint archives_file_path_key unique (file_path);
+  end if;
+end $$;
+
+-- ===== 자료 =====
 insert into public.archives
   (title, doc_type, issuer, issued_on, file_path, description, sort_order, is_published)
 values
