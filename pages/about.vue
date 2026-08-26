@@ -14,11 +14,13 @@ useSeoMeta({
 })
 
 const skillGroups = computed(() => {
+  // 라벨은 영문이다. 히어로의 'Skills' 링크가 이 섹션으로 들어오므로
+  // 상위 제목(Skills)과 목소리를 맞춘다. 기술 이름 자체도 대부분 영문이다.
   const labels: Record<string, string> = {
-    language: '언어',
-    framework: '프레임워크',
-    tool: '도구',
-    design: '디자인',
+    language: 'Language',
+    framework: 'Framework',
+    tool: 'Tools',
+    design: 'Design',
   }
   const groups: { key: string; label: string; items: typeof skillList.value }[] = []
 
@@ -43,7 +45,7 @@ const skillGroups = computed(() => {
       <p v-if="profile?.bio" v-reveal class="page__bio">{{ profile.bio }}</p>
 
       <section v-if="careerList.length" v-reveal class="block">
-      <h2>경력</h2>
+      <h2>Career</h2>
       <ul class="career">
         <li v-for="c in careerList" :key="c.id">
           <div class="career__period">{{ formatPeriod(c.period_start, c.period_end) }}</div>
@@ -58,7 +60,7 @@ const skillGroups = computed(() => {
 
     <!-- 히어로의 'Skills' 링크가 이 앵커로 들어온다 -->
     <section id="skills" v-if="skillGroups.length" v-reveal="{ delay: 80 }" class="block">
-      <h2>기술</h2>
+      <h2>Skills</h2>
       <div class="skills">
         <div v-for="g in skillGroups" :key="g.key" class="skills__group">
           <h3>{{ g.label }}</h3>

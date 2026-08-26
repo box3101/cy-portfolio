@@ -45,15 +45,15 @@ useSeoMeta({
 
     <dl v-reveal="{ delay: 80 }" class="meta">
       <div class="meta__row">
-        <dt>기간</dt>
+        <dt>Period</dt>
         <dd class="meta__mono">{{ period }}</dd>
       </div>
       <div v-if="project.role" class="meta__row">
-        <dt>역할</dt>
+        <dt>Role</dt>
         <dd>{{ project.role }}</dd>
       </div>
       <div v-if="project.tags.length" class="meta__row">
-        <dt>기술</dt>
+        <dt>Stack</dt>
         <dd>
           <ul class="tags">
             <li v-for="t in project.tags" :key="t">{{ t }}</li>
@@ -61,7 +61,7 @@ useSeoMeta({
         </dd>
       </div>
       <div v-if="links.length" class="meta__row">
-        <dt>링크</dt>
+        <dt>Links</dt>
         <dd>
           <ul class="links">
             <li v-for="l in links" :key="l.label">

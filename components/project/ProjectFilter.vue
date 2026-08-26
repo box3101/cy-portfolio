@@ -11,10 +11,10 @@ const props = defineProps<{
 const emit = defineEmits<{ 'update:modelValue': [CategoryFilter] }>()
 
 const filters: { value: CategoryFilter; label: string }[] = [
-  { value: 'all', label: '전체' },
+  { value: 'all', label: 'All' },
   { value: 'vue-nuxt', label: 'Vue · Nuxt' },
   { value: 'astro', label: 'Astro' },
-  { value: 'publisher', label: '퍼블리싱' },
+  { value: 'publisher', label: 'Publishing' },
   { value: 'react', label: 'React' },
 ]
 
