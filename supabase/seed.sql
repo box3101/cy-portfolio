@@ -62,7 +62,7 @@ values
    '개인 프로젝트',
    'https://github.com/box3101/movie-dashboard',
    'https://movie-dashboard-two-khaki.vercel.app',
-   40, false, false),
+   70, false, false),
 
   ('yeonsu-library-website', '연수구립도서관 공식 웹사이트', '도서관 공식 웹사이트',
    'Astro 4.15 기반 정적 사이트. SCSS 7-1 아키텍처 + BEM, 재사용 UI 컴포넌트 시스템 구축.',
@@ -70,7 +70,7 @@ values
    array['Astro', 'SCSS', 'Nanostores', 'Swiper.js'],
    '퍼블리싱 · 컴포넌트 설계',
    'https://github.com/box3101/yeonsu-library-web', null,
-   50, false, false),
+   80, false, false),
 
   ('korean-bank-evaluation', '한국은행 직원평가시스템', 'Employee Evaluation System',
    '기획-디자인-개발 올인원으로 빌드업한 직원평가 시스템. Astro 기반.',
@@ -86,7 +86,7 @@ values
    array['Astro', '반응형', '웹 접근성'],
    'Front · Admin UI 개발',
    null, 'https://edu.icjg.go.kr/',
-   70, false, false),
+   90, false, false),
 
   ('incheon-city', '인천광역시 웹사이트 · 패밀리 사이트', 'Public Sector Web Development',
    '3년간 유지보수 및 개선. 2021.03 웹 접근성 마크 획득, 2021.10 행정안전부 품질관리 우수평가, 2022.03 갱신.',
@@ -94,7 +94,7 @@ values
    array['공공기관', '웹 접근성', '품질관리 우수평가', '장기 프로젝트'],
    '퍼블리싱 · 유지보수',
    null, 'https://www.incheon.go.kr/index',
-   80, false, false),
+   40, false, false),
 
   ('samsung-sdi-gsop', '삼성 SDI GSOP 시스템', 'Enterprise System Development',
    'Global Standard Operation Procedure 시스템의 Admin 화면 개발 및 테마 커스터마이징.',
@@ -102,7 +102,7 @@ values
    array['Admin 개발', '시스템 커스터마이징', '기업 솔루션'],
    'Admin 화면 개발',
    null, null,
-   90, false, false),
+   50, false, false),
 
   ('g4b-business-support', 'G4b 기업지원 플러스 리뉴얼', 'Business Support Platform',
    '기업지원 플러스 Front 화면 리뉴얼. 웹 접근성 마크 획득.',
