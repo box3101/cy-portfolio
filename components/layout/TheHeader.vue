@@ -7,6 +7,7 @@ const navItems = [
   { to: '/', label: '홈' },
   { to: '/projects', label: '프로젝트' },
   { to: '/about', label: '소개' },
+  { to: '/contact', label: '연락처' },
 ]
 
 const route = useRoute()

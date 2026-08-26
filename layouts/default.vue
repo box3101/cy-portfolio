@@ -12,6 +12,7 @@ await useAsyncData('layout/profile', async () => {
 
 <template>
   <div class="shell">
+    <LayoutTheCursor />
     <LayoutTheHeader />
     <main class="shell__main">
       <slot />

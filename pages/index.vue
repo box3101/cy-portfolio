@@ -1,366 +1,237 @@
 <script setup lang="ts">
 const { profile } = useProfileStore()
-const { featuredList, handleSelectFeatured } = useProjectStore()
-
-await useAsyncData('home/featured', async () => {
-  await handleSelectFeatured()
-  return true
-})
 
 useSeoMeta({
-  title: "Cy's Code Canvas — 이찬용 포트폴리오",
+  title: "Cy's Code Canvas",
   description: () =>
-    profile.value?.headline ?? '디자인 시스템을 만들고, 그 시스템으로 제품을 만듭니다.',
+    profile.value?.headline ?? 'Creative Web Publisher & FrontEnd — 이찬용 포트폴리오',
   ogTitle: "Cy's Code Canvas",
   ogDescription: () =>
-    profile.value?.headline ?? '디자인 시스템을 만들고, 그 시스템으로 제품을 만듭니다.',
+    profile.value?.headline ?? 'Creative Web Publisher & FrontEnd — 이찬용 포트폴리오',
   ogType: 'website',
 })
 
-// ===== 검증 가능한 숫자 =====
-// "열심히 합니다" 대신 면접관이 그 자리에서 확인할 수 있는 값만 둔다.
-const proofs = [
-  { n: '33', label: '배포한 UI 컴포넌트' },
-  { n: '280+', label: 'Storybook 스토리' },
-  { n: '3', label: '웹접근성 인증 획득' },
-  { n: 'v0.6.12', label: 'npm 퍼블리시 버전' },
-]
+// 히어로는 뷰포트를 통째로 쓴다. 레이아웃의 헤더·푸터를 숨긴다.
+definePageMeta({ layout: 'hero' })
 </script>
 
 <template>
-  <div>
-    <!-- 화면을 꽉 채우되, 슬라이드 네비게이션이 아니라 일반 스크롤이다. -->
-    <section class="hero">
-      <div class="hero__bg" aria-hidden="true"></div>
+  <section class="hero">
+    <!-- 배경 영상. 원본 사이트와 동일한 소스를 쓴다. -->
+    <video class="hero__video" autoplay loop muted playsinline preload="metadata" aria-hidden="true">
+      <source src="/video/main.mp4" type="video/mp4" />
+    </video>
 
-      <div class="hero__inner">
-        <p class="hero__eyebrow">Frontend Engineer — Design Systems</p>
+    <!-- 좌우 세로 링크. 원본의 슬라이드 전환 대신 실제 라우트로 이동한다. -->
+    <NuxtLink to="/about" class="side side--left" aria-label="소개 보기">About</NuxtLink>
+    <NuxtLink to="/contact" class="side side--right" aria-label="연락처 보기">contact</NuxtLink>
 
-        <h1 class="hero__title">
-          <span>Cy's</span>
-          <span>Code Canvas</span>
-        </h1>
+    <div class="hero__center">
+      <h1 class="hero__title">Cy's Code Canvas</h1>
 
-        <p class="hero__lead">
-          {{ profile?.headline ?? '디자인 시스템을 만들고, 그 시스템으로 제품을 만듭니다.' }}
-        </p>
+      <p class="hero__script">Creative Web Publisher &amp; FrontEnd</p>
 
-        <div class="hero__cta">
-          <NuxtLink to="/projects" class="btn btn--primary">프로젝트 보기</NuxtLink>
-          <a
-            href="https://box3101.github.io/ispark-ui/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn btn--ghost"
-          >
-            ispark-ui 살펴보기
-          </a>
-        </div>
-      </div>
-
-      <div class="hero__foot">
-        <p class="hero__self">
-          <span class="hero__dot" aria-hidden="true"></span>
-          이 사이트는 @leechanyong/ispark-ui 로 만들었습니다
-        </p>
-        <span class="hero__scroll" aria-hidden="true">SCROLL</span>
-      </div>
-    </section>
-
-    <section class="proof-band" aria-label="검증 가능한 지표">
-      <dl class="proof">
-        <div v-for="p in proofs" :key="p.label" class="proof__item">
-          <dt class="proof__n">{{ p.n }}</dt>
-          <dd class="proof__l">{{ p.label }}</dd>
-        </div>
-      </dl>
-    </section>
-
-    <section class="featured">
-      <div class="featured__head">
-        <h2>대표 작업</h2>
-        <NuxtLink to="/projects">전체 보기 →</NuxtLink>
-      </div>
-
-      <ul v-if="featuredList.length" class="grid">
-        <li v-for="p in featuredList" :key="p.id">
-          <ProjectCard :project="p" />
-        </li>
-      </ul>
-
-      <p v-else class="featured__empty">아직 공개된 대표 작업이 없습니다.</p>
-    </section>
-  </div>
+      <p class="hero__links">
+        <NuxtLink to="/about"><span>Skill Inventory</span></NuxtLink>
+        <NuxtLink to="/projects"><span>portfolio</span></NuxtLink>
+      </p>
+    </div>
+  </section>
 </template>
 
 <style scoped>
 /* ============================================================
-   히어로 — 뷰포트를 꽉 채운다
+   히어로 — 원본 사이트 재현
    ============================================================ */
 .hero {
   position: relative;
-  /* 헤더 높이를 뺀 나머지 전부 */
-  min-height: calc(100dvh - 61px);
-  display: grid;
-  grid-template-rows: 1fr auto;
-  align-items: center;
+  width: 100%;
+  min-height: 100dvh;
+  display: block;
   overflow: hidden;
+  background-size: cover;
+  background-position: center;
 }
 
-.hero__bg {
+.hero__video {
   position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image: linear-gradient(color-mix(in oklab, var(--brand-line) 70%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in oklab, var(--brand-line) 70%, transparent) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(130% 100% at 82% 18%, #000 5%, transparent 70%);
-  -webkit-mask-image: radial-gradient(130% 100% at 82% 18%, #000 5%, transparent 70%);
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  transform: translateX(-50%) translateY(-50%);
+  object-fit: cover;
+  z-index: 0;
 }
 
-/* accent 광원 — 배경 이미지 없이 깊이를 만든다 */
-.hero__bg::after {
+/* 영상 위 검은 오버레이 — 텍스트 대비 확보 */
+.hero::before {
   content: '';
   position: absolute;
-  top: -18%;
-  right: -8%;
-  width: 62vw;
-  height: 62vw;
-  max-width: 900px;
-  max-height: 900px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    color-mix(in oklab, var(--brand-accent) 22%, transparent) 0%,
-    transparent 62%
-  );
-  filter: blur(20px);
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
 }
 
-.hero__inner {
-  position: relative;
+/*
+  주의: `.hero > *` 같은 넓은 규칙으로 position을 주면
+  명시도(0,2,0)가 .hero__center(0,1,0)를 이겨 absolute 중앙정렬이 깨진다.
+  요소별로 명시한다.
+*/
+
+/* ===== 중앙 콘텐츠 ===== */
+.hero__center {
+  position: absolute;
   width: 100%;
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 40px 24px;
-}
-
-.hero__eyebrow {
-  margin: 0 0 24px;
-  font-family: var(--font-mono);
-  font-size: var(--step--1);
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--brand-ink-muted);
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: center;
+  padding: 0 24px;
+  z-index: 2;
 }
 
 .hero__title {
-  margin: 0 0 28px;
-  display: grid;
-  font-family: var(--font-display);
-  /* 화면 폭을 실제로 채우는 크기 */
-  font-size: clamp(3rem, 11.5vw, 9.5rem);
-  font-weight: 800;
-  letter-spacing: -0.045em;
-  line-height: 0.86;
-  text-wrap: balance;
+  margin: 0 0 40px;
+  font-family: 'Poppins', var(--font-body);
+  color: #fff;
+  font-size: clamp(2rem, 5vw, 5rem);
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: -0.01em;
 }
 
-.hero__lead {
-  margin: 0 0 36px;
-  max-width: 30ch;
-  font-size: clamp(1.0625rem, 0.9rem + 0.9vw, 1.625rem);
-  font-weight: 300;
-  line-height: 1.45;
-  color: var(--brand-ink-muted);
+.hero__script {
+  margin: 0 0 44px;
+  font-family: 'Dancing Script', cursive;
+  letter-spacing: 1px;
+  color: #866baf;
+  font-size: 26px;
+  line-height: 1;
+  font-weight: 700;
 }
 
-.hero__cta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 11px;
+.hero__links {
+  margin: 0;
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 500;
+  color: #fff;
+  letter-spacing: 1px;
 }
 
-.btn {
-  font-size: var(--step-0);
-  font-weight: 600;
-  padding: 13px 26px;
-  border-radius: 10px;
-  border: 1px solid transparent;
+.hero__links a {
+  color: #fff;
   text-decoration: none;
-  transition: transform 0.12s ease, border-color 0.15s;
 }
 
-.btn:hover {
-  transform: translateY(-1px);
-}
-
-.btn--primary {
-  background: var(--brand-accent);
-  color: var(--brand-accent-ink);
-}
-
-.btn--ghost {
-  color: var(--brand-ink);
-  border-color: var(--brand-line);
-  background: color-mix(in oklab, var(--brand-surface) 60%, transparent);
-}
-
-.btn--ghost:hover {
-  border-color: var(--brand-accent);
-}
-
-/* 하단 고정 영역 — 도그푸딩 문구 + 스크롤 유도 */
-.hero__foot {
+.hero__links span {
+  margin: 0 15px;
   position: relative;
-  width: 100%;
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 0 24px 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  display: inline-block;
+  cursor: pointer;
+  padding-bottom: 35px;
 }
 
-.hero__self {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  margin: 0;
-  font-family: var(--font-mono);
-  font-size: var(--step--1);
-  color: var(--brand-ink-muted);
-  background: color-mix(in oklab, var(--brand-accent) 10%, transparent);
-  border: 1px solid color-mix(in oklab, var(--brand-accent) 32%, transparent);
-  padding: 6px 12px;
-  border-radius: 999px;
+/* 아래 화살표 — 호버 시 나타난다 */
+.hero__links span::before {
+  position: absolute;
+  content: '';
+  bottom: 10px;
+  left: 50%;
+  height: 30px;
+  width: 30px;
+  margin-left: -15px;
+  background: url('/icons/arrow-down.svg') no-repeat center / 30px 30px;
+  opacity: 0.45;
+  transition: all 200ms linear;
 }
 
-.hero__dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--brand-accent);
+.hero__links span:hover::before {
+  opacity: 1;
+  bottom: 5px;
 }
 
-.hero__scroll {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.3em;
-  color: var(--brand-ink-muted);
-  writing-mode: vertical-rl;
-  animation: drift 2.4s ease-in-out infinite;
-}
-
-@keyframes drift {
-  0%,
-  100% {
-    transform: translateY(0);
-    opacity: 0.5;
-  }
-  50% {
-    transform: translateY(8px);
-    opacity: 1;
-  }
-}
-
-/* ============================================================
-   지표 밴드
-   ============================================================ */
-.proof-band {
-  border-top: 1px solid var(--brand-line);
-  border-bottom: 1px solid var(--brand-line);
-  background: var(--brand-surface);
-}
-
-.proof {
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 28px 24px;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.proof__item {
-  display: grid;
-  gap: 4px;
-}
-
-.proof__n {
-  font-family: var(--font-display);
-  font-size: var(--step-2);
+/* ===== 좌우 세로 링크 ===== */
+.side {
+  position: absolute;
+  top: 50%;
+  font-family: 'Poppins', var(--font-body);
+  font-size: 17px;
+  line-height: 20px;
   font-weight: 700;
-  letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums;
-}
-
-.proof__l {
-  margin: 0;
-  font-size: var(--step--1);
-  color: var(--brand-ink-muted);
-  line-height: 1.4;
-}
-
-/* ============================================================
-   대표 작업
-   ============================================================ */
-.featured {
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 64px 24px 20px;
-}
-
-.featured__head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.featured__head h2 {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--step-2);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-
-.featured__head a {
-  font-family: var(--font-mono);
-  font-size: var(--step--1);
-  color: var(--brand-accent);
+  color: #fff;
+  letter-spacing: 2px;
   text-decoration: none;
+  writing-mode: vertical-lr;
+  transition: all 200ms linear;
+  z-index: 3;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
+.side--left {
+  left: 40px;
+  transform: translateY(-50%) rotate(180deg);
 }
 
-.featured__empty {
-  color: var(--brand-ink-muted);
-  font-size: var(--step-0);
-  padding: 32px 0;
-  border-top: 1px solid var(--brand-line);
+.side--right {
+  right: 40px;
+  transform: translateY(-50%) rotate(180deg);
 }
 
-@media (max-width: 860px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-  .proof {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px 8px;
-  }
-  .hero__scroll {
+.side::before {
+  position: absolute;
+  content: '';
+  top: 50%;
+  height: 30px;
+  width: 30px;
+  margin-top: -15px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 30px 30px;
+  opacity: 0.45;
+  transition: all 200ms linear;
+}
+
+/* rotate(180deg)된 요소라 좌우가 뒤집힌다 */
+.side--left::before {
+  left: -25px;
+  background-image: url('/icons/arrow-right.svg');
+}
+
+.side--right::before {
+  right: -25px;
+  background-image: url('/icons/arrow-left.svg');
+}
+
+.side:hover::before {
+  opacity: 1;
+}
+
+.side--left:hover::before {
+  left: -30px;
+}
+
+.side--right:hover::before {
+  right: -30px;
+}
+
+@media (max-width: 640px) {
+  .side {
     display: none;
+  }
+  .hero__script {
+    font-size: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__video {
+    display: none;
+  }
+  .hero {
+    background: #1f2029;
   }
 }
 </style>
