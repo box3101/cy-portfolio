@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict'
 import { chromium } from 'playwright'
-import { writeFile } from 'node:fs/promises'
+import { mkdir, writeFile } from 'node:fs/promises'
 
 const base = process.env.STUDIO_BASE_URL || 'http://127.0.0.1:3020'
+await mkdir('artifacts/studio-study', { recursive: true })
 const browser = await chromium.launch({ headless: true, channel: 'msedge' })
 console.log('Browser started')
 const page = await browser.newPage({ viewport: { width: 1536, height: 578 } })
