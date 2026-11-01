@@ -1,13 +1,15 @@
 import assert from 'node:assert/strict'
 import { chromium } from 'playwright'
-import { writeFile } from 'node:fs/promises'
+import { mkdir, writeFile } from 'node:fs/promises'
 
+const base = process.env.STUDIO_BASE_URL || 'http://127.0.0.1:3020'
+await mkdir('artifacts/studio-study', { recursive: true })
 const browser = await chromium.launch({ headless: true, channel: 'msedge' })
 try {
   const page = await browser.newPage({ viewport: { width: 1536, height: 578 } })
   // The study must remain legible even if external font CDNs cannot be reached.
   await page.route(/https:\/\/(fonts\.(googleapis|gstatic)\.com|cdn\.jsdelivr\.net)\//, route => route.abort())
-  await page.goto('http://127.0.0.1:3020/studio-study', { waitUntil: 'domcontentloaded', timeout: 60000 })
+  await page.goto(`${base}/studio-study`, { waitUntil: 'domcontentloaded', timeout: 60000 })
   await page.locator('[data-render-state="ready"]').waitFor()
   await page.evaluate(() => document.fonts.ready)
   const result = await page.evaluate(() => ({
