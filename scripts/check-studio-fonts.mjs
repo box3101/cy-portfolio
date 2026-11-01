@@ -9,7 +9,7 @@ try {
   const page = await browser.newPage({ viewport: { width: 1536, height: 578 } })
   // The study must remain legible even if external font CDNs cannot be reached.
   await page.route(/https:\/\/(fonts\.(googleapis|gstatic)\.com|cdn\.jsdelivr\.net)\//, route => route.abort())
-  await page.goto(`${base}/studio-study`, { waitUntil: 'domcontentloaded', timeout: 60000 })
+  await page.goto(`${base}${process.env.STUDIO_PATH || '/studio-study'}`, { waitUntil: 'domcontentloaded', timeout: 60000 })
   await page.locator('[data-render-state="ready"]').waitFor()
   await page.evaluate(() => document.fonts.ready)
   const result = await page.evaluate(() => ({

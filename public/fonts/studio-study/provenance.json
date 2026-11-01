@@ -2,7 +2,7 @@
   "families": ["Noto Serif KR Regular", "Noto Sans KR Regular"],
   "source": "Google Fonts CSS API, https://fonts.googleapis.com/css2",
   "license": "SIL Open Font License 1.1; license files included alongside the fonts",
-  "scope": "Only /studio-study uses the Studio Noto Serif and Studio Noto Sans family aliases",
-  "subset": "Korean syllables in pages/studio-study.vue and components/studio/StoryStudio.client.vue, printable ASCII, middle dot and arrows. Regenerate the subsets when adding new Korean copy.",
+  "scope": "The home and /studio-study routes use the Studio Noto Serif and Studio Noto Sans family aliases",
+  "subset": "Korean syllables in components/studio/Landing.vue, components/studio/StoryStudio.client.vue and data/navigation.ts, printable ASCII, middle dot and arrows. Regenerate the subsets when adding new Korean copy.",
   "files": ["noto-serif-kr.woff2", "noto-sans-kr.woff2"]
 }

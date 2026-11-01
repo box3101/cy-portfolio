@@ -11,7 +11,7 @@ const page = await browser.newPage({ viewport: { width, height }, deviceScaleFac
 const errors = []
 page.on('pageerror', error => errors.push(error.message))
 page.on('console', message => { if (message.type() === 'error') errors.push(message.text()) })
-const response = await page.goto(`${process.env.STUDIO_BASE_URL || 'http://127.0.0.1:3020'}/studio-study`, { waitUntil: 'domcontentloaded', timeout: 60000 })
+const response = await page.goto(`${process.env.STUDIO_BASE_URL || 'http://127.0.0.1:3020'}${process.env.STUDIO_PATH || '/studio-study'}`, { waitUntil: 'domcontentloaded', timeout: 60000 })
 console.log('HTTP', response.status())
 if (response.status() !== 200) throw new Error(`HTTP ${response.status()}`)
 await page.locator('.story-world[data-render-state="ready"], .story-world[data-render-state="fallback"]').waitFor().catch(async error => {

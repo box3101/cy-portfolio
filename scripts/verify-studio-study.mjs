@@ -11,10 +11,17 @@ page.setDefaultNavigationTimeout(60000)
 const errors = []
 page.on('pageerror', error => errors.push(error.message))
 try {
-  await page.goto(`${base}/studio-study`, { waitUntil: 'domcontentloaded' })
+  await page.goto(`${base}${process.env.STUDIO_PATH || '/studio-study'}`, { waitUntil: 'domcontentloaded' })
   console.log('Page loaded')
   await page.locator('[data-render-state="ready"]').waitFor()
   console.log('3D ready')
+  if (process.env.STUDIO_PATH === '/') {
+    assert.equal(await page.locator('meta[name="robots"]').getAttribute('content'), 'index,follow')
+    assert.equal(await page.locator('link[rel="canonical"]').getAttribute('href'), 'https://cy-portfolio-eight.vercel.app/')
+    assert.equal(await page.locator('.review-label').count(), 0)
+    assert.equal(await page.locator('.studio-header nav a').count(), 4)
+    assert((await page.title()).includes('이찬용'))
+  }
   assert.equal(await page.locator('.panel-dom article').count(), 3)
   const panels = await page.locator('.panel-dom article').evaluateAll(elements => elements.map(element => {
     const { x, y, width, height } = element.getBoundingClientRect()
