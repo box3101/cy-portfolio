@@ -58,7 +58,7 @@ const brandColor = computed(() => brandColorMap[props.project.slug] ?? 'rgba(20,
 </script>
 
 <template>
-  <NuxtLink :to="project.slug === 'taskflow' ? '/work/taskflow' : project.slug === 'ispark-ui' ? 'https://github.com/box3101/ispark-ui' : `/projects/${project.slug}`" :external="project.slug === 'ispark-ui'" :target="project.slug === 'ispark-ui' ? '_blank' : undefined" :rel="project.slug === 'ispark-ui' ? 'noopener noreferrer' : undefined" class="card">
+  <NuxtLink :to="project.slug === 'taskflow' ? '/work/taskflow' : project.slug === 'ispark-ui' ? 'https://box3101.github.io/ispark-ui/' : `/projects/${project.slug}`" :external="project.slug === 'ispark-ui'" :target="project.slug === 'ispark-ui' ? '_blank' : undefined" :rel="project.slug === 'ispark-ui' ? 'noopener noreferrer' : undefined" class="card">
     <div class="card__thumb">
       <span v-if="badge" class="card__badge">
         <UiBadge variant="primary" size="xs">{{ badge }}</UiBadge>

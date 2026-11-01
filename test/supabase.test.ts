@@ -26,7 +26,7 @@ describe('Supabase 연동', () => {
     const html = await fetchHtml('/')
     expect(html).toContain('studio-main')
     expect(html).toContain('/images/studio-courtyard.webp')
-    expect(html).toContain('href="https://github.com/box3101/ispark-ui"')
+    expect(html).toContain('href="https://box3101.github.io/ispark-ui/"')
     expect(html).toContain('href="/agents"')
     expect(html).toContain('href="/projects?space=si"')
   })

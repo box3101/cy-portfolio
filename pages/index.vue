@@ -1,11 +1,11 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'studio' })
-useSeoMeta({ title: '이찬용 — 화면에서 그 너머로', description: '퍼블리싱에서 프런트엔드, 디자인 시스템과 AI 에이전트까지. 이찬용의 작업 세계를 둘러보세요.' })
+useSeoMeta({ title: '이찬용 — 화면에서 그 너머로', description: '퍼블리싱에서 프론트엔드, 디자인 시스템과 AI 에이전트까지. 이찬용의 작업 세계를 둘러보세요.' })
 useHead({ link: [{ rel: 'preload', as: 'image', href: '/images/studio-courtyard.webp' }] })
 const activeRoom = ref('')
 const backdrop = ref<HTMLElement | null>(null)
 const rooms = [
-  { id: 'design', number: '01', name: '디자인 시스템', subtitle: 'ispark-ui GitHub 바로가기', detail: '일관된 화면을 만드는 기반', href: 'https://github.com/box3101/ispark-ui', external: true },
+  { id: 'design', number: '01', name: '디자인 시스템', subtitle: 'ispark-ui Storybook 둘러보기', detail: '일관된 화면을 만드는 기반', href: 'https://box3101.github.io/ispark-ui/', external: true },
   { id: 'agents', number: '02', name: 'AI 에이전트 & 업무 도구', subtitle: '무엇을, 왜, 어떻게 만들었는지', detail: 'TeamAgent · 제안서 에이전트 · TaskFlow', href: '/agents', external: false },
   { id: 'si', number: '03', name: 'SI 프로젝트', subtitle: '현장의 요구를 구현한 작업', detail: '공공 웹사이트 · 기업 업무시스템', href: '/projects?space=si', external: false },
 ]
@@ -20,13 +20,13 @@ function resetScene() { if (backdrop.value) backdrop.value.style.transform = '' 
     <div ref="backdrop" class="courtyard__scene" aria-hidden="true"><img src="/images/studio-courtyard.webp" alt="" fetchpriority="high" width="1672" height="941" /></div>
     <div class="courtyard__shade" aria-hidden="true" />
     <header class="studio-header">
-      <NuxtLink to="/" class="studio-brand" aria-label="이찬용 홈"><strong>CY.</strong><span>이찬용</span><small>프런트엔드 개발자 · AI 빌더</small></NuxtLink>
+      <NuxtLink to="/" class="studio-brand" aria-label="이찬용 홈"><strong>CY.</strong><span>이찬용</span><small>프론트엔드 개발자 · AI 빌더</small></NuxtLink>
       <nav aria-label="주요 메뉴"><NuxtLink to="/projects">전체 작업</NuxtLink><NuxtLink to="/about">나의 이야기</NuxtLink><NuxtLink to="/contact">연락하기 ↗</NuxtLink></nav>
     </header>
     <div class="courtyard__intro">
       <p class="eyebrow">LEE CHANYONG / A WORLD OF WORK</p>
       <h1>화면을 만들다 보니,<br /><span>그 너머</span>도 만들고 싶어졌습니다.</h1>
-      <p class="courtyard__description">프런트엔드 개발자 이찬용.<br class="mobile-break" /> 디자인 시스템과 AI 에이전트를 만듭니다.</p>
+      <p class="courtyard__description">프론트엔드 개발자 이찬용.<br class="mobile-break" /> 디자인 시스템과 AI 에이전트를 만듭니다.</p>
     </div>
     <NuxtLink class="story-door" to="/about">나의 이야기 <span>↗</span></NuxtLink>
     <nav class="room-grid" aria-label="작업 공간 선택">
