@@ -36,11 +36,16 @@ const skillGroups = computed(() => {
   <div>
     <LayoutPageHeader
       eyebrow="Who I am"
-      title="About"
-      :description="profile?.headline ?? undefined"
+      title="나의 이야기"
+      description="화면을 만들다 보니, 그 너머도 만들고 싶어졌습니다."
     />
 
     <div class="page">
+      <section class="journey" aria-label="만드는 영역의 확장">
+        <article><span>01 / PUBLISHING</span><h2>화면의 디테일을 쌓다.</h2><p>퍼블리싱으로 시작해 공공기관과 기업의 웹 화면을 구현했습니다.</p></article>
+        <article><span>02 / FRONTEND</span><h2>제품의 동작을 구현하다.</h2><p>프런트엔드 개발과 디자인 시스템으로 재사용 가능한 UI와 제품을 만듭니다.</p></article>
+        <article><span>03 / AI BUILDER</span><h2>업무를 돕는 도구로 넓히다.</h2><p>모델과 지식을 연결하는 에이전트, 제안 업무를 돕는 도구로 영역을 넓히고 있습니다.</p><NuxtLink to="/agents">만든 이야기 보기 →</NuxtLink></article>
+      </section>
       <p v-if="profile?.bio" v-reveal class="page__bio">{{ profile.bio }}</p>
 
       <section v-if="careerList.length" v-reveal class="block">
@@ -104,6 +109,14 @@ const skillGroups = computed(() => {
 </template>
 
 <style scoped>
+.journey { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; margin:0 0 42px; }
+.journey article { border-top:2px solid var(--brand-accent); padding:22px 0; }
+.journey span { color:var(--brand-accent); font-size:10px; letter-spacing:.1em; }
+.journey h2 { font-size:21px; letter-spacing:-.03em; margin:18px 0 12px; }
+.journey p { color:var(--brand-ink-muted); line-height:1.9; font-size:14px; }
+.journey a { color:var(--brand-accent); font-size:12px; text-decoration:none; }
+@media(max-width:740px) { .journey { grid-template-columns:1fr; gap:8px; } }
+
 /* 프로젝트 페이지와 같은 1180px. 페이지를 오갈 때 좌측 시작선이 어긋나지 않게 한다. */
 .page {
   max-width: 1180px;
