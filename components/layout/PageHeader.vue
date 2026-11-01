@@ -1,14 +1,14 @@
 <script setup lang="ts">
 /**
  * 내부 페이지 공용 헤더.
- * 히어로와 같은 격자·광원 모티프를 축소해 얹어 톤을 잇는다.
+ * 메인 갤러리의 크림 배경(#f5f1e9)을 이어받아 같은 세계관으로 진입하는 느낌을 준다.
  */
 withDefaults(
   defineProps<{
     eyebrow?: string
     title: string
     description?: string
-    /** 본문 콘텐츠 폭에 맞춘다. 좌측 정렬이 어긋나지 않게 하기 위함이다. */
+    /** 본문 콘텐츠 폭에 맞춘다. */
     width?: 'wide' | 'narrow'
   }>(),
   { width: 'wide' },
@@ -17,7 +17,11 @@ withDefaults(
 
 <template>
   <header class="ph">
-    <div class="ph__bg" aria-hidden="true"></div>
+    <!-- 우측 아치 장식 -->
+    <div class="ph__bg" aria-hidden="true">
+      <div class="ph__arch ph__arch--1"></div>
+      <div class="ph__arch ph__arch--2"></div>
+    </div>
 
     <div class="ph__inner" :class="`ph__inner--${width}`">
       <p v-if="eyebrow" class="ph__eyebrow">{{ eyebrow }}</p>
@@ -32,104 +36,97 @@ withDefaults(
 .ph {
   position: relative;
   overflow: hidden;
+  background: #f5f1e9;
 }
 
-/*
-  헤더 바닥 처리.
-  전에는 border-bottom 1px 실선이었다. 격자와 광원이 overflow:hidden 에
-  그대로 잘려서 가로로 딱 끊긴 단면이 생겼고, 그 위에 실선까지 얹혀
-  본문과의 경계가 필요 이상으로 딱딱했다.
-
-  ::after 가 바탕색과 같은 색으로 아래로 갈수록 진해지며 배경 레이어만
-  녹인다(본문은 .ph__inner 의 z-index 로 그 위에 남는다).
-  ::before 는 양 끝이 사라지는 헤어라인이다 — 구획은 남기되 선이
-  화면을 가로질러 끊는 느낌은 없앤다.
-*/
+/* 하단 페이드 — 크림에서 페이지 배경으로 자연스럽게 */
 .ph::after {
   content: '';
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 96px;
+  left: 0; right: 0; bottom: 0;
+  height: 120px;
   pointer-events: none;
   background: linear-gradient(to bottom, transparent, var(--brand-ground));
+  z-index: 0;
 }
 
+/* 양 끝이 사라지는 헤어라인 */
 .ph::before {
   content: '';
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  left: 0; right: 0; bottom: 0;
   height: 1px;
   z-index: 2;
   pointer-events: none;
   background: linear-gradient(
     90deg,
     transparent 0%,
-    var(--brand-line) 16%,
-    var(--brand-line) 70%,
+    rgba(150, 135, 115, 0.3) 16%,
+    rgba(150, 135, 115, 0.3) 70%,
     transparent 100%
   );
 }
 
-/* 히어로와 동일한 격자. 크기만 절반으로 줄여 부차적으로 보이게 한다. */
+/* 배경 장식 */
 .ph__bg {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background-image: linear-gradient(
-      color-mix(in oklab, var(--brand-line) 70%, transparent) 1px,
-      transparent 1px
-    ),
-    linear-gradient(90deg, color-mix(in oklab, var(--brand-line) 70%, transparent) 1px, transparent 1px);
-  background-size: 32px 32px;
-  mask-image: radial-gradient(120% 140% at 85% 10%, #000 0%, transparent 65%);
-  -webkit-mask-image: radial-gradient(120% 140% at 85% 10%, #000 0%, transparent 65%);
 }
 
-.ph__bg::after {
-  content: '';
+/* 반투명 아치 — 메인 갤러리 카드의 editorial-art 모티프 */
+.ph__arch {
   position: absolute;
-  top: -60%;
-  right: -5%;
-  width: 34vw;
-  height: 34vw;
-  max-width: 460px;
-  max-height: 460px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    color-mix(in oklab, var(--brand-accent) 16%, transparent) 0%,
-    transparent 62%
-  );
-  filter: blur(18px);
+  border-radius: 50% 50% 0 0;
+  border-style: solid;
+  border-color: rgba(180, 160, 130, 0.18);
+}
+
+.ph__arch--1 {
+  top: -60px; right: 80px;
+  width: 200px; height: 290px;
+  border-width: 24px;
+  transform: rotate(10deg);
+}
+
+.ph__arch--2 {
+  top: -30px; right: 40px;
+  width: 120px; height: 175px;
+  border-width: 15px;
+  border-color: rgba(180, 160, 130, 0.1);
+  transform: rotate(-6deg);
 }
 
 .ph__inner {
   position: relative;
-  /* ::after 페이드보다 위. 없으면 DOM 순서상 페이드가 제목을 덮는다. */
   z-index: 1;
   margin: 0 auto;
-  padding: 40px 24px 28px;
+  padding: 44px 24px 52px;
 }
 
-.ph__inner--wide {
-  max-width: 1180px;
-}
+.ph__inner--wide  { max-width: 1180px; }
+.ph__inner--narrow { max-width: 800px; }
 
-.ph__inner--narrow {
-  max-width: 800px;
-}
-
+/* eyebrow — 라인 + 레이블 */
 .ph__eyebrow {
-  margin: 0 0 10px;
+  margin: 0 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--font-body);
-  font-size: var(--step--1);
-  letter-spacing: 0.18em;
+  font-size: 9px;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--brand-ink-muted);
+  color: #8a7d6e;
+}
+
+.ph__eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 18px;
+  height: 1px;
+  background: #8a7d6e;
+  flex-shrink: 0;
 }
 
 .ph__title {
@@ -137,21 +134,25 @@ withDefaults(
   font-family: var(--font-display);
   font-size: clamp(1.875rem, 3.6vw, 2.75rem);
   font-weight: 900;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.055em;
   line-height: 1;
+  color: #202734;
 }
 
 .ph__desc {
-  margin: 12px 0 0;
+  margin: 14px 0 0;
   max-width: 52ch;
-  color: var(--brand-ink-muted);
+  color: #596575;
   font-size: var(--step-1);
-  line-height: 1.6;
+  line-height: 1.75;
 }
 
 @media (max-width: 640px) {
   .ph__inner {
-    padding: 32px 20px 24px;
+    padding: 32px 20px 28px;
   }
+
+  .ph__arch--1 { right: 20px; width: 150px; height: 210px; }
+  .ph__arch--2 { right: -10px; width: 90px; height: 130px; }
 }
 </style>
