@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import { UiBadge, UiBadgeGroup } from '@leechanyong/ispark-ui'
 import type { Project } from '~/types/database'
+import { workStories } from '~/data/workStories'
 
 const props = defineProps<{ project: Project }>()
+const taskflowStory = workStories.find(story => story.slug === 'taskflow')!
+const displayTitle = computed(() => props.project.slug === 'taskflow' ? 'TaskFlow — 나만의 비서' : props.project.title)
+const summary = computed(() => props.project.slug === 'taskflow' ? taskflowStory.intro : props.project.summary)
+const subtitle = computed(() => props.project.slug === 'taskflow' ? taskflowStory.subtitle : props.project.subtitle)
 
 const period = computed(() => formatPeriod(props.project.period_start, props.project.period_end))
 
@@ -24,7 +29,7 @@ const categoryLabel: Record<string, string> = {
 // 프로젝트별 로고 이미지 매핑
 const logoMap: Record<string, string> = {
   'ispark-ui': '/images/pt-ispark-ui.svg',
-  'taskflow': '/images/pt-taskflow.svg',
+  'taskflow': '/images/work/taskflow-calendar.png',
   'sgate-okr-solution': '/images/pt-sgate.svg',
   'movie-dashboard': '/images/pt-movie-dashboard.svg',
   'yeonsu-library-website': '/images/pf-yeonsu-library.png',
@@ -78,7 +83,7 @@ const brandColor = computed(() => brandColorMap[props.project.slug] ?? 'rgba(20,
         <strong class="card__overlay-title">Overview</strong>
         <p class="card__overlay-info">
           ({{ period }})<br />
-          {{ project.summary }}
+          {{ summary }}
         </p>
         <div class="card__overlay-tags">
           <span v-for="tag in project.tags" :key="tag" class="card__overlay-tag" :style="{ backgroundColor: brandColor }">
@@ -89,8 +94,8 @@ const brandColor = computed(() => brandColorMap[props.project.slug] ?? 'rgba(20,
     </div>
 
     <div class="card__body">
-      <span class="card__cat">{{ project.subtitle || categoryLabel[project.category] }}</span>
-      <h3 class="card__title">{{ project.title }}</h3>
+      <span class="card__cat">{{ subtitle || categoryLabel[project.category] }}</span>
+      <h3 class="card__title">{{ displayTitle }}</h3>
       <span class="card__period">{{ period }}</span>
 
       <UiBadgeGroup

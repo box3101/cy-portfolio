@@ -9,19 +9,19 @@ await useAsyncData('projects/list', async () => { await handleSelectProjectPage(
 const keyword = ref('')
 const isSi = computed(() => route.query.space === 'si')
 const category = computed(() => ['vue-nuxt','astro','react','publisher'].includes(String(route.query.category)) ? String(route.query.category) : 'all')
-const scopedProjects = computed(() => projectList.value.filter(p => !isSi.value || siSlugs.has(p.slug)))
+const scopedProjects = computed(() => projectList.value.filter(p => !isSi.value || siSlugs.has(p.slug)).map(p => p.slug === 'taskflow' ? { ...p, subtitle: workStories.find(story => story.slug === p.slug)!.subtitle } : p))
 const tabs = computed<TabItem[]>(() => [
   { value:'all',label:'전체' },{ value:'vue-nuxt',label:'Vue · Nuxt' },{ value:'astro',label:'Astro' },{ value:'publisher',label:'Publishing' },{ value:'react',label:'React' },
 ].map(tab => ({ ...tab, count: scopedProjects.value.filter(p => tab.value === 'all' || p.category === tab.value).length })).filter(tab => tab.value === 'all' || tab.count > 0))
 const filteredList = computed(() => scopedProjects.value.filter(p => (category.value === 'all' || p.category === category.value) && [p.title,p.subtitle ?? '',...p.tags].some(t => t.toLowerCase().includes(keyword.value.trim().toLowerCase()))))
-const agentStories = computed(() => isSi.value || category.value !== 'all' ? [] : workStories.filter(p => p.slug !== 'taskflow' && `${p.name} ${p.subtitle}`.toLowerCase().includes(keyword.value.trim().toLowerCase())))
+const agentStories = computed(() => isSi.value || category.value !== 'all' ? [] : workStories.filter(p => `${p.name} ${p.subtitle}`.toLowerCase().includes(keyword.value.trim().toLowerCase())))
 const designProject = computed(() => filteredList.value.find(p => p.slug === 'ispark-ui'))
 const exhibits = computed(() => {
   const stories = agentStories.value.map(story => ({ slug:story.slug, title:story.name, detail:story.subtitle, to:'/work/' + story.slug, external:false }))
-  if (designProject.value) stories.splice(Math.min(1, stories.length), 0, { slug:'ispark-ui', title:designProject.value.title, detail:'직접 설계하고 개발한 UI 컴포넌트 라이브러리', to:'https://box3101.github.io/ispark-ui/', external:true })
+  if (designProject.value) stories.splice(Math.min(2, stories.length), 0, { slug:'ispark-ui', title:designProject.value.title, detail:'직접 설계하고 개발한 UI 컴포넌트 라이브러리', to:'https://box3101.github.io/ispark-ui/', external:true })
   return stories
 })
-const galleryProjects = computed(() => filteredList.value.filter(p => p.slug !== 'ispark-ui'))
+const galleryProjects = computed(() => filteredList.value.filter(p => !exhibits.value.some(item => item.slug === p.slug)))
 function setCategory(value: string) { keyword.value = ''; router.replace({ query: { ...(isSi.value ? { space:'si' } : {}), ...(value === 'all' ? {} : { category:value }) } }) }
 async function retry() { await handleSelectProjectPage('all') }
 useSeoMeta({ title: () => `${isSi.value ? 'SI 프로젝트' : '프로젝트'} — 이찬용`, description: '공공기관 웹사이트부터 기업 시스템, 디자인 시스템과 AI 도구까지.' })
@@ -35,7 +35,8 @@ useSeoMeta({ title: () => `${isSi.value ? 'SI 프로젝트' : '프로젝트'} �
       <div v-if="exhibits.length" class="edition-heading"><h2>직접 만든 도구들</h2><span>FEATURE STORIES / 기획에서 구현까지</span></div>
       <div v-if="exhibits.length" class="exhibitions">
         <NuxtLink v-for="item in exhibits" :key="item.slug" :to="item.to" :external="item.external" :target="item.external ? '_blank' : undefined" :rel="item.external ? 'noopener noreferrer' : undefined" class="exhibition">
-          <ProjectExhibitVisual :kind="item.slug" />
+          <div v-if="item.slug === 'taskflow'" class="taskflow-exhibit"><ProjectLogoExhibit src="/images/work/taskflow-calendar.png" title="TaskFlow — 나만의 비서" slug="taskflow" /></div>
+          <ProjectExhibitVisual v-else :kind="item.slug" />
           <div class="exhibition__caption"><h2>{{ item.title }}</h2><span aria-hidden="true">↗</span><p>{{ item.detail }}</p></div>
         </NuxtLink>
       </div>
@@ -49,6 +50,7 @@ useSeoMeta({ title: () => `${isSi.value ? 'SI 프로젝트' : '프로젝트'} �
   </div>
 </template>
 <style scoped>
+.taskflow-exhibit { position:relative; aspect-ratio:16 / 10; overflow:hidden; }
 .page { max-width:1400px; margin:0 auto; padding:12px 32px 60px; }
 .toolbar { display:flex; justify-content:space-between; align-items:flex-end; gap:16px; margin-bottom:24px; flex-wrap:wrap; }.search { flex:0 1 230px; }
 .toolbar :deep(.ui-tab) { width:auto; min-width:0; max-width:100%; flex:1 1 480px; overflow-x:auto; overflow-y:hidden; }

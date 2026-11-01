@@ -1,0 +1,14 @@
+{
+  "newspaper-ai-builder.webp": {
+    "source": "OpenAI built-in image edit of newspaper.webp",
+    "promptSummary": "Replace only the masthead byline with two centered lines: 이찬용 · AI 빌더 / 기획 · 디자인 · 프론트엔드 · 백엔드 · 배포. Preserve the paper, layout, lighting and article illustrations.",
+    "processing": "1672x941; WebP quality 95",
+    "contentNote": "Generated editorial concept illustrations, not actual product screenshots."
+  },
+  "newspaper.webp": {
+    "source": "OpenAI built-in image generation; user-selected concept 2, THE JOURNAL UNFOLDS",
+    "promptSummary": "A warm sunlit studio with one standing, three-section accordion-fold newspaper. THE CY JOURNAL masthead; UI design system on the left, proposal AI in the center, web projects on the right. Ivory paper, physical folds, oak desk, three editorial illustrations.",
+    "processing": "Original 1672x941 composition preserved; WebP quality 95",
+    "contentNote": "Printed interface imagery and copy are generated concept illustrations, not actual product screenshots. Real project information is available through the three article links."
+  }
+}

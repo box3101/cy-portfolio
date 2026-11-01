@@ -4,6 +4,7 @@ export interface WorkScreen {
   alt: string
   description: string
   points: string[]
+  caption?: string
 }
 
 // 저장소에 남아 있는 실제 개발 화면 캡처. 서비스 성과나 최신 운영 상태를 뜻하지 않는다.
@@ -17,11 +18,19 @@ export const workScreens: Record<string, WorkScreen[]> = {
   ],
   taskflow: [
     {
-      src: '/images/work/taskflow-main.png',
-      title: '일정과 작업을 날짜별로 확인',
-      alt: 'TaskFlow의 데스크톱 캘린더 화면. Todo·Issue 필터, 월 이동, 선택 날짜의 일정 영역이 표시되어 있다.',
-      description: '월 단위 탐색과 선택 날짜의 작업 영역을 연결했습니다. 작업 유형 필터와 일정 추가 버튼을 함께 배치한 실제 개발 화면입니다.',
-      points: ['Todo·Issue 표시 필터', '이전·다음 달과 오늘 이동', '선택 날짜의 일정 확인·추가'],
+      src: '/images/work/taskflow-dashboard.png',
+      caption: '개발 화면 캡처 · 개인 항목 일부 삭제',
+      title: '오늘 챙겨야 할 일을 한눈에',
+      alt: 'TaskFlow 홈 대시보드. 진행 중인 프로젝트, 할 일 완료 현황, 오늘 할 일과 오늘의 일정을 함께 보여준다.',
+      description: '홈에서 진행 중인 프로젝트와 할 일 완료 현황을 먼저 확인합니다. 프로젝트 목록, 오늘 할 일, 오늘의 일정을 나란히 배치해 업무와 개인 일상을 함께 살펴볼 수 있도록 구성했습니다.',
+      points: ['진행 중인 프로젝트와 완료 현황', '오늘 할 일과 마감 정보', '오늘의 일정과 기능별 바로가기'],
+    },
+    {
+      src: '/images/work/taskflow-issues.png',
+      title: '프로젝트 이슈를 상태와 우선순위로 정리',
+      alt: 'TaskFlow 프로젝트 이슈 목록. 상태, 구분, 번호, 제목, 우선순위, 경과일과 담당자를 표로 표시한다.',
+      description: '프로젝트별 이슈를 검색하고 상태, 오류·개선 구분, 우선순위와 담당자를 함께 확인합니다. 오래된 컨펌 이슈는 접어두고 필요할 때 펼쳐 보며, 엑셀 붙여넣기로 이슈를 입력할 수 있습니다.',
+      points: ['검색·필터와 열별 정렬', '상태·우선순위·담당자 확인', '오래된 컨펌 이슈 접기와 엑셀 붙여넣기'],
     },
   ],
 }

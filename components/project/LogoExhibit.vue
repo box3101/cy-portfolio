@@ -20,7 +20,7 @@ const logoScales: Record<string, number> = {
 </script>
 
 <template>
-  <div class="logo-exhibit" :style="{ '--glass-tint': palettes[slug] || '#a5bce0', '--logo-scale': logoScales[slug] || 1 }">
+  <div class="logo-exhibit" :class="{ 'logo-exhibit--screen': slug === 'taskflow' }" :style="{ '--glass-tint': palettes[slug] || '#a5bce0', '--logo-scale': logoScales[slug] || 1 }">
     <div class="logo-exhibit__arch" aria-hidden="true" />
     <div class="logo-exhibit__floor" aria-hidden="true" />
     <div class="logo-exhibit__plinth" aria-hidden="true" />
@@ -67,6 +67,8 @@ const logoScales: Record<string, number> = {
   transition:transform .3s ease;
 }
 .logo-exhibit__plaque img { position:absolute; top:50%; left:50%; width:76%; height:66%; object-fit:contain; transform:translate(-50%,-50%) scale(var(--logo-scale)); }
+.logo-exhibit--screen .logo-exhibit__plaque { inset:12% 9% 25%; }
+.logo-exhibit--screen .logo-exhibit__plaque img { width:100%; height:100%; object-fit:contain; }
 .logo-exhibit__label { position:absolute; bottom:7%; left:6%; font-size:7px; letter-spacing:.14em; color:#536574; }
 .logo-exhibit__arrow { position:absolute; bottom:5%; right:6%; color:#536574; font-size:17px; }
 @media(hover:hover) { .logo-exhibit:hover .logo-exhibit__plaque { transform:rotateY(0) rotateZ(0) translateY(-3px); } }

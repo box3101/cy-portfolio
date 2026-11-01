@@ -48,26 +48,29 @@ export const workStories: WorkStory[] = [
     scope: '에이전트 관리 화면을 중심으로 구현 내용을 소개합니다.',
   },
   {
-    slug: 'taskflow', name: 'TaskFlow', kind: '업무 관리 도구',
-    subtitle: '디자인 시스템을 실제 제품에 적용한 작업',
-    intro: '직접 만든 UI 컴포넌트로 작업 관리 화면을 구성하고, 서버와 데이터베이스까지 연결했습니다.',
+    slug: 'taskflow', name: 'TaskFlow', kind: '개인 업무·생활 관리 도구',
+    subtitle: '프로젝트부터 일정·식단·메모·예약까지, 나만의 비서',
+    intro: '프로젝트와 할 일은 물론 일정, 식단, 메모, 예약까지 한곳에서 관리하는 개인 비서 서비스입니다. 업무와 일상에 흩어진 기록을 모아 하루를 정리할 수 있도록 만들었습니다.',
     why: [
-      '디자인 시스템의 컴포넌트가 실제 제품 안에서도 잘 작동하는지 확인하고 싶었습니다. 예제에서 보기 좋은 것과 여러 기능이 연결된 서비스에서 쓰기 편한 것은 다르기 때문입니다.',
-      '그 적용 대상으로 선택한 것이 작업 관리 도구 TaskFlow입니다. 작업과 진행 상태를 관리하는 화면에 ispark-ui를 적용했습니다.',
-      '재사용 가능한 UI를 만드는 경험에서 한 걸음 더 나아가, 그 UI로 서버와 데이터가 연결된 제품을 구성하는 경험을 쌓았습니다.',
+      '프로젝트의 할 일, 개인 일정, 식단과 메모, 예약 정보를 따로 관리하다 보면 하루에 확인해야 할 것들이 여러 곳으로 흩어집니다.',
+      'TaskFlow는 업무와 일상의 기록을 한곳에 모아 관리하는 나만의 비서입니다. 프로젝트 관리부터 일정·식단·메모·예약까지 필요한 기능을 함께 담았습니다.',
+      '해야 할 일과 기억할 내용을 한곳에서 확인할 수 있도록, 개인의 업무와 생활을 함께 관리하는 흐름에 초점을 맞췄습니다.',
     ],
     stack: ['Vue', 'TypeScript', 'ispark-ui', 'Express', 'Prisma', 'PostgreSQL'],
-    approach: 'Vue와 ispark-ui로 화면을 구성하고, Express API와 Prisma를 통해 PostgreSQL의 데이터를 다루는 구조입니다. JWT 인증을 사용합니다.',
+    approach: '홈에서는 프로젝트 진행 현황과 오늘 할 일·일정을 한눈에 확인하고, 프로젝트에 들어가면 개별 이슈를 자세히 관리하는 흐름입니다. 일정·식단·메모·예약도 같은 서비스에서 관리해 업무와 생활의 기록을 함께 정리합니다.',
     steps: [
-      { title: '작업 관리 화면 구성', body: '작업을 정리하고 진행 상태를 확인하는 화면을 재사용 가능한 컴포넌트로 구성했습니다.', evidence: ['작업 목록', '진행 상태', '입력 화면'] },
-      { title: '서버와 데이터 연결', body: '프론트엔드에서 API를 호출하고 서버에서 데이터를 저장·조회하도록 연결했습니다.', evidence: ['Express API', 'Prisma', 'PostgreSQL'] },
-      { title: '제품에 UI 적용', body: '입력, 버튼, 모달 등 공통 UI를 제품의 실제 화면에 적용했습니다.', evidence: ['ispark-ui', '공통 스타일', '제품 화면'] },
+      { title: '대시보드에서 하루 시작', body: '진행 중인 프로젝트 수와 할 일 완료 현황, 오늘 할 일과 일정을 모아 지금 챙길 내용을 확인합니다.', evidence: ['프로젝트 현황', '오늘 할 일', '오늘의 일정'] },
+      { title: '프로젝트별 이슈 관리', body: '이슈의 상태·구분·우선순위·담당자를 표로 확인하고, 검색과 정렬로 필요한 작업을 찾습니다.', evidence: ['이슈 검색', '우선순위', '담당자'] },
+      { title: '일정과 예약 관리', body: '개인 일정과 예약을 관리하고, 캘린더에서 선택한 날짜의 일정을 확인하거나 추가합니다.', evidence: ['월별 캘린더', '날짜별 일정', '예약 관리'] },
+      { title: '식단과 메모 기록', body: '식단과 메모도 함께 관리해 업무 외에 일상에서 챙겨야 할 내용까지 한곳에 남깁니다.', evidence: ['식단 관리', '메모', '생활 기록'] },
     ],
-    decision: '컴포넌트 예제를 넘어, 화면과 서버·데이터가 연결된 제품 안에서 디자인 시스템을 사용했습니다.',
+    decision: '업무용 할 일과 개인 생활의 기록을 따로 흩어두지 않고, 나에게 필요한 정보를 한곳에서 관리할 수 있도록 구성했습니다.',
     role: '프론트엔드·백엔드·데이터베이스 설계와 구현.',
-    scope: '작업 관리 화면부터 API와 데이터 저장까지 직접 구현한 프로젝트입니다.',
-    image: '/images/pt-taskflow.svg',
+    scope: '프로젝트·일정·식단·메모·예약 관리와 이를 연결하는 화면, API, 데이터 저장까지 직접 구현한 프로젝트입니다.',
+    image: '/images/work/taskflow-dashboard.png',
     link: { label: 'GitHub에서 보기', url: 'https://github.com/box3101/taskflow' },
   },
 ]
+const storyOrder = ['proposal-agent', 'taskflow', 'team-agent']
+workStories.sort((a, b) => storyOrder.indexOf(a.slug) - storyOrder.indexOf(b.slug))
 export const siSlugs = new Set(['sgate-okr-solution', 'incheon-city', 'samsung-sdi-gsop', 'korean-bank-evaluation', 'yeonsu-library-website', 'incheon-jung-gu-edu', 'g4b-business-support', 'ict-ksa-system'])
