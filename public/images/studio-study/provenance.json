@@ -1,0 +1,21 @@
+{
+  "tool": "Built-in image_gen.imagegen (not CLI)",
+  "created": "2026-11-01",
+  "purpose": "Website assets only. These are not screenshots of the implemented website.",
+  "assets": [
+    {
+      "file": "architecture.webp",
+      "reference": "User supplied portfolio-3d-story-design.png, top scene",
+      "prompt": "Use case: precise-object-edit. Create a production website BACKGROUND ASSET, not a website mockup. Use ONLY the TOP wide scene of the supplied reference; discard all bottom panels and all dividers. Match its architectural composition, camera and photoreal materials extremely closely. Output a single ultrawide landscape image, 2304 x 864 (8:3 aspect ratio). Remove ALL glass panels and ALL UI, all lettering, titles, logos, arrows, buttons, labels. Keep the empty wide oval travertine podium at right, its precise placement x37%-93%, top surface around y73%-80%, base bottom y92%. Keep a large unobstructed pale sea-and-sky area on the left for separate HTML copy. Ocean horizon y57%, soft late afternoon sun at left with sparkling sea. Beautiful curved beige travertine ceiling across top, natural limestone columns tightly at left and right margins, olive branches and cream ceramic vase at far edges. Polished pale stone floor with realistic grain, pores, subtle seams, warm shadows and reflections. Sea islands in distance. Podium must be EMPTY, no objects or panels on it. Camera low and nearly level, matching top reference scene. Rich photographic detail, physically believable bounced light, restrained warm ivory and pale blue palette. No exaggerated orange sunset, no dark room. The full frame should resemble the first scene in reference with its panels and text cleanly removed. No text anywhere. Save output image to local generated image location.",
+      "output": "2048x768 PNG encoded to WebP quality 0.94"
+    },
+    {
+      "file": "glass-wave.webp",
+      "transparent_background": true,
+      "prompt": "Use case: product-mockup. Asset: isolated transparent PNG decoration for a premium blue-glass web UI. Create a single horizontal flowing ribbon sculpture of TRANSLUCENT PALE BLUE GLASS, with 3 thin overlapping curved sheets. WIDE landscape composition 1536x1024. Ribbon rises in an elegant long sine wave from lower left, curls softly downward in center, then sweeps upward high at the right before descending outside the right edge. The sculpture spans the entire image width; it is a flowing horizontal wave, not a vertical corkscrew or a loop. Very thin transparent blue glass layers, delicate dark cobalt edges, graceful broad curvature, realistic specular highlights, internal reflections and refractions, pale icy blue transparent body with stronger blue folds. Editorial architectural visualization quality, refined and light, no thick plastic. No stand, no room, no floor, no text, no UI, no shadows on a background. True transparent alpha surrounding only the ribbon. It will be placed over an airy pale blue panel. Broad S-wave silhouette as used in elegant abstract glass interface wallpapers. Keep top left almost empty for headline overlay.",
+      "output": "1536x1024 PNG encoded to WebP quality 0.94 with alpha preserved"
+    }
+  ],
+  "existing_asset": "../gallery-reference-background.webp reused as a conceptual brand panel, not a real client project screenshot",
+  "rendering_reference": "https://threejs.org/docs/pages/MeshPhysicalMaterial.html"
+}

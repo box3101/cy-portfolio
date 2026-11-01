@@ -1,195 +1,292 @@
 <script setup lang="ts">
 import * as THREE from 'three'
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js'
+
 const host = ref<HTMLDivElement>()
-const failed = ref(false)
+const artwork = ref<HTMLDivElement>()
 const ready = ref(false)
-let cleanup = () => {}
-let disposed = false
+const failed = ref(false)
+const selected = ref(0)
+const exhibits = [
+  { title: 'Proposal AI', href: '/work/proposal-agent' },
+  { title: 'UI Components', href: '/projects/ispark-ui' },
+  { title: 'Selected Work', href: '/projects' },
+]
+let renderScene = () => {}
+function choose(index: number) {
+  if (!ready.value) return
+  selected.value = (index + exhibits.length) % exhibits.length
+  renderScene()
+}
+let dispose = () => {}
+
 onMounted(async () => {
   await nextTick()
   const el = host.value
-  if (!el) return
-  let renderer: THREE.WebGLRenderer | undefined
-  const textures: THREE.Texture[] = []
+  const source = artwork.value
+  if (!el || !source) return
   const scene = new THREE.Scene()
+  const textures: THREE.Texture[] = []
+  const geometries: THREE.BufferGeometry[] = []
+  const materials: THREE.Material[] = []
+  let renderer: THREE.WebGLRenderer | undefined
+  let panelLayer: HTMLDivElement | undefined
   let observer: ResizeObserver | undefined
-  let pmrem: THREE.PMREMGenerator | undefined
   let environment: THREE.WebGLRenderTarget | undefined
-  let room: RoomEnvironment | undefined
-  cleanup = () => {
-    disposed = true; observer?.disconnect()
-    scene.traverse(obj => { if (obj instanceof THREE.Mesh) { obj.geometry.dispose(); (Array.isArray(obj.material) ? obj.material : [obj.material]).forEach(m => m.dispose()) } })
-    textures.forEach(t => t.dispose()); environment?.dispose(); pmrem?.dispose(); room?.dispose()
-    renderer?.dispose(); renderer?.domElement.remove()
+  let cancelled = false
+  const elements = Array.from(source.children) as HTMLElement[]
+  const onLost = (event: Event) => { event.preventDefault(); dispose(); failed.value = true; ready.value = false }
+  dispose = () => {
+    cancelled = true
+    renderScene = () => {}
+    observer?.disconnect()
+    elements.forEach(element => { element.removeAttribute('style'); source.appendChild(element) })
+    geometries.forEach(geometry => geometry.dispose())
+    materials.forEach(material => material.dispose())
+    textures.forEach(texture => texture.dispose())
+    environment?.dispose()
+    renderer?.domElement.removeEventListener('webglcontextlost', onLost)
+    renderer?.dispose()
+    renderer?.domElement.remove()
+    panelLayer?.remove()
   }
   try {
-    renderer = new THREE.WebGLRenderer({ antialias:true, alpha:false, powerPreference:'high-performance' })
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5)); renderer.shadowMap.enabled = true
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.2
-    renderer.domElement.setAttribute('aria-label', '원형 석재 전시대와 세 유리 패널이 있는 3D 스튜디오')
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'low-power' })
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    renderer.toneMapping = THREE.NoToneMapping
+    renderer.outputColorSpace = THREE.SRGBColorSpace
+    renderer.domElement.setAttribute('aria-hidden', 'true')
+    renderer.domElement.addEventListener('webglcontextlost', onLost)
     el.appendChild(renderer.domElement)
+    panelLayer = document.createElement('div')
+    panelLayer.className = 'panel-dom'
+    el.appendChild(panelLayer)
 
-    // === 배경: 따뜻한 골든아워 그라디언트 ===
-    const bgCanvas = document.createElement('canvas'); bgCanvas.width = 1920; bgCanvas.height = 1080
-    const bgCtx = bgCanvas.getContext('2d')!
-    const skyGrad = bgCtx.createLinearGradient(0, 0, 0, 1080)
-    skyGrad.addColorStop(0, '#7aadcc'); skyGrad.addColorStop(0.28, '#a4c5d8')
-    skyGrad.addColorStop(0.48, '#c5d5dc'); skyGrad.addColorStop(0.60, '#d4c9b8')
-    skyGrad.addColorStop(0.75, '#dfd7c5'); skyGrad.addColorStop(1.0, '#e8e0d2')
-    bgCtx.fillStyle = skyGrad; bgCtx.fillRect(0, 0, 1920, 1080)
-    const sunGrad = bgCtx.createRadialGradient(1580, 320, 0, 1580, 320, 650)
-    sunGrad.addColorStop(0, 'rgba(255,225,140,0.72)'); sunGrad.addColorStop(0.45, 'rgba(255,200,100,0.38)'); sunGrad.addColorStop(1, 'rgba(255,200,100,0)')
-    bgCtx.fillStyle = sunGrad; bgCtx.fillRect(0, 0, 1920, 1080)
-    const bgTex = new THREE.CanvasTexture(bgCanvas); bgTex.colorSpace = THREE.SRGBColorSpace
-    scene.background = bgTex; scene.fog = new THREE.Fog('#dcd4c2', 30, 75)
+    // Fixed-camera architectural plate; this is not a reconstructed building.
+    const plate = await new THREE.TextureLoader().loadAsync('/images/studio-study/architecture.webp')
+    if (cancelled) { plate.dispose(); return }
+    plate.colorSpace = THREE.SRGBColorSpace
+    textures.push(plate)
+    scene.background = plate
 
-    // === PMREM 환경맵 ===
-    pmrem = new THREE.PMREMGenerator(renderer); room = new RoomEnvironment()
-    environment = pmrem.fromScene(room, .04); scene.environment = environment.texture
-
-    // === 카메라 ===
-    const camera = new THREE.PerspectiveCamera(46, 1, .1, 100)
-    camera.position.set(0, 4.6, 11.5); camera.lookAt(0, 3.4, 0)
-
-    // === 조명 ===
-    scene.add(new THREE.HemisphereLight('#ffe5c8', '#c8b8a0', 2.0))
-    const sun = new THREE.DirectionalLight('#ffd890', 5.5)
-    sun.position.set(9, 10, -6); sun.castShadow = true
-    sun.shadow.mapSize.set(2048, 2048)
-    Object.assign(sun.shadow.camera, {left:-16, right:16, top:16, bottom:-16, near:.5, far:45})
-    sun.shadow.normalBias = .022; sun.shadow.bias = -.0001; scene.add(sun)
-    const fill = new THREE.DirectionalLight('#c8dcff', 0.9); fill.position.set(-6, 7, 9); scene.add(fill)
-    const backGlow = new THREE.PointLight('#ffb850', 4.2, 28); backGlow.position.set(8, 3.0, -6); scene.add(backGlow)
-    const rimLight = new THREE.PointLight('#ffd090', 2.2, 18); rimLight.position.set(6, 6, 2); scene.add(rimLight)
-
-    // === 텍스처: 따뜻한 석재 ===
-    const stoneCanvas = document.createElement('canvas'); stoneCanvas.width = 512; stoneCanvas.height = 512
-    const sc = stoneCanvas.getContext('2d')!; sc.fillStyle = '#e2d6c0'; sc.fillRect(0, 0, 512, 512)
-    let seed = 41; const random = () => { seed=(seed*16807)%2147483647; return (seed-1)/2147483646 }
-    for (let i = 0; i < 18000; i++) {
-      sc.fillStyle = `rgba(${random()>.5?'255,248,230':'148,128,95'},${random()*.15})`
-      sc.fillRect(random()*512, random()*512, random()*2.2+.3, random()*2.2+.3)
+    // Approximate the plate's sky, warm floor and broad window reflections.
+    const lighting = new THREE.Scene()
+    const sky = new THREE.Mesh(new THREE.SphereGeometry(100, 32, 16), new THREE.MeshBasicMaterial({ color: '#c7dcec', side: THREE.BackSide }))
+    lighting.add(sky)
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshBasicMaterial({ color: '#c6b49b', side: THREE.DoubleSide }))
+    floor.rotation.x = -Math.PI / 2; floor.position.y = -8; lighting.add(floor)
+    for (const [x, y, z, w, h, color] of [
+      [-18, 9, 14, 8, 30, '#ffffff'], [16, 14, 8, 4, 35, '#eaf4ff'], [0, 24, -8, 45, 4, '#fff5e3'],
+    ] as const) {
+      const card = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide }))
+      card.position.set(x, y, z); card.lookAt(0, 0, 0); lighting.add(card)
     }
-    const stoneTexture = new THREE.CanvasTexture(stoneCanvas); stoneTexture.colorSpace = THREE.SRGBColorSpace
-    stoneTexture.wrapS = stoneTexture.wrapT = THREE.RepeatWrapping; stoneTexture.repeat.set(3, 3); textures.push(stoneTexture)
-    const stone = new THREE.MeshStandardMaterial({color:'#f5edd8', map:stoneTexture, roughness:.74})
-    const floorMat = new THREE.MeshStandardMaterial({color:'#ede3d0', map:stoneTexture, roughness:.40, metalness:.04})
+    const pmrem = new THREE.PMREMGenerator(renderer)
+    environment = pmrem.fromScene(lighting, .035, .1, 200)
+    scene.environment = environment.texture
+    pmrem.dispose()
+    lighting.traverse(object => { if (object instanceof THREE.Mesh) { object.geometry.dispose(); object.material.dispose() } })
+    scene.add(new THREE.HemisphereLight('#edf6ff', '#b9a183', 1.7))
+    const sun = new THREE.DirectionalLight('#fff4e0', 2.2)
+    sun.position.set(-700, 500, 700); scene.add(sun)
 
-    function mesh(geometry: THREE.BufferGeometry, material: THREE.Material, x: number, y: number, z: number) {
-      const m = new THREE.Mesh(geometry, material); m.position.set(x,y,z); m.castShadow=true; m.receiveShadow=true; scene.add(m); return m
-    }
-
-    // 바닥
-    const floor = mesh(new THREE.PlaneGeometry(80, 80), floorMat, 0, -.03, 0); floor.rotation.x = -Math.PI/2
-
-    // 원형 플린스 (중앙) — 패널 크기에 맞게 반경 확장
-    mesh(new THREE.CylinderGeometry(5.4, 5.45, .40, 128), stone, 0, .20, 0)
-    mesh(new THREE.CylinderGeometry(5.35, 5.35, .022, 128), new THREE.MeshStandardMaterial({color:'#f8f0e0', roughness:.24, map:stoneTexture}), 0, .42, 0)
-
-    // 좌우 원형 기둥
-    const colMat = new THREE.MeshStandardMaterial({color:'#f0e8d5', roughness:.72, map:stoneTexture})
-    for (const [cx, cz] of [[-9.5, -2.5], [9.5, -2.5]] as [number,number][]) {
-      const col = new THREE.Mesh(new THREE.CylinderGeometry(.55, .58, 8.0, 32), colMat)
-      col.position.set(cx, 4.0, cz); col.castShadow = true; col.receiveShadow = true; scene.add(col)
-    }
-
-    // 아치 천장 — 화면 최상단에만 살짝 보이도록 높이 올림
-    const canopy = new THREE.Shape(); canopy.absarc(0, 0, 18, 0, Math.PI*2, false)
-    const hole = new THREE.Path(); hole.absarc(0, 0, 13, 0, Math.PI*2, true); canopy.holes.push(hole)
-    const roof = mesh(new THREE.ExtrudeGeometry(canopy, {depth:.40, bevelEnabled:false, curveSegments:96}), stone, 0, 10.5, -1)
-    roof.rotation.x = -Math.PI/2
-
-    // 오션 배경 평면
-    const oceanCanvas = document.createElement('canvas'); oceanCanvas.width = 512; oceanCanvas.height = 256
-    const oc = oceanCanvas.getContext('2d')!
-    const oceanGrad = oc.createLinearGradient(0, 0, 0, 256)
-    oceanGrad.addColorStop(0, '#7ab2cc'); oceanGrad.addColorStop(0.38, '#9ec8da')
-    oceanGrad.addColorStop(0.55, '#6a9fb8'); oceanGrad.addColorStop(1, '#4e8ea8')
-    oc.fillStyle = oceanGrad; oc.fillRect(0, 0, 512, 256)
-    const sunR = oc.createRadialGradient(400, 70, 0, 400, 70, 190)
-    sunR.addColorStop(0, 'rgba(255,225,140,0.75)'); sunR.addColorStop(0.55, 'rgba(255,200,100,0.38)'); sunR.addColorStop(1, 'rgba(255,200,100,0)')
-    oc.fillStyle = sunR; oc.fillRect(0, 0, 512, 256)
-    const oceanTex = new THREE.CanvasTexture(oceanCanvas); oceanTex.colorSpace = THREE.SRGBColorSpace; textures.push(oceanTex)
-    const oceanMesh = new THREE.Mesh(new THREE.PlaneGeometry(110, 40), new THREE.MeshStandardMaterial({map:oceanTex, roughness:.28, metalness:.12}))
-    oceanMesh.position.set(0, 3.2, -16); scene.add(oceanMesh)
-
-    // 유리 재질 — 청색 엣지 살리되 콘텐츠 가독성 확보
     const glass = new THREE.MeshPhysicalMaterial({
-      color:'#90cef5', metalness:0, roughness:.10,
-      transmission:.32, thickness:.44, ior:1.52,
-      envMapIntensity:2.4, clearcoat:1, clearcoatRoughness:.05
+      color: '#e3f2ff', metalness: 0, roughness: .075, transmission: 1,
+      thickness: 7, ior: 1.46, attenuationColor: new THREE.Color('#77b8ff'),
+      attenuationDistance: 160, envMapIntensity: .65, clearcoat: 1, clearcoatRoughness: .055,
+    })
+    const edge = new THREE.MeshBasicMaterial({ color: '#225b9f', transparent: true, opacity: .82 })
+    const glint = new THREE.MeshBasicMaterial({ color: '#edf9ff', transparent: true, opacity: .9 })
+    materials.push(glass, edge, glint)
+
+    // Screen-space proportions measured from the 1536 × 578 reference hero.
+    const specs = [
+      { x: 692, bottom: 425, w: 172, h: 255, yaw: -.35 },
+      { x: 944, bottom: 455, w: 334, h: 355, yaw: -.4 },
+      { x: 1262, bottom: 438, w: 247, h: 294, yaw: .19 },
+    ]
+    const panels = specs.map((spec, index) => {
+      const group = new THREE.Group(); scene.add(group)
+      const geometry = new RoundedBoxGeometry(spec.w, spec.h, 6, 4, 1.6)
+      geometries.push(geometry)
+      group.add(new THREE.Mesh(geometry, glass))
+      // Polished front and rear perimeters emphasize the slab's real thickness.
+      for (const z of [-2.4, 2.4]) {
+        for (const sign of [-1, 1]) {
+          const vertical = new THREE.CylinderGeometry(.65, .65, spec.h - 3, 8)
+          const horizontal = new THREE.CylinderGeometry(.65, .65, spec.w - 3, 8)
+          geometries.push(vertical, horizontal)
+          const v = new THREE.Mesh(vertical, z > 0 && sign < 0 ? glint : edge)
+          v.position.set(sign * (spec.w / 2 - .8), 0, z); group.add(v)
+          const h = new THREE.Mesh(horizontal, z > 0 && sign > 0 ? glint : edge)
+          h.rotation.z = Math.PI / 2; h.position.set(0, sign * (spec.h / 2 - .8), z); group.add(h)
+        }
+      }
+      const element = elements[index]!
+      panelLayer!.appendChild(element)
+      return { group, element, spec }
     })
 
-    const ribbonImage = new Image(); ribbonImage.src = '/images/gallery-ribbon.webp'
-    await Promise.all([document.fonts.ready, ribbonImage.decode().catch(()=>{})]); if (disposed) return
-
-    function artwork(kind: string) {
-      const c = document.createElement('canvas'); c.width = 1200; c.height = 1450; const ctx = c.getContext('2d')!
-      const rounded = (x:number,y:number,w:number,h:number,r:number,color:string) => { ctx.fillStyle=color; ctx.beginPath(); ctx.roundRect(x,y,w,h,r); ctx.fill() }
-      const text = (s:string,x:number,y:number,size:number,color='#183654',weight=400) => { ctx.fillStyle=color; ctx.font=`${weight} ${size}px Pretendard, sans-serif`; ctx.fillText(s,x,y) }
-      text(kind==='proposal'?'Proposal AI':kind==='design'?'UI Components':'Selected Work', 65, 105, 36, '#173653', 600)
-      text(kind==='proposal'?'01 / IDEA TO PRODUCT':kind==='design'?'02 / DESIGN LANGUAGE':'03 / SELECTED WORK', 65, 155, 18, '#506e89')
-      const gradient = ctx.createLinearGradient(50, 200, 1100, 1250); gradient.addColorStop(0, '#eff7fff2'); gradient.addColorStop(1, '#c8def0e8')
-      ctx.fillStyle = gradient; ctx.beginPath(); ctx.roundRect(55, 220, 1090, 1040, 16); ctx.fill()
-      if (kind === 'proposal') {
-        text('Proposal AI', 115, 345, 75, '#183654', 500); text('좋은 제안이,', 118, 418, 31, '#506a88'); text('더 많은 가능성을 만듭니다.', 118, 462, 31, '#506a88')
-        if (ribbonImage.naturalWidth) ctx.drawImage(ribbonImage, 525, 270, 550, 750)
-        rounded(115, 1010, 970, 130, 24, '#ffffffdc'); text('어떤 제안을 도와드릴까요?', 150, 1085, 29, '#6e879f')
-        rounded(980, 1045, 65, 65, 33, '#346de2'); text('→', 994, 1091, 39, 'white')
-        for (const [i, label] of ['제안서 조회','자료 정리','맞춤형 제안'].entries()) { rounded(120+i*315, 1170, 290, 55, 26, '#ffffff80'); text(label, 152+i*315, 1208, 22, '#57718e') }
-      } else if (kind === 'design') {
-        text('일관된 화면,', 115, 350, 64, '#183654', 600); text('자연스러운 경험.', 115, 430, 64, '#183654', 600)
-        rounded(110, 520, 460, 320, 22, '#ffffffd9'); text('Aa', 155, 710, 150, '#183654', 500); text('Pretendard', 155, 785, 27, '#71889e')
-        rounded(600, 520, 485, 320, 22, '#ffffffd9'); for (let i=0;i<4;i++) rounded(635+i*106, 615, 75, 75, 38, ['#254bb5','#457de6','#a8c7ee','#1e344c'][i]!)
-        rounded(110, 870, 975, 165, 22, '#ffffffd9'); text('작은 요소가 만드는 완성도', 150, 965, 39, '#385675', 500)
-        rounded(110, 1065, 460, 130, 22, '#ffffffd9'); rounded(160, 1107, 110, 48, 24, '#3d6cdb'); rounded(217, 1114, 33, 33, 17, 'white'); text('ON', 305, 1144, 28, '#57718e')
-        rounded(600, 1065, 485, 130, 22, '#3263d2'); text('컴포넌트 보기  ↗', 660, 1145, 32, 'white', 600)
-      } else {
-        text('경험을 쌓고,', 115, 350, 64, '#183654', 600); text('가치를 만듭니다.', 115, 430, 64, '#183654', 600)
-        const g = ctx.createLinearGradient(100, 550, 1000, 1000); g.addColorStop(0, '#b0cce1'); g.addColorStop(1, '#f2dfbd')
-        ctx.fillStyle = g; ctx.fillRect(115, 520, 970, 500)
-        ctx.strokeStyle = '#fff9ed'; ctx.lineWidth = 80; ctx.beginPath(); ctx.moveTo(280, 1020); ctx.lineTo(280, 770); ctx.bezierCurveTo(280, 540, 690, 540, 690, 770); ctx.lineTo(690, 1020); ctx.stroke()
-        ctx.fillStyle = '#6b94b3'; ctx.fillRect(790, 720, 170, 300); rounded(900, 565, 95, 95, 48, '#fff9e5')
-        text('현장의 문제를 화면으로 해결합니다.', 120, 1100, 31, '#385675'); text('업무 이해   /   설계   /   프론트엔드 개발', 120, 1170, 24, '#617b93')
-      }
-      text('CY.  —  FRONTEND · DESIGN · AI', 65, 1370, 19, '#4b6e8e')
-      const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = renderer!.capabilities.getMaxAnisotropy(); textures.push(t); return t
+    const camera = new THREE.PerspectiveCamera(30, 1, 1, 5000)
+    camera.position.z = 1000
+    const render = () => {
+      if (cancelled || failed.value) return
+      const w = el.clientWidth, h = el.clientHeight
+      if (!w || !h) return
+      const mobile = w < 760
+      const scale = mobile ? w / 850 : w / 1536
+      const vertical = mobile ? scale : Math.min(h / 578, scale * 1.25)
+      const baseline = mobile ? h * .735 : h * .755
+      const visibleWidth = mobile ? (w / h) / (8 / 3) : 1
+      plate.repeat.set(visibleWidth, .95)
+      plate.offset.set((1 - visibleWidth) * .65, .05)
+      renderer!.setSize(w, h)
+      camera.aspect = w / h
+      camera.fov = THREE.MathUtils.radToDeg(2 * Math.atan(h / 2000))
+      camera.updateProjectionMatrix()
+      camera.updateMatrixWorld()
+      panels.forEach(({ group, element, spec }, index) => {
+        const slotIndex = (index + selected.value) % specs.length
+        const slot = specs[slotIndex]!
+        const x = mobile ? (slot.x - 600) * scale + w * .08 : slot.x * scale
+        const bottom = baseline + (slot.bottom - 445) * vertical
+        group.position.set(x - w / 2, h / 2 - bottom + slot.h * vertical / 2, 0)
+        group.rotation.y = slot.yaw
+        group.scale.set(scale * slot.w / spec.w, vertical * slot.h / spec.h, scale)
+        element.classList.toggle('is-featured', slotIndex === 1)
+        element.classList.toggle('is-side', slotIndex !== 1)
+        group.updateMatrixWorld()
+        const project = (x: number, y: number) => {
+          const point = new THREE.Vector3(x, y, 3.7).applyMatrix4(group.matrixWorld).project(camera)
+          return { x: (point.x + 1) * w / 2, y: (1 - point.y) * h / 2 }
+        }
+        const tl = project(-spec.w / 2, spec.h / 2)
+        const tr = project(spec.w / 2, spec.h / 2)
+        const bl = project(-spec.w / 2, -spec.h / 2)
+        const br = project(spec.w / 2, -spec.h / 2)
+        // Keep the glass in perspective, but rasterize text at its final screen size.
+        // Integer bounds inside the four corners avoid scaled/rotated glyph textures.
+        const left = Math.ceil(Math.max(tl.x, bl.x)) + 4
+        const top = Math.ceil(Math.max(tl.y, tr.y)) + 4
+        Object.assign(element.style, {
+          left: `${left}px`, top: `${top}px`,
+          width: `${Math.floor(Math.min(tr.x, br.x)) - left - 4}px`,
+          height: `${Math.floor(Math.min(bl.y, br.y)) - top - 4}px`,
+        })
+        const shadow = el.querySelector<HTMLElement>(`.contact-${index}`)
+        if (shadow) {
+          group.updateMatrixWorld()
+          const points = [-1, 1].map(sign => {
+            const point = new THREE.Vector3(sign * spec.w / 2, -spec.h / 2, 0).applyMatrix4(group.matrixWorld).project(camera)
+            return { x: (point.x + 1) * w / 2, y: (1 - point.y) * h / 2 }
+          })
+          const [a, b] = points as [{ x: number; y: number }, { x: number; y: number }]
+          shadow.style.left = `${(a.x + b.x) / 2}px`; shadow.style.top = `${(a.y + b.y) / 2}px`
+          shadow.style.width = `${Math.hypot(b.x - a.x, b.y - a.y)}px`
+          shadow.style.transform = `translate(-50%, -30%) rotate(${Math.atan2(b.y - a.y, b.x - a.x)}rad)`
+        }
+      })
+      renderer!.render(scene, camera)
+      ready.value = true
     }
-
-    // 패널 배치 — 아트워크를 유리 뒤에 배치해 transmission으로 청색 유리 효과
-    const panels = [
-      {kind:'design',   x:-3.5, z:0.3, w:2.3, h:3.0, angle:0.16},
-      {kind:'proposal', x: 0.1, z:1.1, w:3.4, h:4.8, angle:0},
-      {kind:'projects', x: 3.8, z:0.2, w:2.6, h:3.5, angle:-0.18}
-    ]
-    for (const p of panels) {
-      const group = new THREE.Group(); group.position.set(p.x, 0.44, p.z); group.rotation.y = p.angle; scene.add(group)
-      const slab = new THREE.Mesh(new RoundedBoxGeometry(p.w, p.h, .44, 4, .038), glass)
-      slab.position.y = p.h/2 + .10; group.add(slab)
-      // 아트워크: 유리 앞면에 배치 — 가독성 유지, 유리 엣지에서 청색 보임
-      const graphic = new THREE.Mesh(new THREE.PlaneGeometry(p.w-.08, p.h-.08), new THREE.MeshBasicMaterial({map:artwork(p.kind), transparent:true, depthWrite:false, toneMapped:false}))
-      graphic.position.set(0, p.h/2+.10, .235); group.add(graphic)
-      for (const x of [-p.w/2+.16, p.w/2-.16]) {
-        const support = new THREE.Mesh(new RoundedBoxGeometry(.22, .22, .38, 2, .020), glass)
-        support.position.set(x, .11, 0); group.add(support)
-      }
-    }
-
-    const render = () => { if (!disposed && renderer) { renderer.render(scene, camera); ready.value = true } }
-    const resize = () => {
-      const w = el.clientWidth, h = el.clientHeight; if (!w || !h) return
-      renderer!.setSize(w, h); camera.aspect = w/h
-      if (w < 740) { camera.position.set(0, 5.0, 17); camera.lookAt(0, 3.4, 0) }
-      else { camera.position.set(0, 4.6, 11.5); camera.lookAt(0, 3.4, 0) }
-      camera.updateProjectionMatrix(); render()
-    }
-    observer = new ResizeObserver(resize); observer.observe(el); resize()
-    renderer.domElement.addEventListener('webglcontextlost', () => { failed.value=true; ready.value=false })
-  } catch(error) { console.error('Studio render failed', error); failed.value = true; cleanup() }
+    renderScene = render
+    observer = new ResizeObserver(render); observer.observe(el); render()
+  } catch (error) {
+    console.error('Studio rendering failed', error)
+    dispose(); failed.value = true; ready.value = false
+  }
 })
-onBeforeUnmount(() => cleanup())
+onBeforeUnmount(() => dispose())
 </script>
-<template><div ref="host" class="story-world"><p v-if="failed" class="render-status">이 환경에서는 3D 화면을 표시할 수 없습니다.</p><p v-else-if="!ready" class="render-status">스튜디오를 준비하고 있습니다</p></div></template>
-<style scoped>.story-world{position:absolute;inset:0}.story-world :deep(canvas){display:block;width:100%;height:100%}.render-status{position:absolute;right:10%;top:50%;font-size:14px;color:#29445f}.render-status span{display:block}</style>
+
+<template>
+  <div ref="host" class="story-world" :class="{ 'is-ready': ready, 'has-failed': failed }" :data-render-state="failed ? 'fallback' : ready ? 'ready' : 'loading'">
+    <div v-for="index in 3" :key="index" class="contact-shadow" :class="`contact-${index - 1}`" aria-hidden="true" />
+    <div ref="artwork" class="artwork-source">
+      <article class="panel-art design-art" aria-label="UI 컴포넌트 디자인 미리보기">
+        <h2><span class="desktop-copy">UI Components</span><span class="mobile-copy">UI Kit</span></h2>
+        <div class="swatches" aria-label="파란색과 뉴트럴 색상 팔레트"><i v-for="color in ['#234778', '#3263a9', '#94b8e0', '#cbd7e2', '#f4f6f6']" :key="color" :style="{ background: color }" /></div>
+        <div class="mini-buttons" aria-hidden="true"><span>Reset</span><span>Button</span><span>○ &nbsp;●</span></div>
+        <div class="component-grid" aria-hidden="true"><div class="mini-menu"><span>Overview <b>›</b></span><span>Projects <b>›</b></span><span>Design files <b>›</b></span><span>Settings <b>›</b></span></div><div class="type-card"><span>Aa</span><small>PRETENDARD & SERIF</small></div></div>
+        <p class="panel-caption">작은 요소부터, 일관된 경험으로.</p>
+      </article>
+      <article class="panel-art proposal-art" aria-label="Proposal AI 서비스 디자인 미리보기">
+        <div class="proposal-heading"><h2>Proposal AI</h2><p>좋은 제안이,<br><span class="desktop-copy">더 많은 가능성을 만듭니다.</span><span class="mobile-copy">가능성을 만듭니다.</span></p></div>
+        <img class="proposal-wave" src="/images/studio-study/glass-wave.webp" alt="" />
+        <div class="proposal-composer"><div class="prompt-preview"><span>어떤 제안을 도와드릴까요?</span><span class="send-mark" aria-hidden="true">→</span></div><div class="suggestions"><span>제안서 초안</span><span>자료 정리</span><span>맞춤형 제안</span><span>톤앤매너</span></div></div>
+      </article>
+      <article class="panel-art brand-art" aria-label="브랜드 웹 디자인 콘셉트 미리보기">
+        <div class="brand-visual"><img src="/images/gallery-reference-background.webp" alt="바다를 바라보는 밝은 석재 건축 공간"/><div class="brand-copy"><h2>브랜드의<br>가능성을<span class="desktop-copy"> 구체적인</span><br>경험으로</h2><span>View Project →</span></div></div>
+        <div class="brand-thumbnails" aria-hidden="true"><img v-for="position in ['18%', '55%', '88%']" :key="position" src="/images/gallery-reference-background.webp" alt="" :style="{ objectPosition: position }"/></div>
+      </article>
+    </div>
+    <p v-if="failed" class="render-status" role="status">정지 이미지와 UI로 표시하고 있습니다.</p>
+    <nav class="studio-controls" aria-label="작업 슬라이드" @keydown.left.prevent="choose(selected - 1)" @keydown.right.prevent="choose(selected + 1)">
+      <button type="button" class="slide-arrow" aria-label="이전 프로젝트" :disabled="!ready" @click="choose(selected - 1)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7M8 12h12" /></svg></button>
+      <div class="slide-dots"><button v-for="(exhibit, index) in exhibits" :key="exhibit.title" type="button" :aria-label="`${exhibit.title} 선택`" :aria-current="selected === index ? 'true' : undefined" :disabled="!ready" @click="choose(index)"><span /></button></div>
+      <button type="button" class="slide-arrow" aria-label="다음 프로젝트" :disabled="!ready" @click="choose(selected + 1)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7M4 12h12" /></svg></button>
+      <p class="slide-caption" aria-live="polite"><NuxtLink :to="exhibits[selected]!.href">{{ exhibits[selected]!.title }} <span aria-hidden="true">↗</span></NuxtLink></p>
+    </nav>
+  </div>
+</template>
+
+<style scoped>
+.story-world{position:absolute;inset:0;pointer-events:none}
+.story-world :deep(canvas),.story-world :deep(.panel-dom){position:absolute;inset:0;display:block}
+.story-world :deep(.panel-dom){z-index:2;pointer-events:none!important}
+.story-world :deep(canvas){opacity:0}.is-ready :deep(canvas){opacity:1}
+.artwork-source{position:absolute;inset:0;visibility:hidden}
+.panel-art{position:absolute;box-sizing:border-box;color:#112747;overflow:hidden;pointer-events:none!important;border-radius:3px;background:linear-gradient(130deg,#d9edff24,#cde4ff48 52%,#b2d7fc35);font-family:var(--studio-font-sans);font-weight:400;line-height:1.5}
+.panel-art h2,.panel-art p{margin:0;font-weight:400}
+.proposal-art{background:linear-gradient(130deg,#edf6ff24,#9ecbfa7a 70%,#dcecff40)}
+.proposal-heading{position:absolute;left:40px;top:66px;z-index:1}.proposal-heading h2{font-family:Georgia,'Times New Roman',serif;font-size:28px;letter-spacing:-1px;line-height:1.1}.proposal-heading p{font-size:12px;line-height:1.5;margin-top:12px;color:#42658d}
+.proposal-wave{position:absolute;width:150%;max-width:none;height:88%;object-fit:fill;left:-25%;top:6%;opacity:.83}
+.proposal-composer{position:absolute;bottom:25px;left:26px;right:26px;border:1px solid #ffffffb0;border-radius:13px;background:#f6f9ff7a;box-shadow:0 6px 22px #1e5ea313;padding:0 0 8px}
+.prompt-preview{height:55px;background:#f8fbffb3;display:flex;align-items:center;justify-content:space-between;padding:0 13px;border-radius:12px 12px 8px 8px;color:#5f7fa6;font-size:10px}
+.send-mark{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;color:white;background:#3478df;border:1px solid #2260bd;box-shadow:inset 0 0 0 1px #ffffff38;font-size:22px;font-weight:200}
+.suggestions{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:7px 8px 0}.suggestions span{font-size:11px;line-height:1.4;color:#385476;border:1px solid #ffffffa0;background:#ffffff70;border-radius:15px;padding:4px 5px;text-align:center;white-space:nowrap}
+.design-art{padding:25px 11px 15px}.design-art h2{font:12px Georgia,serif;letter-spacing:-.3px;margin-bottom:25px}.swatches{display:flex;justify-content:space-between;padding:0 4px;margin-bottom:19px}.swatches i{width:16px;height:19px;border:1px solid #ffffff80;border-radius:50%;box-shadow:0 2px 3px #1b416914}.mini-buttons{display:flex;gap:6px;margin-bottom:14px}.mini-buttons span{flex:1;text-align:center;font-size:9px;background:#ffffffb0;border:1px solid #fff9;border-radius:5px;padding:5px 0;color:#6a7891}.mini-buttons span:nth-child(2){background:#28599c;color:white;border-color:#295795}.component-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:8px}.mini-menu{display:flex;flex-direction:column;gap:4px}.mini-menu span{font-size:9px;color:#5f738a;background:#f6faff9c;border:1px solid #ffffff70;border-radius:3px;padding:7px 4px}.mini-menu b{float:right;font-weight:400}.type-card{display:flex;flex-direction:column;align-items:center;justify-content:center;background:#f4faff8c;border:1px solid #fff8;border-radius:4px}.type-card>span{font:35px Georgia,serif}.type-card small{font-size:8px;color:#56718f;margin-top:7px}.panel-caption{font-size:10px!important;color:#55708c;margin-top:14px!important}
+.brand-art{padding:22px 15px 20px}.brand-visual{height:77%;position:relative;overflow:hidden;border-radius:4px;background:#eee8df}.brand-visual>img{width:100%;height:100%;object-fit:cover;object-position:64%;filter:saturate(.7)}.brand-copy{position:absolute;inset:0;background:linear-gradient(90deg,#f3efe9db,transparent 85%);padding:48px 15px 10px}.brand-copy h2{font-size:13px;line-height:1.4;font-weight:500;letter-spacing:-.4px}.brand-copy>span{position:absolute;bottom:12px;font-size:10px}.brand-thumbnails{display:flex;gap:4px;margin-top:10px;height:21%}.brand-thumbnails img{width:calc((100% - 8px)/3);height:100%;object-fit:cover;border:1px solid #ffffffb0}
+.contact-shadow{position:absolute;height:9px;transform:translate(-50%,-35%);border-radius:50%;background:#203e60;filter:blur(3px);opacity:0;z-index:1;box-shadow:10px 5px 12px #34445b38}.is-ready .contact-shadow{opacity:.38}
+.render-status{position:absolute;bottom:42px;left:20px;font-size:12px;color:#253c52}
+.has-failed .artwork-source{visibility:visible}.has-failed .panel-art{position:absolute;top:25%;height:44%;background:#d4e7f5c9;border:1px solid #5280b9;box-shadow:2px 3px 0 #bdd5f5}.has-failed .design-art{left:40%;width:11%}.has-failed .proposal-art{left:52%;width:21%;top:14%;height:64%}.has-failed .brand-art{left:75%;width:15%;height:50%}
+@media(max-width:759px){.has-failed .design-art{left:5%;width:20%;top:55%;height:24%}.has-failed .proposal-art{left:27%;width:40%;top:45%;height:35%}.has-failed .brand-art{left:70%;width:25%;top:51%;height:28%}}
+
+/* Small panels show a legible summary instead of shrinking the entire desktop UI. */
+.mobile-copy{display:none}
+.studio-controls{position:absolute;left:65%;bottom:8%;z-index:4;display:flex;align-items:center;gap:12px;transform:translateX(-50%);pointer-events:auto;color:#25415f}
+.studio-controls button{display:grid;place-items:center;padding:0;cursor:pointer;color:inherit;background:transparent;font:inherit}
+.slide-arrow{width:44px;height:44px;border:1px solid #48607850;border-radius:50%;background:#f6faff45!important;backdrop-filter:blur(4px)}
+.slide-arrow:hover{background:#ffffffb0!important}.slide-arrow svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.slide-dots{display:flex;gap:3px}.slide-dots button{width:35px;height:44px;border:0}.slide-dots span{width:7px;height:7px;border-radius:8px;background:#8196ad70}.slide-dots [aria-current="true"] span{width:24px;background:#315ed6}
+.studio-controls button:disabled{cursor:default;opacity:.4}.slide-caption{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin:5px 0 0;font-size:11px;white-space:nowrap}.slide-caption a{color:inherit;text-decoration:none}.slide-caption a:hover{text-decoration:underline}
+.proposal-art.is-side .proposal-heading{left:10px;top:24px}.proposal-art.is-side .proposal-heading h2{font-size:18px;letter-spacing:-.6px}.proposal-art.is-side .proposal-heading p{font-size:10px;line-height:1.6}.proposal-art.is-side .suggestions{display:none}.proposal-art.is-side .prompt-preview{font-size:10px;padding:0 6px;gap:4px}.proposal-art.is-side .send-mark{width:22px;height:22px;font-size:16px}.proposal-art.is-side .proposal-composer{padding:0;bottom:12px}
+.design-art.is-featured{padding:35px 24px}.design-art.is-featured h2{font-size:24px;margin-bottom:25px}.design-art.is-featured .swatches{max-width:220px;margin-bottom:24px}.design-art.is-featured .swatches i{width:24px;height:28px}.design-art.is-featured .mini-menu span{font-size:12px;padding:8px}.design-art.is-featured .mini-buttons span{font-size:11px}.design-art.is-featured .type-card>span{font-size:48px}.brand-art.is-featured .brand-copy h2{font-size:19px}
+.proposal-heading{left:10%;top:14%}
+.proposal-heading p{color:#344f70}
+.proposal-composer{left:7%;right:7%;bottom:6%}
+.prompt-preview{font-size:12px;gap:8px;color:#385476}
+.prompt-preview>span:first-child{min-width:0}
+.send-mark{flex-shrink:0}
+.design-art{padding:20px 10px 10px}
+.design-art h2{font-size:14px;margin-bottom:17px}
+.swatches{margin-bottom:15px}
+.mini-buttons{gap:4px;margin-bottom:10px}
+.mini-menu span{padding:5px 4px;white-space:nowrap}
+.component-grid{grid-template-columns:1.3fr .7fr;gap:5px}
+.type-card small{display:none}
+.panel-caption{margin-top:9px!important;line-height:1.5}
+@media(max-width:1100px){.panel-caption{display:none}.design-art h2{font-size:12px}.mini-menu span{font-size:9px}.proposal-heading h2{font-size:24px}.proposal-heading p{font-size:11px}.suggestions span{font-size:10px}.prompt-preview{font-size:11px;padding:0 8px}.brand-copy{padding:28px 8px 8px}.brand-copy h2{font-size:12px}}
+@media(max-width:759px){
+  .studio-controls{left:50%;bottom:10%;gap:10px}.slide-caption{font-size:11px}
+  .design-art.is-featured{padding:20px 12px}.design-art.is-featured h2{font-size:17px;margin-bottom:16px}.design-art.is-featured .swatches{margin-bottom:15px}.design-art.is-featured .swatches i{width:14px;height:17px}.design-art.is-featured .type-card{height:45px}.design-art.is-featured .type-card>span{font-size:32px}
+  .brand-art.is-featured .brand-copy h2{font-size:15px}.proposal-art.is-side .proposal-heading h2{font-size:11px}.proposal-art.is-side .proposal-heading{left:6px;right:4px;top:14px}.proposal-art.is-side .proposal-heading p,.proposal-art.is-side .proposal-composer{display:none}
+  .desktop-copy{display:none}.mobile-copy{display:inline}
+  .design-art{padding:12px 7px}.design-art h2{font-size:11px;line-height:1.5;margin-bottom:10px}
+  .swatches{gap:3px;padding:0;margin-bottom:10px}.swatches i{width:7px;height:9px;flex-shrink:0}
+  .mini-buttons,.mini-menu,.panel-caption,.suggestions{display:none}.component-grid{display:block}.type-card{height:27px}.type-card>span{font-size:22px}
+  .proposal-heading{left:10px;right:8px;top:14px}.proposal-heading h2{font-size:17px;letter-spacing:-.5px}.proposal-heading p{font-size:10px;line-height:1.6;margin-top:8px}
+  .proposal-composer{bottom:10px;left:8px;right:8px;padding:0;border-radius:8px}.prompt-preview{height:42px;font-size:10px;padding:0 7px;border-radius:8px;gap:4px}.send-mark{width:20px;height:20px;font-size:16px}
+  .brand-art{padding:12px 7px}.brand-copy{padding:16px 5px 5px}.brand-copy h2{font-size:11px;line-height:1.5;letter-spacing:-.5px}.brand-copy>span{display:none}.brand-thumbnails{gap:3px;margin-top:5px}
+}
+</style>
