@@ -1,302 +1,66 @@
 <script setup lang="ts">
-const { profile } = useProfileStore()
-
-useSeoMeta({
-  title: "Cy's Code Canvas",
-  description: () =>
-    profile.value?.headline ?? 'Chanyong Lee — Frontend & Web Publishing',
-  ogTitle: "Cy's Code Canvas",
-  ogDescription: () =>
-    profile.value?.headline ?? 'Chanyong Lee — Frontend & Web Publishing',
-  ogType: 'website',
-})
-
-// 히어로는 뷰포트를 통째로 쓴다. 레이아웃의 헤더·푸터를 숨긴다.
-definePageMeta({ layout: 'hero' })
+definePageMeta({ layout: 'studio' })
+useSeoMeta({ title: '이찬용 — 화면에서 그 너머로', description: '퍼블리싱에서 프런트엔드, 디자인 시스템과 AI 에이전트까지. 이찬용의 작업 세계를 둘러보세요.' })
+useHead({ link: [{ rel: 'preload', as: 'image', href: '/images/studio-courtyard.webp' }] })
+const activeRoom = ref('')
+const backdrop = ref<HTMLElement | null>(null)
+const rooms = [
+  { id: 'design', number: '01', name: '디자인 시스템', subtitle: 'ispark-ui GitHub 바로가기', detail: '일관된 화면을 만드는 기반', href: 'https://github.com/box3101/ispark-ui', external: true },
+  { id: 'agents', number: '02', name: 'AI 에이전트 & 업무 도구', subtitle: '무엇을, 왜, 어떻게 만들었는지', detail: 'TeamAgent · 제안서 에이전트 · TaskFlow', href: '/agents', external: false },
+  { id: 'si', number: '03', name: 'SI 프로젝트', subtitle: '현장의 요구를 구현한 작업', detail: '공공 웹사이트 · 기업 업무시스템', href: '/projects?space=si', external: false },
+]
+function onPointerMove(event: PointerEvent) {
+  if (event.pointerType !== 'mouse' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+  if (backdrop.value) backdrop.value.style.transform = `scale(1.025) translate(${(event.clientX / window.innerWidth - .5) * -8}px, ${(event.clientY / window.innerHeight - .5) * -5}px)`
+}
+function resetScene() { if (backdrop.value) backdrop.value.style.transform = '' }
 </script>
-
 <template>
-  <section class="hero">
-    <!-- 배경 영상. 원본 사이트와 동일한 소스를 쓴다. -->
-    <video class="hero__video" autoplay loop muted playsinline preload="metadata" aria-hidden="true">
-      <source src="/video/main.mp4" type="video/mp4" />
-    </video>
-
-    <!-- 좌우 세로 링크. 원본의 슬라이드 전환 대신 실제 라우트로 이동한다. -->
-    <NuxtLink to="/about" class="side side--left enter-fade enter-d3" aria-label="소개 보기">About</NuxtLink>
-    <NuxtLink to="/contact" class="side side--right enter-fade enter-d3" aria-label="연락처 보기">Contact</NuxtLink>
-
-    <div class="hero__center">
-      <!--
-        소유격 "Cy's"를 한 덩어리로 강조한다. Cy 만 칠하면 뒤따르는
-        아포스트로피가 흰색으로 남아 글자가 잘린 것처럼 보인다.
-      -->
-      <h1 class="hero__title enter-drop"><span class="hero__title-me">Cy's</span> Code Canvas</h1>
-
-      <!--
-        좁은 화면에서 두 줄이 될 때 이름 중간이 끊기지 않도록 각 덩어리는
-        &nbsp;로 묶는다. 줄바꿈은 대시 뒤의 일반 공백에서만 일어난다.
-      -->
-      <p class="hero__script enter-rise enter-d1">Chanyong&nbsp;Lee&nbsp;&mdash; Frontend&nbsp;&amp;&nbsp;Web&nbsp;Publishing</p>
-
-      <!--
-        주된 행동은 Portfolio 하나다. Skills 는 about 의 기술 섹션 앵커로
-        보내 About 사이드 링크와 목적지가 겹치지 않게 한다.
-      -->
-      <div class="hero__actions enter-rise enter-d2">
-        <NuxtLink to="/projects" class="hero__cta">Portfolio</NuxtLink>
-        <NuxtLink to="/about#skills" class="hero__link">Skills</NuxtLink>
-      </div>
+  <main id="studio-main" class="courtyard" @pointermove="onPointerMove" @pointerleave="resetScene">
+    <div ref="backdrop" class="courtyard__scene" aria-hidden="true"><img src="/images/studio-courtyard.webp" alt="" fetchpriority="high" width="1672" height="941" /></div>
+    <div class="courtyard__shade" aria-hidden="true" />
+    <header class="studio-header">
+      <NuxtLink to="/" class="studio-brand" aria-label="이찬용 홈"><strong>CY.</strong><span>이찬용</span><small>프런트엔드 개발자 · AI 빌더</small></NuxtLink>
+      <nav aria-label="주요 메뉴"><NuxtLink to="/projects">전체 작업</NuxtLink><NuxtLink to="/about">나의 이야기</NuxtLink><NuxtLink to="/contact">연락하기 ↗</NuxtLink></nav>
+    </header>
+    <div class="courtyard__intro">
+      <p class="eyebrow">LEE CHANYONG / A WORLD OF WORK</p>
+      <h1>화면을 만들다 보니,<br /><span>그 너머</span>도 만들고 싶어졌습니다.</h1>
+      <p class="courtyard__description">프런트엔드 개발자 이찬용.<br class="mobile-break" /> 디자인 시스템과 AI 에이전트를 만듭니다.</p>
     </div>
-  </section>
+    <NuxtLink class="story-door" to="/about">나의 이야기 <span>↗</span></NuxtLink>
+    <nav class="room-grid" aria-label="작업 공간 선택">
+      <NuxtLink v-for="room in rooms" :key="room.id" :to="room.href" :external="room.external" :target="room.external ? '_blank' : undefined" :rel="room.external ? 'noopener noreferrer' : undefined" class="room" :class="{ 'room--active': activeRoom === room.id }" @mouseenter="activeRoom = room.id" @mouseleave="activeRoom = ''" @focus="activeRoom = room.id" @blur="activeRoom = ''">
+        <span class="room__sign"><small>{{ room.number }}</small>{{ room.name }}</span>
+        <span class="room__card"><span class="room__number">{{ room.number }}</span><span class="room__copy"><strong>{{ room.name }}</strong><span>{{ room.subtitle }}<span v-if="room.external" class="sr-only"> (새 창)</span></span></span><span class="room__arrow" aria-hidden="true">{{ room.external ? '↗' : '→' }}</span></span>
+        <span class="room__detail">{{ room.detail }}</span>
+      </NuxtLink>
+    </nav>
+    <footer class="courtyard__footer"><p><span class="live-dot" /> 공간을 선택해 둘러보세요</p><span class="footer-caption">작은 디테일부터, 새로운 도구까지.</span><NuxtLink to="/projects">전체 작업 보기 ↗</NuxtLink></footer>
+  </main>
 </template>
-
 <style scoped>
-/* ============================================================
-   히어로 — 원본 사이트 재현
-   ============================================================ */
-.hero {
-  position: relative;
-  width: 100%;
-  min-height: 100dvh;
-  /*
-    중앙정렬을 transform 이 아니라 레이아웃(flex)으로 한다.
-    전에는 .hero__center 가 top:50% + translateY(-50%) 였는데,
-    콘텐츠 높이가 소수(223.09px)라 -50% 가 -111.547px 이 되어
-    하위 요소 전체가 픽셀 경계에 걸쳤다. DPR 1 에서 CTA 의 1px
-    테두리가 곡선 구간부터 갉히던 원인이다.
-    transform 은 픽셀 스냅을 받지 않지만 레이아웃 위치는 받는다.
-  */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  background-size: cover;
-  background-position: center;
-}
-
-.hero__video {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  min-width: 100%;
-  min-height: 100%;
-  width: auto;
-  height: auto;
-  transform: translateX(-50%) translateY(-50%);
-  object-fit: cover;
-  z-index: 0;
-}
-
-/* 영상 위 검은 오버레이 — 텍스트 대비 확보 */
-.hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1;
-}
-
-/*
-  주의: `.hero > *` 같은 넓은 규칙으로 position을 주면
-  명시도(0,2,0)가 .hero__center(0,1,0)를 이겨 absolute 중앙정렬이 깨진다.
-  요소별로 명시한다.
-*/
-
-/* ===== 중앙 콘텐츠 ===== */
-.hero__center {
-  position: relative;
-  width: 100%;
-  text-align: center;
-  padding: 0 24px;
-  z-index: 2;
-}
-
-.hero__title {
-  margin: 0 0 40px;
-  font-family: var(--font-display);
-  color: #fff;
-  font-size: clamp(2rem, 5vw, 5rem);
-  line-height: 1;
-  font-weight: 900;
-  letter-spacing: -0.03em;
-}
-
-/*
-  히어로에서 브랜드 액센트가 등장하는 유일한 자리다.
-  내부 페이지가 같은 핑크를 쓰므로 여기서 한 번 눌러줘야 톤이 이어진다.
-  영상 위라 대비가 흔들릴 수 있어 옅은 그림자로 색을 붙잡는다.
-*/
-.hero__title-me {
-  color: var(--brand-accent);
-  text-shadow: 0 2px 24px rgba(var(--brand-accent-rgb), 0.35);
-}
-
-/*
-  타이틀이 Pretendard 900이라 태그라인은 등폭으로 역할을 나눈다.
-  제목이 주연이므로 이 줄은 작게 두고, 대문자에는 넓은 자간을 준다.
-*/
-.hero__script {
-  margin: 0 0 44px;
-  font-family: var(--font-body);
-  font-weight: 500;
-  /* 자간이 넓어 실제 폭은 크게 늘어난다. 자간을 조금 줄여 폭을 상쇄한다. */
-  font-size: 15px;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.78);
-  line-height: 1.6;
-  text-wrap: balance;
-}
-
-/* ===== 행동 =====
-  아래 화살표(∨)를 쓰지 않는다. 히어로는 100dvh 라 스크롤할 것이 없는데
-  ∨ 는 "아래로 더 있음"을 뜻해 실제 동작(라우트 이동)과 어긋난다.
-  방향을 뜻하는 → 만 CTA 안에 둔다.
-*/
-.hero__actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 12px 28px;
-}
-
-.hero__cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  /* 세로 패딩 대신 정수 height. 위아래 테두리가 같은 픽셀 위상에 놓인다. */
-  height: 52px;
-  padding: 0 30px;
-  border: 1px solid rgba(255, 255, 255, 0.85);
-  border-radius: 999px;
-  color: #fff;
-  font-family: var(--font-display);
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-decoration: none;
-  transition: background-color 200ms ease-out, color 200ms ease-out;
-}
-
-.hero__cta::after {
-  content: '→';
-  transition: transform 200ms ease-out;
-}
-
-.hero__cta:hover {
-  background-color: #fff;
-  color: #14151c;
-}
-
-.hero__cta:hover::after {
-  transform: translateX(4px);
-}
-
-.hero__link {
-  color: rgba(255, 255, 255, 0.72);
-  font-family: var(--font-display);
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-decoration: none;
-  padding-bottom: 2px;
-  border-bottom: 1px solid transparent;
-  transition: color 200ms ease-out, border-color 200ms ease-out;
-}
-
-.hero__link:hover {
-  color: #fff;
-  border-bottom-color: rgba(255, 255, 255, 0.6);
-}
-
-.hero__cta:focus-visible,
-.hero__link:focus-visible {
-  outline: 2px solid #fff;
-  outline-offset: 4px;
-}
-
-/* ===== 좌우 세로 링크 ===== */
-.side {
-  position: absolute;
-  top: 50%;
-  font-family: var(--font-display);
-  font-size: 17px;
-  line-height: 20px;
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: 2px;
-  text-decoration: none;
-  writing-mode: vertical-lr;
-  transition: all 200ms linear;
-  z-index: 3;
-}
-
-.side--left {
-  left: 40px;
-  transform: translateY(-50%) rotate(180deg);
-}
-
-.side--right {
-  right: 40px;
-  transform: translateY(-50%) rotate(180deg);
-}
-
-.side::before {
-  position: absolute;
-  content: '';
-  top: 50%;
-  height: 30px;
-  width: 30px;
-  margin-top: -15px;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 30px 30px;
-  opacity: 0.45;
-  transition: all 200ms linear;
-}
-
-/* rotate(180deg)된 요소라 좌우가 뒤집힌다 */
-.side--left::before {
-  left: -25px;
-  background-image: url('/icons/arrow-right.svg');
-}
-
-.side--right::before {
-  right: -25px;
-  background-image: url('/icons/arrow-left.svg');
-}
-
-.side:hover::before {
-  opacity: 1;
-}
-
-.side--left:hover::before {
-  left: -30px;
-}
-
-.side--right:hover::before {
-  right: -30px;
-}
-
-@media (max-width: 640px) {
-  .side {
-    display: none;
-  }
-  /* 좁은 화면에서는 넓은 자간이 줄바꿈을 유발하므로 함께 줄인다 */
-  .hero__script {
-    font-size: 12.5px;
-    letter-spacing: 0.14em;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero__video {
-    display: none;
-  }
-  .hero {
-    background: #1f2029;
-  }
-}
+.courtyard { position: relative; min-height: max(800px, 100svh); isolation: isolate; overflow: hidden; display: flex; flex-direction: column; }
+.courtyard__scene, .courtyard__shade { position: absolute; inset: 0; z-index: -2; }
+.courtyard__scene { transition: transform 700ms ease-out; transform: scale(1.025); }
+.courtyard__scene img { width: 100%; height: 100%; object-fit: cover; object-position: center 62%; }
+.courtyard__shade { z-index: -1; background: linear-gradient(180deg,rgba(3,14,29,.8) 0%,rgba(3,14,29,.65) 28%,transparent 51%,rgba(3,14,29,.16) 70%,rgba(3,14,29,.9) 100%); }
+.studio-header { display: flex; align-items: center; justify-content: space-between; padding: 25px 3.5vw; gap: 24px; }
+.studio-brand { display: flex; align-items: center; gap: 13px; color: #fff; text-decoration: none; white-space: nowrap; }
+.studio-brand strong { font-size: 30px; letter-spacing: -2px; line-height: 1; }.studio-brand span { font-size: 15px; }.studio-brand small { border-left: 1px solid #ffffff30; padding-left: 16px; font-size: 12px; color: #c8d3e2; }
+.studio-header nav { display: flex; gap: 28px; }.studio-header nav a { color: #e7edf5; text-decoration: none; font-size: 13px; }
+.courtyard__intro { padding: 28px 3.5vw 10px; }.eyebrow { color: #b1c3d8; font-size: 10px; letter-spacing: .2em; margin: 0 0 16px; }
+h1 { font-size: clamp(32px,3.65vw,61px); line-height: 1.29; letter-spacing: -.045em; font-weight: 700; margin: 0; text-wrap: balance; }h1 span { color: #8dd9f5; }
+.courtyard__description { font-size: clamp(13px,1.1vw,17px); color: #d3dfec; margin: 20px 0 0; }.mobile-break { display: none; }
+.story-door { position: absolute; top: 37%; right: 8%; color: #fff; text-decoration: none; font-size: 13px; border-bottom: 1px solid #ffffff50; padding: 9px 0; text-shadow: 0 2px 15px #000; }.story-door span { margin-left: 25px; }
+.room-grid { margin-top: auto; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 3.5vw; padding: 120px 5vw 55px; }
+.room { min-width: 0; text-decoration: none; color: #fff; position: relative; display: flex; flex-direction: column; justify-content: flex-end; min-height: 215px; }
+.room__sign { font-size: clamp(15px,1.45vw,23px); font-weight: 650; letter-spacing: -.02em; text-align: center; padding-bottom: 90px; text-shadow: 0 2px 20px #000; }.room__sign small { color: #8dd9f5; margin-right: 12px; }
+.room__card { display: flex; align-items: center; gap: 18px; padding: 21px 20px; border: 1px solid #b7cfdf65; background: linear-gradient(130deg,#0e1c30e8,#071322e0); backdrop-filter: blur(14px); border-radius: 12px; box-shadow: 0 15px 40px #0004; transition: transform .25s,border-color .25s,background .25s; }
+.room--active .room__card { transform: translateY(-7px); border-color: #8dd9f5; background: #0e2945ee; }.room__number { color: #8dd9f5; font-size: 20px; font-weight: 650; }.room__copy { display: flex; flex-direction: column; gap: 5px; min-width: 0; }.room__copy strong { font-size: clamp(14px,1.3vw,19px); font-weight: 600; letter-spacing: -.025em; }.room__copy>span { color: #c1cbd7; font-size: 12px; }.room__arrow { font-size: 25px; margin-left: auto; }.room__detail { text-align: center; color: #bfccda; font-size: 11px; padding-top: 13px; text-shadow: 0 2px 5px #000; }
+.courtyard__footer { display: flex; align-items: center; justify-content: space-between; padding: 19px 3.5vw; border-top: 1px solid #ffffff24; background: #06101ca8; gap: 20px; font-size: 12px; }.courtyard__footer p { margin: 0; color: #c3d0df; }.courtyard__footer a { color: white; text-decoration: none; border: 1px solid #ffffff50; border-radius: 30px; padding: 8px 20px; }.footer-caption { color: #a6b6c8; }.live-dot { display: inline-block; width: 5px; height: 5px; background: #8dd9f5; border-radius: 50%; margin-right: 10px; }.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+@media(min-width:1800px) { .courtyard { min-height: 100svh; }.room-grid { padding-bottom: 8vh; } }
+@media(max-width:900px) { .studio-brand small { display: none; }.room-grid { gap: 15px; padding-left: 24px; padding-right: 24px; }.room__card { padding: 18px 14px; gap: 10px; }.room__number { display: none; }.room__sign { font-size: 15px; }.footer-caption { display: none; } }
+@media(max-width:640px) { .courtyard { min-height: 100svh; }.courtyard__scene img { object-position: 48% center; }.courtyard__shade { background: linear-gradient(#061426b0,#06142655 30%,#061426a8 55%,#061426f5); }.studio-header { padding: 22px 22px; }.studio-brand strong { font-size: 26px; }.studio-header nav { gap: 16px; }.studio-header nav a { font-size: 12px; }.studio-header nav a:first-child { display: none; }.courtyard__intro { padding: 28px 22px 15px; }h1 { font-size: clamp(28px,6.8vw,40px); line-height: 1.42; letter-spacing: -.055em; }.eyebrow { font-size: 9px; letter-spacing: .12em; }.mobile-break { display: block; }.courtyard__description { font-size: 13px; line-height: 1.8; }.story-door { display: none; }.room-grid { display: flex; flex-direction: column; padding: 90px 22px 24px; gap: 12px; }.room { min-height: 0; }.room__sign,.room__detail { display: none; }.room__number { display: block; }.room__card { padding: 17px 18px; gap: 18px; }.room__copy strong { font-size: 16px; }.room__copy>span { font-size: 12px; }.courtyard__footer { padding: 16px 22px; font-size: 10px; }.courtyard__footer a { padding: 7px 13px; } }
+@media(prefers-reduced-motion:reduce) { .courtyard__scene { transform: none!important; }.room--active .room__card { transform: none; } }
 </style>

@@ -47,8 +47,8 @@
    차가운 뉴트럴로 바뀐 다크와 족보가 달랐다.
      ground  #f5f7fa  = background-secondary (페이지 바탕)
      surface #ffffff  = background-primary   (카드가 바탕 위로 뜬다)
-   액센트는 같은 마젠타 계열의 어두운 쪽을 쓴다. 밝은 바탕에서
-   다크용 #ec5cc0 은 대비가 모자라기 때문이다.
+   액센트는 같은 블루 계열의 어두운 쪽을 쓴다. 밝은 바탕에서
+   다크용 #8dd9f5 은 대비가 모자라기 때문이다.
    ============================================================ */
 :root {
   --brand-ground: #f5f7fa;
@@ -56,8 +56,8 @@
   --brand-line: #e2e6ed;
   --brand-ink: #1f2428;
   --brand-ink-muted: #475660;
-  --brand-accent: #b4148f;
-  --brand-accent-rgb: 180, 20, 143;
+  --brand-accent: #2463cf;
+  --brand-accent-rgb: 36, 99, 207;
   --brand-accent-ink: #ffffff;
   --brand-focus: #0e7c86;
 }
@@ -68,10 +68,10 @@
    ============================================================ */
 :root {
   --color-primary: var(--brand-accent);
-  --color-primary-hover: #9a1079;
-  --color-primary-dark: #7e0d63;
-  --color-primary-dark-hover: #660a50;
-  --color-primary-bg: #fae6f5;
+  --color-primary-hover: #1e53b2;
+  --color-primary-dark: #194593;
+  --color-primary-dark-hover: #143674;
+  --color-primary-bg: #eaf1ff;
   --color-primary-rgb: var(--brand-accent-rgb);
 
   --color-background: var(--brand-ground);
@@ -113,16 +113,16 @@
   --brand-line: #252b30;
   --brand-ink: #f5f7fa;
   --brand-ink-muted: #9dadbc;
-  --brand-accent: #ec5cc0;
-  --brand-accent-rgb: 236, 92, 192;
+  --brand-accent: #8dd9f5;
+  --brand-accent-rgb: 141, 217, 245;
   --brand-accent-ink: #09090a;
   --brand-focus: #5fe0e8;
 
   --color-primary: var(--brand-accent);
-  --color-primary-hover: #f27ccd;
-  --color-primary-dark: #c93fa0;
-  --color-primary-dark-hover: #b03489;
-  --color-primary-bg: #2c1226;
+  --color-primary-hover: #b4e9ff;
+  --color-primary-dark: #68bddf;
+  --color-primary-dark-hover: #4ca2c6;
+  --color-primary-bg: #112d40;
   --color-primary-rgb: var(--brand-accent-rgb);
 
   --color-background: var(--brand-ground);

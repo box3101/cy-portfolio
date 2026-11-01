@@ -1,184 +1,39 @@
 <script setup lang="ts">
-import { UiInput, UiEmpty } from '@leechanyong/ispark-ui'
-import type { CategoryFilter } from '~/composables/store/useProjectStore'
-
+import { UiInput, UiEmpty, UiButton, UiTab } from '@leechanyong/ispark-ui'
+import type { TabItem } from '@leechanyong/ispark-ui'
+import { siSlugs, workStories } from '~/data/workStories'
 const route = useRoute()
 const router = useRouter()
-
-const { projectList, activeCategory, categoryCounts, handleSelectProjectPage, onCategoryChange } =
-  useProjectStore()
-
-/** 필터 상태를 URL에서 읽는다. 링크로 공유 가능해야 한다. */
-const categoryFromQuery = (): CategoryFilter => {
-  const q = route.query.category
-  const valid: CategoryFilter[] = ['all', 'vue-nuxt', 'astro', 'react', 'publisher']
-  return valid.includes(q as CategoryFilter) ? (q as CategoryFilter) : 'all'
-}
-
-await useAsyncData('projects/list', async () => {
-  await handleSelectProjectPage(categoryFromQuery())
-  return true
-}, { getCachedData: () => undefined })
-
-// 필터를 누르면 URL에 반영한다. 그래야 이력서에 특정 필터 상태를 링크할 수 있다.
-const onFilterChange = async (category: CategoryFilter) => {
-  await router.replace({
-    query: category === 'all' ? {} : { category },
-  })
-  await onCategoryChange(category)
-}
-
-/*
-  검색은 서버를 다시 타지 않고 현재 분류로 받아온 목록 안에서 거른다.
-  프로젝트 수가 수십 건 규모라 왕복할 이유가 없다.
-*/
+const { projectList, projectLoadFailed, handleSelectProjectPage } = useProjectStore()
+await useAsyncData('projects/list', async () => { await handleSelectProjectPage('all'); return true }, { getCachedData: () => undefined })
 const keyword = ref('')
-
-const filteredList = computed(() => {
-  const k = keyword.value.trim().toLowerCase()
-  if (!k) return projectList.value
-
-  return projectList.value.filter((p) =>
-    [p.title, p.subtitle ?? '', ...p.tags].some((t) => t.toLowerCase().includes(k)),
-  )
-})
-
-// 분류를 바꾸면 검색어는 비운다. 결과가 0인 이유가 둘로 겹쳐 보이지 않게 한다.
-const onFilterChangeWithReset = async (category: CategoryFilter) => {
-  keyword.value = ''
-  await onFilterChange(category)
-}
-
-useSeoMeta({
-  title: 'Projects — Cy\'s Code Canvas',
-  description: '공공기관 웹사이트부터 엔터프라이즈 솔루션, 디자인 시스템까지.',
-})
+const isSi = computed(() => route.query.space === 'si')
+const category = computed(() => ['vue-nuxt','astro','react','publisher'].includes(String(route.query.category)) ? String(route.query.category) : 'all')
+const scopedProjects = computed(() => projectList.value.filter(p => !isSi.value || siSlugs.has(p.slug)))
+const tabs = computed<TabItem[]>(() => [
+  { value:'all',label:'전체' },{ value:'vue-nuxt',label:'Vue · Nuxt' },{ value:'astro',label:'Astro' },{ value:'publisher',label:'Publishing' },{ value:'react',label:'React' },
+].map(tab => ({ ...tab, count: scopedProjects.value.filter(p => tab.value === 'all' || p.category === tab.value).length })).filter(tab => tab.value === 'all' || tab.count > 0))
+const filteredList = computed(() => scopedProjects.value.filter(p => (category.value === 'all' || p.category === category.value) && [p.title,p.subtitle ?? '',...p.tags].some(t => t.toLowerCase().includes(keyword.value.trim().toLowerCase()))))
+const agentStories = computed(() => isSi.value || category.value !== 'all' ? [] : workStories.filter(p => p.slug !== 'taskflow' && `${p.name} ${p.subtitle}`.toLowerCase().includes(keyword.value.trim().toLowerCase())))
+function setCategory(value: string) { keyword.value = ''; router.replace({ query: { ...(isSi.value ? { space:'si' } : {}), ...(value === 'all' ? {} : { category:value }) } }) }
+async function retry() { await handleSelectProjectPage('all') }
+useSeoMeta({ title: () => `${isSi.value ? 'SI 프로젝트' : '전체 작업'} — 이찬용`, description: '공공기관 웹사이트부터 기업 시스템, 디자인 시스템과 AI 도구까지.' })
 </script>
-
 <template>
   <div>
-    <LayoutPageHeader
-      eyebrow="What I've built"
-      title="Projects"
-      description="공공기관 웹사이트부터 엔터프라이즈 솔루션, 디자인 시스템까지."
-    />
-
+    <LayoutPageHeader eyebrow="SELECTED WORK" :title="isSi ? 'SI 프로젝트' : '전체 작업'" :description="isSi ? '현장의 요구를 구현한 작업. 각 프로젝트에서 맡은 역할과 실제 화면을 살펴보세요.' : '화면의 디테일부터 업무를 돕는 도구까지, 직접 만들며 쌓아 온 작업입니다.'" />
     <div class="page">
-      <!--
-        검색과 분류 탭은 둘 다 "목록 좁히기" 도구다. 세로로 떼어놓으면
-        서로 다른 단계처럼 읽혀서 한 줄에 둔다.
-      -->
-      <div class="toolbar">
-        <ProjectFilter
-          class="toolbar__filter"
-          :model-value="activeCategory"
-          :counts="categoryCounts"
-          @update:model-value="onFilterChangeWithReset"
-        />
-
-        <div class="toolbar__search">
-          <UiInput
-            v-model="keyword"
-            type="search"
-            label="프로젝트 검색"
-            label-hidden
-            placeholder="프로젝트명 · 기술 스택으로 검색"
-          />
-        </div>
-      </div>
-
-      <!--
-        건수는 검색 중일 때만 띄운다.
-        검색어가 없으면 탭의 배지(categoryCounts)가 이미 같은 숫자를 보여주고,
-        결과가 0이면 아래 UiEmpty 가 이유까지 설명하므로 둘 다 중복이다.
-      -->
-      <p v-if="keyword.trim() && filteredList.length" class="page__count">
-        {{ filteredList.length }}건
-      </p>
-
-      <ul v-if="filteredList.length" class="grid">
-        <li v-for="(p, i) in filteredList" :key="p.id" v-reveal="{ delay: Math.min(i, 5) * 60 }">
-          <ProjectCard :project="p" />
-        </li>
-      </ul>
-
-      <!-- 결과 0의 원인이 검색어인지 데이터 부재인지 구분해서 안내한다 -->
-      <div v-else class="page__empty">
-        <UiEmpty
-          v-if="keyword.trim()"
-          icon="icon-search"
-          title="검색 결과가 없습니다"
-          :description="`'${keyword.trim()}' 와 일치하는 프로젝트를 찾지 못했습니다.`"
-        />
-        <UiEmpty
-          v-else
-          title="아직 공개된 프로젝트가 없습니다"
-          description="정리되는 대로 이곳에 올라옵니다."
-        />
-      </div>
+      <nav class="spaces" aria-label="작업 분야"><NuxtLink to="/projects" :aria-current="!isSi ? 'page' : undefined">전체 작업</NuxtLink><NuxtLink to="/projects?space=si" :aria-current="isSi ? 'page' : undefined">SI 프로젝트</NuxtLink><NuxtLink to="/agents">AI·업무 도구의 이야기 ↗</NuxtLink><a href="https://github.com/box3101/ispark-ui" target="_blank" rel="noopener noreferrer">ispark-ui GitHub ↗</a></nav>
+      <div class="toolbar"><UiTab :model-value="category" :tabs="tabs" aria-label="기술 분류" @update:model-value="setCategory" /><div class="search"><UiInput v-model="keyword" type="search" label="프로젝트 검색" label-hidden placeholder="프로젝트명 · 기술 검색" /></div></div>
+      <div v-if="agentStories.length" class="agent-stories"><NuxtLink v-for="story in agentStories" :key="story.slug" :to="`/work/${story.slug}`"><span>{{ story.kind }}</span><h2>{{ story.name }}</h2><p>{{ story.subtitle }}</p><small>만든 이야기 읽기 →</small></NuxtLink></div>
+      <div v-if="projectLoadFailed" class="load-error" role="status"><UiEmpty title="프로젝트를 불러오지 못했습니다" description="잠시 후 다시 시도해 주세요. 공개 여부와는 관계없는 연결 오류입니다." /><UiButton variant="secondary" @click="retry">다시 불러오기</UiButton></div>
+      <ul v-else-if="filteredList.length" class="grid"><li v-for="p in filteredList" :key="p.id"><ProjectCard :project="p" /></li></ul>
+      <div v-else class="empty"><UiEmpty :title="keyword ? '검색 결과가 없습니다' : '이 분류에 등록된 프로젝트가 없습니다'" :description="keyword ? '다른 검색어로 찾아보세요.' : '전체 작업에서 다른 프로젝트를 살펴보세요.'" /></div>
     </div>
   </div>
 </template>
-
 <style scoped>
-.page {
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 28px 24px 20px;
-}
-
-/*
-  flex-end 로 맞춰야 입력 밑변과 탭 밑줄이 같은 선에 놓인다.
-  center 로 두면 탭의 밑줄만 아래로 처져 두 요소가 어긋나 보인다.
-*/
-.toolbar {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px 24px;
-  margin-bottom: 20px;
-}
-
-.toolbar__filter {
-  flex: 1 1 320px;
-  min-width: 0;
-}
-
-.toolbar__search {
-  flex: 0 1 280px;
-}
-
-/* 좁아지면 검색이 한 줄을 통째로 쓴다 */
-@media (max-width: 720px) {
-  .toolbar__search {
-    flex: 1 1 100%;
-  }
-}
-
-.page__count {
-  font-size: var(--step--1);
-  color: var(--brand-ink-muted);
-  margin: 0 0 16px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-/* 탭이 이미 아래쪽 구분선을 갖고 있어 여기서 또 그으면 줄이 두 개가 된다 */
-.page__empty {
-  padding: 32px 0 48px;
-}
-
-@media (max-width: 860px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-}
+.page { max-width:1180px; margin:0 auto; padding:24px 24px 50px; }.spaces { display:flex; flex-wrap:wrap; gap:12px 25px; padding-bottom:24px; border-bottom:1px solid var(--brand-line); margin-bottom:25px; }.spaces a { color:var(--brand-ink-muted); text-decoration:none; font-size:12px; }.spaces a[aria-current] { color:var(--brand-accent); font-weight:650; }.toolbar { display:flex; justify-content:space-between; align-items:flex-end; gap:20px; margin-bottom:28px; flex-wrap:wrap; }.search { flex:0 1 260px; }.grid { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; }.agent-stories { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; margin-bottom:30px; }.agent-stories a { text-decoration:none; color:var(--brand-ink); padding:25px; border:1px solid var(--brand-line); border-radius:10px; background:var(--brand-surface); }.agent-stories a:hover { border-color:var(--brand-accent); }.agent-stories span { font-size:10px; color:var(--brand-accent); }.agent-stories h2 { margin:10px 0 8px; font-size:23px; letter-spacing:-.03em; }.agent-stories p { color:var(--brand-ink-muted); font-size:13px; }.agent-stories small { color:var(--brand-accent); font-size:11px; }.load-error,.empty { text-align:center; padding:30px 0; }
+@media(max-width:800px) { .grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:540px) { .grid,.agent-stories { grid-template-columns:1fr; }.search { flex-basis:100%; } }
 </style>

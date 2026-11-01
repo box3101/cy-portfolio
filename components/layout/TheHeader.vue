@@ -1,19 +1,12 @@
 <script setup lang="ts">
 const { toggleTheme, restoreTheme } = useTheme()
 
-// ===== 내비게이션 =====
-// 슬라이드 네비게이션을 쓰지 않는다. 각 화면이 고유 URL을 갖도록 라우트로 구성한다.
-//
-// 라벨은 영문이다. 이 사이트는 "뼈대(내비·페이지 제목)는 영문, 내용(설명·경력·
-// 프로젝트 본문)은 한글" 규칙을 따른다. 히어로가 완전 영문이라 여기가 한글이면
-// 첫 화면에서 내부로 들어올 때 목소리가 바뀐다. nav 라벨과 각 페이지의 h1 은
-// 반드시 같은 단어여야 한다 — 누른 것과 도착한 곳의 이름이 달라지면 안 된다.
 const navItems = [
-  { to: '/', label: 'Home' },
-  { to: '/projects', label: 'Projects' },
-  { to: '/archive', label: 'Archive' },
-  { to: '/about', label: 'About' },
-  { to: '/contact', label: 'Contact' },
+  { to: '/', label: '골목으로' },
+  { to: '/agents', label: 'AI·업무 도구' },
+  { to: '/projects', label: '전체 작업' },
+  { to: '/about', label: '나의 이야기' },
+  { to: '/contact', label: '연락' },
 ]
 
 const route = useRoute()
@@ -26,8 +19,8 @@ onMounted(() => restoreTheme())
   <header class="header">
     <div class="header__inner">
       <NuxtLink to="/" class="brand" aria-label="홈으로">
-        <span class="brand__mark">CY</span>
-        <span class="brand__name">Code Canvas</span>
+        <span class="brand__mark">CY.</span>
+        <span class="brand__name">이찬용</span>
       </NuxtLink>
 
       <nav class="nav" aria-label="주요 메뉴">
@@ -61,6 +54,7 @@ onMounted(() => restoreTheme())
 }
 
 .header__inner {
+  flex-wrap: wrap;
   max-width: 1180px;
   margin: 0 auto;
   padding: 14px 24px;
@@ -98,7 +92,7 @@ onMounted(() => restoreTheme())
 
 .nav {
   display: flex;
-  gap: 22px;
+  gap: 20px;
 }
 
 .nav__link {
@@ -150,7 +144,11 @@ onMounted(() => restoreTheme())
 
 @media (max-width: 640px) {
   .nav {
-    gap: 16px;
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    gap: 20px;
   }
   .brand__name {
     display: none;

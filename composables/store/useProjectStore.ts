@@ -10,6 +10,7 @@ export const useProjectStore = () => {
   // 모듈 스코프 ref를 쓰면 SSR에서 요청 간 상태가 공유된다(cross-request pollution).
   // useState는 Nuxt가 요청별로 격리해준다.
   const projectList = useState<Project[]>('project/list', () => [])
+  const projectLoadFailed = useState<boolean>('project/load-failed', () => false)
   const selectedProject = useState<Project | null>('project/selected', () => null)
   const activeCategory = useState<CategoryFilter>('project/category', () => 'all')
   const categoryCounts = useState<Record<string, number>>('project/counts', () => ({}))
@@ -17,7 +18,9 @@ export const useProjectStore = () => {
   // ===== 조회 =====
   const handleSelectProjectList = async () => {
     const category = activeCategory.value === 'all' ? undefined : activeCategory.value
-    projectList.value = (await fetchProjectList(category)) ?? []
+    const result = await fetchProjectList(category)
+    projectLoadFailed.value = result === null
+    projectList.value = result ?? []
   }
 
   const handleSelectProject = async (slug: string) => {
@@ -42,6 +45,7 @@ export const useProjectStore = () => {
 
   return {
     projectList,
+    projectLoadFailed,
     selectedProject,
     activeCategory,
     categoryCounts,
