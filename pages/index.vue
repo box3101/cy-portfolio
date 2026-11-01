@@ -1,49 +1,52 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'studio' })
-useSeoMeta({ title: '이찬용 — 화면에서 그 너머로', description: '퍼블리싱에서 프론트엔드, 디자인 시스템과 AI 에이전트까지. 이찬용의 작업 세계를 둘러보세요.' })
-useHead({ link: [{ rel: 'preload', as: 'image', href: '/images/studio-courtyard.webp' }] })
+useSeoMeta({ title: '이찬용 — 생각을 설계하고, 화면으로 만듭니다.', description: '프론트엔드 개발자 이찬용의 디자인 시스템, 제안서 AI 에이전트, SI 프로젝트.' })
+useHead({ link: [{ rel: 'preload', as: 'image', href: '/images/gallery-hero.webp' }] })
 </script>
 <template>
-  <main id="studio-main" class="courtyard">
-    <ClientOnly><StudioSpatialWorld /><template #fallback><nav class="loading-links" aria-label="작업 공간 선택"><a href="https://box3101.github.io/ispark-ui/" target="_blank" rel="noopener noreferrer">디자인 시스템 · Storybook ↗</a><NuxtLink to="/agents">AI 에이전트 →</NuxtLink><NuxtLink to="/projects?space=si">SI 프로젝트 →</NuxtLink></nav></template></ClientOnly>
-    <header class="studio-header">
-      <NuxtLink to="/" class="studio-brand" aria-label="이찬용 홈"><strong>CY.</strong><span>이찬용</span><small>프론트엔드 개발자 · AI 빌더</small></NuxtLink>
-      <nav aria-label="주요 메뉴"><NuxtLink to="/projects">전체 작업</NuxtLink><NuxtLink to="/about">나의 이야기</NuxtLink><NuxtLink to="/contact">연락하기 ↗</NuxtLink></nav>
+  <main id="studio-main" class="gallery">
+    <img class="gallery-scene" src="/images/gallery-hero.webp" alt="햇살이 비치는 밝은 갤러리의 푸른 유리 전시대" fetchpriority="high" />
+    <header class="gallery-header">
+      <NuxtLink to="/" class="brand" aria-label="이찬용 홈"><b>CY.</b><span>이찬용</span></NuxtLink>
+      <nav aria-label="주요 메뉴"><NuxtLink to="/projects">작업</NuxtLink><NuxtLink to="/about">소개</NuxtLink><NuxtLink to="/contact">연락 ↗</NuxtLink></nav>
     </header>
-    <div class="courtyard__intro">
-      <p class="eyebrow">LEE CHANYONG / A WORLD OF WORK</p>
-      <h1>화면을 만들다 보니,<br /><span>그 너머</span>도 만들고 싶어졌습니다.</h1>
-      <p class="courtyard__description">프론트엔드 개발자 이찬용.<br class="mobile-break" /> 디자인 시스템과 AI 에이전트를 만듭니다.</p>
-    </div>
-    <footer class="courtyard__footer"><p><span class="live-dot" /> 공간을 선택해 둘러보세요</p><span class="footer-caption">작은 디테일부터, 새로운 도구까지.</span><NuxtLink to="/projects">전체 작업 보기 ↗</NuxtLink></footer>
+    <section class="gallery-intro">
+      <p class="eyebrow">FRONTEND DEVELOPER & AI BUILDER</p>
+      <h1>생각을 설계하고,<br />화면으로 만듭니다.</h1>
+      <p class="description">기획부터 디자인, 개발까지.<br />직접 만든 제품과 그 과정을 소개합니다.</p>
+      <NuxtLink class="primary-link" to="/work/proposal-agent">제안서 에이전트 보기 <span>↗</span></NuxtLink>
+    </section>
+    <nav class="exhibits" aria-label="갤러리 작업 선택">
+      <a class="exhibit exhibit--design" href="https://box3101.github.io/ispark-ui/" target="_blank" rel="noopener noreferrer"><span class="number">01</span><div><strong>디자인 시스템</strong><small>ispark-ui · Storybook</small></div><span>↗</span></a>
+      <NuxtLink class="exhibit exhibit--proposal" to="/work/proposal-agent"><span class="number">02</span><div><strong>제안서 AI 에이전트</strong><small>기획 · 디자인 · 개발 이야기</small></div><span>↗</span></NuxtLink>
+      <NuxtLink class="exhibit exhibit--si" to="/projects?space=si"><span class="number">03</span><div><strong>SI 프로젝트</strong><small>현장에서 만든 제품들</small></div><span>↗</span></NuxtLink>
+    </nav>
+    <footer class="gallery-footer"><span>01 / THE WORK GALLERY</span><NuxtLink to="/work/team-agent">TeamAgent 둘러보기 ↗</NuxtLink><NuxtLink to="/projects">전체 작업 보기 ↗</NuxtLink></footer>
   </main>
 </template>
 <style scoped>
-.loading-links { position:absolute; bottom:20%; left:10%; right:10%; display:flex; justify-content:center; gap:25px; color:#d9edf9; font-size:13px; }
-.courtyard { background:radial-gradient(ellipse at 50% 70%,#1c3553 0,#071321 65%); min-height:100svh!important; height:max(800px,100svh); }.studio-header,.courtyard__intro { position:relative; z-index:2; pointer-events:none; }.studio-header a { pointer-events:auto; }.courtyard__intro { max-width:850px; }.courtyard__footer { margin-top:auto; position:relative; z-index:2; }h1 { font-size:clamp(28px,3vw,48px)!important; }.courtyard__description { font-size:13px!important; }
-@media(max-width:640px) { .courtyard { height:max(850px,100svh); }.courtyard__intro { padding-top:15px!important; }h1 { font-size:27px!important; } }
-
-.courtyard { position: relative; min-height: max(800px, 100svh); isolation: isolate; overflow: hidden; display: flex; flex-direction: column; }
-.courtyard__scene, .courtyard__shade { position: absolute; inset: 0; z-index: -2; }
-.courtyard__scene { transition: transform 700ms ease-out; transform: scale(1.025); }
-.courtyard__scene img { width: 100%; height: 100%; object-fit: cover; object-position: center 62%; }
-.courtyard__shade { z-index: -1; background: linear-gradient(180deg,rgba(3,14,29,.8) 0%,rgba(3,14,29,.65) 28%,transparent 51%,rgba(3,14,29,.16) 70%,rgba(3,14,29,.9) 100%); }
-.studio-header { display: flex; align-items: center; justify-content: space-between; padding: 25px 3.5vw; gap: 24px; }
-.studio-brand { display: flex; align-items: center; gap: 13px; color: #fff; text-decoration: none; white-space: nowrap; }
-.studio-brand strong { font-size: 30px; letter-spacing: -2px; line-height: 1; }.studio-brand span { font-size: 15px; }.studio-brand small { border-left: 1px solid #ffffff30; padding-left: 16px; font-size: 12px; color: #c8d3e2; }
-.studio-header nav { display: flex; gap: 28px; }.studio-header nav a { color: #e7edf5; text-decoration: none; font-size: 13px; }
-.courtyard__intro { padding: 28px 3.5vw 10px; }.eyebrow { color: #b1c3d8; font-size: 10px; letter-spacing: .2em; margin: 0 0 16px; }
-h1 { font-size: clamp(32px,3.65vw,61px); line-height: 1.29; letter-spacing: -.045em; font-weight: 700; margin: 0; text-wrap: balance; }h1 span { color: #8dd9f5; }
-.courtyard__description { font-size: clamp(13px,1.1vw,17px); color: #d3dfec; margin: 20px 0 0; }.mobile-break { display: none; }
-.story-door { position: absolute; top: 37%; right: 8%; color: #fff; text-decoration: none; font-size: 13px; border-bottom: 1px solid #ffffff50; padding: 9px 0; text-shadow: 0 2px 15px #000; }.story-door span { margin-left: 25px; }
-.room-grid { margin-top: auto; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 3.5vw; padding: 120px 5vw 55px; }
-.room { min-width: 0; text-decoration: none; color: #fff; position: relative; display: flex; flex-direction: column; justify-content: flex-end; min-height: 215px; }
-.room__sign { font-size: clamp(15px,1.45vw,23px); font-weight: 650; letter-spacing: -.02em; text-align: center; padding-bottom: 90px; text-shadow: 0 2px 20px #000; }.room__sign small { color: #8dd9f5; margin-right: 12px; }
-.room__card { display: flex; align-items: center; gap: 18px; padding: 21px 20px; border: 1px solid #b7cfdf65; background: linear-gradient(130deg,#0e1c30e8,#071322e0); backdrop-filter: blur(14px); border-radius: 12px; box-shadow: 0 15px 40px #0004; transition: transform .25s,border-color .25s,background .25s; }
-.room--active .room__card { transform: translateY(-7px); border-color: #8dd9f5; background: #0e2945ee; }.room__number { color: #8dd9f5; font-size: 20px; font-weight: 650; }.room__copy { display: flex; flex-direction: column; gap: 5px; min-width: 0; }.room__copy strong { font-size: clamp(14px,1.3vw,19px); font-weight: 600; letter-spacing: -.025em; }.room__copy>span { color: #c1cbd7; font-size: 12px; }.room__arrow { font-size: 25px; margin-left: auto; }.room__detail { text-align: center; color: #bfccda; font-size: 11px; padding-top: 13px; text-shadow: 0 2px 5px #000; }
-.courtyard__footer { display: flex; align-items: center; justify-content: space-between; padding: 19px 3.5vw; border-top: 1px solid #ffffff24; background: #06101ca8; gap: 20px; font-size: 12px; }.courtyard__footer p { margin: 0; color: #c3d0df; }.courtyard__footer a { color: white; text-decoration: none; border: 1px solid #ffffff50; border-radius: 30px; padding: 8px 20px; }.footer-caption { color: #a6b6c8; }.live-dot { display: inline-block; width: 5px; height: 5px; background: #8dd9f5; border-radius: 50%; margin-right: 10px; }.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-@media(min-width:1800px) { .courtyard { min-height: 100svh; }.room-grid { padding-bottom: 8vh; } }
-@media(max-width:900px) { .studio-brand small { display: none; }.room-grid { gap: 15px; padding-left: 24px; padding-right: 24px; }.room__card { padding: 18px 14px; gap: 10px; }.room__number { display: none; }.room__sign { font-size: 15px; }.footer-caption { display: none; } }
-@media(max-width:640px) { .courtyard { min-height: 100svh; }.courtyard__scene img { object-position: 48% center; }.courtyard__shade { background: linear-gradient(#061426b0,#06142655 30%,#061426a8 55%,#061426f5); }.studio-header { padding: 22px 22px; }.studio-brand strong { font-size: 26px; }.studio-header nav { gap: 16px; }.studio-header nav a { font-size: 12px; }.studio-header nav a:first-child { display: none; }.courtyard__intro { padding: 28px 22px 15px; }h1 { font-size: clamp(28px,6.8vw,40px); line-height: 1.42; letter-spacing: -.055em; }.eyebrow { font-size: 9px; letter-spacing: .12em; }.mobile-break { display: block; }.courtyard__description { font-size: 13px; line-height: 1.8; }.story-door { display: none; }.room-grid { display: flex; flex-direction: column; padding: 90px 22px 24px; gap: 12px; }.room { min-height: 0; }.room__sign,.room__detail { display: none; }.room__number { display: block; }.room__card { padding: 17px 18px; gap: 18px; }.room__copy strong { font-size: 16px; }.room__copy>span { font-size: 12px; }.courtyard__footer { padding: 16px 22px; font-size: 10px; }.courtyard__footer a { padding: 7px 13px; } }
-@media(prefers-reduced-motion:reduce) { .courtyard__scene { transform: none!important; }.room--active .room__card { transform: none; } }
+.gallery { position:relative; isolation:isolate; min-height:850px; height:100svh; overflow:hidden; background:#f5f1e9; color:#202734; }
+.gallery-scene { position:absolute; inset:0; z-index:-2; width:100%; height:100%; object-fit:cover; object-position:center; }
+.gallery::before { content:''; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg,#f7f3edaa,transparent 56%); pointer-events:none; }
+.gallery-header { display:flex; justify-content:space-between; align-items:center; padding:32px 4vw; }
+.brand { display:flex; gap:20px; align-items:center; }.brand b { font-size:32px; letter-spacing:-2px; }.brand span { font-size:14px; }
+a { color:inherit; text-decoration:none; }.gallery-header nav { display:flex; gap:32px; font-size:14px; }
+.gallery-intro { position:relative; margin:9vh 0 0 4vw; width:46%; }.eyebrow { font-size:10px; letter-spacing:.16em; color:#647082; margin:0 0 23px; }
+h1 { font-size:clamp(35px,3.7vw,66px); letter-spacing:-.065em; line-height:1.28; margin:0; word-break:keep-all; }
+.description { font-size:15px; line-height:1.85; color:#596575; margin:26px 0 32px; }
+.primary-link { display:inline-flex; align-items:center; gap:25px; border-radius:50px; background:#294ccc; color:white; padding:18px 25px; font-size:14px; box-shadow:0 8px 24px #294ccc22; transition:background .2s,transform .2s; }.primary-link:hover { background:#1836a6; transform:translateY(-3px); }
+.exhibit { position:absolute; display:flex; gap:13px; align-items:center; padding:16px 19px; background:#ffffffdf; backdrop-filter:blur(18px); border:1px solid #ffffff; border-radius:13px; box-shadow:0 10px 35px #37496515; transition:transform .2s,box-shadow .2s; }
+.exhibit:hover { transform:translateY(-5px); box-shadow:0 18px 36px #37496525; }.exhibit .number { color:#526697; font-size:10px; }.exhibit strong { font-size:14px; display:block; }.exhibit small { color:#657287; font-size:10px; display:block; margin-top:5px; }.exhibit>span:last-child { margin-left:8px; color:#294ccc; }
+.exhibit--design { left:27%; bottom:19%; }.exhibit--proposal { left:55%; bottom:27%; border-color:#a5c2ff; background:#f5f9fff0; }.exhibit--si { right:3%; bottom:17%; }
+.gallery-footer { position:absolute; bottom:0; left:0; right:0; display:flex; gap:30px; align-items:center; padding:26px 4vw; font-size:11px; background:linear-gradient(transparent,#f5f1e9dd); }.gallery-footer>span { margin-right:auto; font-size:9px; letter-spacing:.15em; color:#647082; }
+@media(min-width:1800px) { .gallery { min-height:100svh; } }
+@media(max-width:1000px) and (min-width:741px) { .gallery-intro { width:55%; } .exhibit--design { left:6%; }.exhibit--proposal { left:39%; }.exhibit--si { right:3%; }.exhibit { padding:14px 12px; gap:7px; } }
+@media(max-width:740px) {
+.gallery { min-height:100svh; height:auto; padding-bottom:0; }.gallery-scene { height:700px; object-position:63% center; opacity:.85; }.gallery::before { background:linear-gradient(#f7f3edf0 0%,#f7f3edcf 30%,transparent 55%,#f5f1e9 76%); }
+.gallery-header { padding:24px; }.brand { gap:12px; }.brand b { font-size:28px; }.brand span { font-size:12px; }.gallery-header nav { gap:19px; font-size:12px; }
+.gallery-intro { width:auto; margin:36px 24px 0; }.eyebrow { font-size:8px; margin-bottom:18px; }h1 { font-size:clamp(32px,8vw,48px); }.description { font-size:13px; margin:20px 0 24px; }.primary-link { font-size:13px; padding:16px 22px; }
+.exhibits { position:relative; display:grid; gap:10px; margin:220px 20px 22px; }.exhibit { position:static; padding:17px 18px; }.exhibit>span:last-child { margin-left:auto; }.exhibit--proposal { order:-1; }.exhibit strong { font-size:15px; }.exhibit small { font-size:11px; }
+.gallery-footer { position:relative; flex-wrap:wrap; gap:18px; padding:20px 24px 28px; }.gallery-footer>span { flex-basis:100%; }
+}
+@media(prefers-reduced-motion:reduce) { .exhibit,.primary-link { transition:none; }.exhibit:hover,.primary-link:hover { transform:none; } }
 </style>

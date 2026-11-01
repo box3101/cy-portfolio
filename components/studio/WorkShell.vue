@@ -5,8 +5,8 @@ defineProps<{ active?: string }>()
 <template>
   <div class="work-shell">
     <div class="room-world" aria-hidden="true"><ClientOnly><StudioSpatialWorld interior /></ClientOnly></div>
-    <header class="studio-top"><NuxtLink to="/" class="work-brand"><b>CY.</b><span>이찬용</span></NuxtLink><nav aria-label="공통 메뉴"><NuxtLink to="/">← 골목으로</NuxtLink><NuxtLink to="/projects">전체 작업</NuxtLink><NuxtLink to="/about">나의 이야기</NuxtLink></nav></header>
-    <div class="room-entry"><NuxtLink to="/agents" class="room-name"><span>02 / AGENT STUDIO</span><strong>생각을 도구로 만드는 방.</strong></NuxtLink><p>작업을 선택하고, 실제 화면과 만든 이야기를 살펴보세요.</p></div>
+    <header class="studio-top"><NuxtLink to="/" class="work-brand"><b>CY.</b><span>이찬용</span></NuxtLink><nav aria-label="공통 메뉴"><NuxtLink to="/">← 갤러리로</NuxtLink><NuxtLink to="/projects">전체 작업</NuxtLink><NuxtLink to="/about">나의 이야기</NuxtLink></nav></header>
+    <div class="room-entry"><NuxtLink to="/work/proposal-agent" class="room-name"><span>02 / AGENT STUDIO</span><strong>생각을 도구로 만드는 방.</strong></NuxtLink><p>작업을 선택하고, 실제 화면과 만든 이야기를 살펴보세요.</p></div>
     <nav class="project-doors" aria-label="프로젝트 선택"><NuxtLink v-for="(story,index) in workStories" :key="story.slug" :to="`/work/${story.slug}`" :aria-current="active===story.slug?'page':undefined" :class="{active:active===story.slug}"><span>0{{ index+1 }}</span><div><strong>{{ story.name }}</strong><small>{{ story.kind }}</small></div><b>↗</b></NuxtLink></nav>
     <div class="work-body"><main id="studio-main" class="work-content"><slot /></main><footer class="work-footer"><NuxtLink to="/agents">← 이 방의 모든 작업</NuxtLink><a href="https://box3101.github.io/ispark-ui/" target="_blank" rel="noopener noreferrer">Built with ispark-ui · Storybook ↗</a></footer></div>
   </div>

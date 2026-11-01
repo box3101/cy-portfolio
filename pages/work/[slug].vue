@@ -9,6 +9,7 @@ const story = workStories.find(item => item.slug === route.params.slug)
 if (!story) throw createError({ statusCode: 404, statusMessage: '프로젝트를 찾을 수 없습니다.' })
 const screens = workScreens[story.slug] ?? []
 const heroScreen = screens[0]
+const teamProcessScreens = [screens[1], screens[0], screens[0]]
 const tabs: TabItem[] = [...(story.slug === 'proposal-agent' ? [{label:'기획·디자인 이야기',value:'case'}] : []), { label:'만든 이유',value:'why' },{ label:'구현 방식',value:'approach' },{ label:'구현 과정',value:'process' },{ label:'내 역할',value:'role' }]
 const tabFromQuery = () => tabs.some(tab => tab.value === route.query.tab) ? String(route.query.tab) : String(tabs[0]!.value)
 const activeTab = ref(tabFromQuery())
@@ -21,7 +22,7 @@ useSeoMeta({ title: `${story.name} — 만든 이야기 | 이찬용`, descriptio
 <template>
   <StudioWorkShell :active="story.slug">
     <div class="story-heading"><div><p class="eyebrow">PROJECT STORY / {{ story.kind }}</p><h1>{{ story.name }}</h1><p class="subtitle">{{ story.subtitle }}</p></div><UiBadge variant="primary" size="sm">{{ story.kind }}</UiBadge></div>
-    <div v-if="heroScreen && activeTab !== 'case'" class="story-hero"><StudioScreenCapture :screen="heroScreen" eager /><p>직접 구현한 화면으로 살펴보는 프로젝트. 아래에서 만든 이유와 구현 방식을 이어서 확인하세요.</p></div>
+    <div v-if="heroScreen && activeTab === 'why'" class="story-hero"><StudioScreenCapture :screen="heroScreen" eager /><p>직접 구현한 화면으로 살펴보는 프로젝트. 아래에서 만든 이유와 구현 방식을 이어서 확인하세요.</p></div>
     <UiTab :model-value="activeTab" :tabs="tabs" align="left" aria-label="프로젝트 이야기" @update:model-value="changeTab" />
     <section class="tab-content" :aria-label="tabs.find(t => t.value === activeTab)?.label">
       <StudioProposalCase v-if="activeTab === 'case'" />
@@ -37,7 +38,7 @@ useSeoMeta({ title: `${story.name} — 만든 이야기 | 이찬용`, descriptio
       <template v-else-if="activeTab === 'process'">
         <p class="section-label">FROM IDEA TO IMPLEMENTATION</p><h2>{{ story.slug === 'team-agent' ? '복잡한 설정을 하나의 흐름으로.' : story.slug === 'proposal-agent' ? '분석 결과를 근거와 함께 검토하도록.' : '컴포넌트를 실제 제품으로 연결.' }}</h2>
         <p class="process-intro">화면과 기능을 구성한 과정을 세 가지 관점으로 정리했습니다.</p>
-        <ol class="process-grid"><li v-for="(step,i) in story.steps" :key="step.title"><span class="step-number">0{{ i+1 }}</span><h3>{{ step.title }}</h3><p>{{ step.body }}</p><ul class="evidence-list"><li v-for="item in step.evidence" :key="item"><span aria-hidden="true">✓</span>{{ item }}</li></ul></li></ol>
+        <ol class="process-grid" :class="{'process-grid--visual': story.slug === 'team-agent'}"><li v-for="(step,i) in story.steps" :key="step.title"><StudioScreenCapture v-if="story.slug === 'team-agent' && teamProcessScreens[i]" :screen="teamProcessScreens[i]!" /><span class="step-number">0{{ i+1 }}</span><h3>{{ step.title }}</h3><p>{{ step.body }}</p><ul class="evidence-list"><li v-for="item in step.evidence" :key="item"><span aria-hidden="true">✓</span>{{ item }}</li></ul></li></ol>
         <aside class="decision"><span>구현에서 중요하게 본 점</span><p>{{ story.decision }}</p></aside>
       </template>
       <template v-else>
@@ -49,6 +50,15 @@ useSeoMeta({ title: `${story.name} — 만든 이야기 | 이찬용`, descriptio
   </StudioWorkShell>
 </template>
 <style scoped>
+.process-grid--visual { grid-template-columns:1fr!important; }
+.process-grid--visual>li { display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); column-gap:28px; align-content:start; }
+.process-grid--visual :deep(.screen-capture) { grid-column:1; grid-row:1 / 5; }
+.process-grid--visual .step-number { justify-self:start; margin-bottom:12px; }
+.process-grid--visual>li>p { min-height:0; margin:0; }
+.process-grid--visual .evidence-list { margin-top:14px; }
+.story-hero :deep(.screen-link) { max-height:490px; overflow:auto; }
+@media(max-width:740px) { .process-grid--visual>li { display:block; }.process-grid--visual :deep(.screen-capture) { margin-bottom:24px; } }
+
 .story-hero { margin:0 0 38px; }.story-hero>p { font-size:11px; color:#78879a; margin:14px 0 0; }.screen-summary { padding:28px; background:#eef3f9; border:1px solid #dde6f1; border-radius:10px; }.screen-summary ul,.feature-copy ul { list-style:none; padding:0; margin:20px 0 25px; display:grid; gap:12px; color:#4e6683; font-size:13px; }.screen-summary li::before,.feature-copy li::before { content:'↗'; margin-right:10px; color:#2265df; }.feature-screens { display:grid; gap:45px; margin:35px 0; }.feature-screen { display:grid; grid-template-columns:minmax(180px,.8fr) minmax(0,1.8fr); gap:30px; align-items:start; padding-top:30px; border-top:1px solid #dce4ee; }.feature-copy h3 { margin-top:13px; font-size:20px; line-height:1.5; }.feature-copy p { font-size:13px; line-height:1.9; color:#5c6c80; }.feature-copy ul { font-size:12px; }
 @media(max-width:1000px) { .feature-screen { grid-template-columns:1fr; gap:12px; } }
 
