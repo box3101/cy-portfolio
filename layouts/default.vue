@@ -11,10 +11,12 @@ await useAsyncData('layout/profile', async () => {
 </script>
 
 <template>
-  <div class="shell">
+  <div class="shell journal-shell">
+    <a class="shell__skip" href="#portfolio-main">본문으로 건너뛰기</a>
     <LayoutTheCursor />
     <LayoutTheHeader />
-    <main class="shell__main">
+    <LayoutJournalMasthead />
+    <main id="portfolio-main" class="shell__main">
       <slot />
     </main>
     <LayoutTheFooter />
@@ -24,6 +26,7 @@ await useAsyncData('layout/profile', async () => {
 <style scoped>
 .shell {
   min-height: 100dvh;
+  padding-left: var(--portfolio-rail);
   display: flex;
   flex-direction: column;
 }
@@ -31,4 +34,8 @@ await useAsyncData('layout/profile', async () => {
 .shell__main {
   flex: 1;
 }
+.shell__main { min-width:0; }
+.shell__skip { position:fixed; top:-100px; left:24px; z-index:100; padding:12px 20px; background:var(--brand-surface); color:var(--brand-ink); }
+.shell__skip:focus { top:12px; }
+@media(max-width:900px) { .shell { padding-left:0; } }
 </style>

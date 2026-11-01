@@ -162,6 +162,16 @@ insert into public.career_projects (career_id, title, tech_stack, outcome, highl
 values
   -- ----- 이즈파크 AX Group -----
   ((select id from public.careers where company = '이즈파크 AX Group' and period_start = '2025-03-01'),
+   '제안서 AI 에이전트 기획·디자인·개발',
+   array['Vue3', 'Vite', 'ispark-ui'],
+   '기획·UI/UX 디자인·프론트엔드 개발을 1인으로 진행 중',
+   array[
+     'RFP 분석부터 제안 중점 선택, 스토리·목차 작성까지 이어지는 단계별 작업 흐름 설계',
+     '요구사항·평가기준과 원문 근거를 함께 검토하고 AI 제안을 직접 수정할 수 있는 UI 구현',
+     'Vue·ispark-ui 기반 문서 분석, 중점 검토, 스토리 편집 화면 기획·디자인·개발'
+   ], 5),
+
+  ((select id from public.careers where company = '이즈파크 AX Group' and period_start = '2025-03-01'),
    'TeamAgent AI 플랫폼 프론트엔드 개발',
    array['Vue3', 'TypeScript', 'Element Plus', 'Pinia'],
    null,

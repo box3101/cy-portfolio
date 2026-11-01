@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UiTab, UiBadge, UiEmpty, UiModal, UiButton } from '@leechanyong/ispark-ui'
+import { UiTab, UiBadge, UiEmpty, UiModal } from '@leechanyong/ispark-ui'
 import type { TabItem } from '@leechanyong/ispark-ui'
 import type { Archive, ArchiveDocType } from '~/types/database'
 import type { DocTypeFilter } from '~/composables/store/useArchiveStore'
@@ -52,7 +52,8 @@ watch(() => [route.query.document, archiveList.value] as const, () => {
   if (doc) openViewer(doc)
 }, { immediate: true })
 const viewerUrl = computed(() => publicFileUrl('documents', selectedArchive.value?.file_path))
-const thumbUrl = (a: Archive) => publicFileUrl('thumbnails', a.thumbnail_path)
+const thumbUrl = (a: Archive) => archivePreviewFor(a.file_path)?.src ?? publicFileUrl('thumbnails', a.thumbnail_path)
+const failedThumbnails = ref(new Set<string>())
 
 /** 2023-04-01 → 2023.04 */
 const formatIssued = (d: string | null) => (d ? d.slice(0, 7).replace('-', '.') : null)
@@ -64,14 +65,15 @@ useSeoMeta({
 </script>
 
 <template>
-  <div>
+  <div class="archive-page">
     <LayoutPageHeader
       eyebrow="Proof of work"
       title="자료실"
       description="웹 접근성·품질 인증서와 심사 결과서, 발표 자료."
     />
 
-    <div class="page"><UiButton as="a" href="/about#credentials" class="archive-back" variant="ghost" size="xlg">← 소개·경력</UiButton>
+    <div class="page">
+      <div class="archive-toolbar">
       <UiTab
         v-if="archiveList.length"
         :model-value="activeDocType"
@@ -81,19 +83,22 @@ useSeoMeta({
         aria-label="자료 분류 필터"
         @update:model-value="onTabChange"
       />
-
-      <p v-if="archiveList.length" class="page__count">{{ filteredList.length }}건</p>
+      <NuxtLink to="/about#credentials" class="archive-back">소개·경력으로 ↗</NuxtLink>
+      </div>
+      <p v-if="archiveList.length" class="page__count"><span>DOCUMENT COLLECTION</span><span>{{ filteredList.length }}건의 기록</span></p>
 
       <ul v-if="filteredList.length" class="grid">
-        <li v-for="(a, i) in filteredList" :key="a.id" v-reveal="{ delay: Math.min(i, 5) * 60 }">
+        <li v-for="a in filteredList" :key="a.id">
           <!--
             카드 전체가 버튼이다. 파일 링크를 그대로 노출하지 않고 모달 뷰어로 연다
             — 원본 PDF 는 뷰어 안에서만 로드한다는 설계를 따른다.
           -->
           <button type="button" class="doc" @click="openViewer(a)">
             <span class="doc__thumb">
-              <img v-if="thumbUrl(a)" :src="thumbUrl(a)!" :alt="`${a.title} 미리보기`" loading="lazy" />
-              <span v-else class="doc__glyph" aria-hidden="true">PDF</span>
+              <img v-if="thumbUrl(a) && !failedThumbnails.has(a.id)" :src="thumbUrl(a)!" :alt="`${a.title} 첫 페이지`" loading="lazy" @error="failedThumbnails.add(a.id)" />
+              <span v-else class="doc__glyph" aria-hidden="true"><span>PDF</span><i /><i /><i /></span>
+              <span class="doc__file-label">PDF <template v-if="archivePreviewFor(a.file_path)">· {{ archivePreviewFor(a.file_path)!.pages }}P</template></span>
+              <span class="doc__open" aria-hidden="true">문서 읽기 ↗</span>
             </span>
 
             <span class="doc__body">
@@ -154,24 +159,36 @@ useSeoMeta({
 </template>
 
 <style scoped>
-.archive-back { display:inline-block; margin-bottom:25px; font-size:13px; color:var(--brand-accent); }
+.archive-page :deep(.ph__inner) { padding-top:20px; padding-bottom:12px; }
+.archive-page :deep(.ph__title) { font-size:clamp(28px,3vw,40px); }
+.archive-page :deep(.ph__desc) { margin-top:8px; }
+.archive-toolbar { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.archive-toolbar :deep(.ui-tab) { flex:1; min-width:0; width:auto; overflow-x:auto; overflow-y:hidden; }
+.archive-toolbar :deep(.ui-tab-inner) { width:max-content; min-width:100%; }
+.archive-toolbar :deep(.ui-tab-item) { flex-shrink:0; white-space:nowrap; }
+.archive-back { flex-shrink:0; display:flex; align-items:center; min-height:44px; font-size:12px; color:var(--brand-ink-muted); text-decoration:none; }
+.archive-back:hover { color:var(--brand-accent); }
 .page {
   max-width: 1180px;
   margin: 0 auto;
-  padding: 36px 24px 20px;
+  padding: 8px 24px 20px;
 }
 
 .page__count {
   font-size: var(--step--1);
   color: var(--brand-ink-muted);
   font-variant-numeric: tabular-nums;
-  margin: 18px 0 14px;
+  margin: 12px 0;
+  display:flex;
+  justify-content:space-between;
+  font-size:10px;
+  letter-spacing:.05em;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px 18px;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -192,9 +209,10 @@ useSeoMeta({
   font: inherit;
   color: inherit;
   cursor: pointer;
-  background: var(--brand-surface);
-  border: 1px solid var(--brand-line);
-  border-radius: 12px;
+  background: transparent;
+  border: 0;
+  border-bottom:1px solid var(--brand-line);
+  border-radius: 0;
   overflow: hidden;
   padding: 0;
   transition: border-color 0.15s, transform 0.15s;
@@ -215,20 +233,32 @@ useSeoMeta({
   display: grid;
   place-items: center;
   aspect-ratio: 4 / 3;
-  border-bottom: 1px solid var(--brand-line);
-  background: color-mix(in oklab, var(--brand-line) 30%, var(--brand-surface));
+  border: 1px solid var(--brand-line);
+  background: radial-gradient(ellipse at 20% 0%,var(--brand-surface),transparent 70%),color-mix(in oklab, var(--brand-line) 35%, var(--brand-ground));
   overflow: hidden;
 }
 
 .doc__thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top center;
+  position:absolute;
+  top:16px;
+  left:20px;
+  width:calc(100% - 40px);
+  height:calc(100% - 48px);
+  object-fit:contain;
+  filter:drop-shadow(3px 5px 5px #282b3024);
+  transition:transform .2s ease;
 }
+.doc:hover .doc__thumb img,.doc:focus-visible .doc__thumb img { transform:translateY(-3px); }
+.doc__file-label,.doc__open { position:absolute; bottom:10px; font-size:9px; letter-spacing:.05em; color:var(--brand-ink-muted); }
+.doc__file-label { left:12px; }.doc__open { right:12px; }
 
 /* 썸네일이 없을 때. 빈 회색 상자보다 무엇인지 말해주는 편이 낫다. */
 .doc__glyph {
+  display:grid;
+  align-content:start;
+  gap:10px;
+  width:40%;
+  height:65%;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.14em;
@@ -236,21 +266,22 @@ useSeoMeta({
   background: var(--brand-surface);
   border: 1px solid var(--brand-line);
   padding: 7px 14px;
-  border-radius: 8px;
+  border-radius: 0;
 }
+.doc__glyph i { display:block; height:2px; background:var(--brand-line); }
 
 .doc__body {
   display: grid;
   gap: 7px;
   justify-items: start;
   align-content: start;
-  padding: 15px 16px 17px;
+  padding: 12px 0 16px;
 }
 
 .doc__title {
-  font-size: var(--step-1);
+  font-size: 15px;
   font-weight: 600;
-  line-height: 1.35;
+  line-height: 1.55;
   letter-spacing: -0.012em;
 }
 
@@ -283,13 +314,15 @@ useSeoMeta({
   color: var(--brand-accent);
 }
 
-@media (max-width: 860px) {
+@media (max-width: 1350px) { .grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media (max-width: 1100px) {
   .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 560px) {
+  .archive-toolbar { flex-wrap:wrap; gap:0; }.archive-toolbar :deep(.ui-tab) { flex-basis:100%; }.archive-back { min-height:32px; margin-left:auto; }
   .grid {
     grid-template-columns: 1fr;
   }

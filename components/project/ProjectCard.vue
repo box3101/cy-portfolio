@@ -65,12 +65,11 @@ const brandColor = computed(() => brandColorMap[props.project.slug] ?? 'rgba(20,
       </span>
 
       <!-- 로고 이미지 -->
-      <img
+      <ProjectLogoExhibit
         v-if="logoSrc"
         :src="logoSrc"
-        :alt="project.title"
-        class="card__logo"
-        loading="lazy"
+        :title="project.title"
+        :slug="project.slug"
       />
       <span v-else class="card__glyph">{{ project.title }}</span>
 
@@ -135,17 +134,6 @@ const brandColor = computed(() => brandColorMap[props.project.slug] ?? 'rgba(20,
   overflow: hidden;
 }
 
-/* 로고 이미지 */
-.card__logo {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: scale-down;
-  padding: 14% 12%;
-}
-
 /* 로고 없을 때 텍스트 폴백 */
 .card__glyph {
   position: relative;
@@ -176,8 +164,12 @@ const brandColor = computed(() => brandColorMap[props.project.slug] ?? 'rgba(20,
   text-align: center;
 }
 
-.card:hover .card__overlay {
+.card:focus-visible .card__overlay {
   opacity: 1;
+}
+
+@media (hover: hover) {
+  .card:hover .card__overlay { opacity:1; }
 }
 
 .card__overlay-title {

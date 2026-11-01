@@ -1,15 +1,17 @@
 <script setup lang="ts">
+import JournalMasthead from '~/components/layout/JournalMasthead.vue'
 import { portfolioNavigation } from '~/data/navigation'
 import { workStories } from '~/data/workStories'
 defineProps<{ active?: string }>()
 </script>
 <template>
-  <div class="work-shell">
+  <div class="work-shell journal-shell">
 
-    <header class="studio-top"><NuxtLink to="/" class="work-brand"><b>CY.</b><span>이찬용</span></NuxtLink><nav aria-label="공통 메뉴"><NuxtLink v-for="item in portfolioNavigation" :key="item.to" :to="item.to">{{ item.label }}</NuxtLink></nav></header>
+    <LayoutTheHeader />
+    <JournalMasthead />
 
     <nav class="project-doors" aria-label="프로젝트 선택"><NuxtLink v-for="(story,index) in workStories" :key="story.slug" :to="`/work/${story.slug}`" :aria-current="active===story.slug?'page':undefined" :class="{active:active===story.slug}"><span>0{{ index+1 }}</span><div><strong>{{ story.name }}</strong><small>{{ story.kind }}</small></div><b>↗</b></NuxtLink></nav>
-    <div class="work-body"><main id="studio-main" class="work-content"><slot /></main><footer class="work-footer"><NuxtLink to="/agents">← AI 도구 모아보기</NuxtLink><a href="https://box3101.github.io/ispark-ui/" target="_blank" rel="noopener noreferrer">Built with ispark-ui · Storybook ↗</a></footer></div>
+    <div class="work-body"><main id="studio-main" class="work-content"><slot /></main><footer class="work-footer"><span>이찬용 · 프로젝트 기록</span><a href="https://box3101.github.io/ispark-ui/" target="_blank" rel="noopener noreferrer">UI 컴포넌트 · Storybook ↗</a></footer></div>
   </div>
 </template>
 <style scoped>
@@ -22,4 +24,7 @@ defineProps<{ active?: string }>()
 /* 첫 화면 캡처가 먼저 보이도록 상단 안내와 장식을 줄였습니다. */
 .work-shell { background:#f5f3ee; padding-bottom:32px; }.studio-top { color:#273447; max-width:1280px; margin:0 auto; padding:24px 28px; }.project-doors { margin:14px auto 0; gap:12px; perspective:none; }.project-doors a { background:#ffffff; color:#334358; box-shadow:none; backdrop-filter:none; border-color:#dde3eb; border-radius:10px; padding:14px 18px; }.project-doors a:hover { transform:none; background:#f2f6fc; border-color:#b1c7e8; }.project-doors a.active { background:#edf3ff; color:#2458ad; border-color:#acc6ed; }.project-doors a>span { color:#6382a7; }.project-doors small { color:#758396; }.work-body { margin-top:22px; background:#fff; border-color:#e0e5ec; box-shadow:0 12px 35px #273c5710; border-radius:16px; }.work-content { padding:32px 40px 40px; }
 @media(max-width:740px) { .studio-top { padding:20px; flex-wrap:wrap; gap:18px; }.studio-top nav { width:100%; justify-content:space-between; font-size:12px; }.project-doors { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); padding:0 12px; gap:6px; }.project-doors a { padding:12px 8px; justify-content:center; gap:0; }.project-doors a>span,.project-doors small,.project-doors b { display:none; }.project-doors strong { font-size:12px; }.work-content { padding:25px 20px 30px; }.work-body { margin:18px 12px 0; } }
+
+.work-shell { padding-left:var(--portfolio-rail); padding-top:32px; background:var(--brand-ground); color:var(--brand-ink); }
+@media(max-width:900px) { .work-shell { padding-left:0; padding-top:0; } }
 </style>

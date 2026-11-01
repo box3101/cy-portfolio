@@ -1,0 +1,50 @@
+/* The journal belongs to interior pages; the 3D entrance keeps its own palette. */
+.journal-shell {
+  --journal-serif: Georgia, 'Times New Roman', serif;
+  --journal-heading: var(--font-display);
+  --brand-ground: #f2eee5;
+  --brand-surface: #fbf8f1;
+  --brand-ink: #292c29;
+  --brand-ink-muted: #62645e;
+  --brand-line: #cfccbf;
+  --journal-rule: #777a70;
+  --color-background: var(--brand-ground);
+  --color-surface: var(--brand-surface);
+  --color-border: var(--brand-line);
+  --color-text-heading: var(--brand-ink);
+  --color-text-primary: var(--brand-ink-muted);
+  background-color:var(--brand-ground);
+  background-image:radial-gradient(#8b806c10 .6px,transparent .6px),linear-gradient(90deg,#98876d05,transparent 30%,#fff4 70%,transparent);
+  background-size:4px 4px,100% 100%;
+  color:var(--brand-ink);
+}
+:root[data-theme='dark'] .journal-shell {
+  --brand-ground:#1b1d1b; --brand-surface:#242722; --brand-ink:#e9e5d9;
+  --brand-ink-muted:#bbbcb0; --brand-line:#41453d; --journal-rule:#85897b;
+  background-image:radial-gradient(#c4b79d0a .6px,transparent .6px);
+}
+.journal-shell .header { background:var(--brand-ground); }
+.journal-shell .shell__main > div > .page { width:100%; max-width:none; padding-inline:32px; }
+.journal-shell .ph { background:transparent; }
+.journal-shell .ph__inner { width:100%; max-width:none; padding-top:28px; padding-bottom:24px; }
+.journal-shell .ph__title { font-family:var(--journal-heading); font-size:clamp(30px,3.4vw,48px); letter-spacing:-.045em; font-weight:750; line-height:1.35; }
+.journal-shell .ph__eyebrow { font-size:9px; margin-bottom:10px; color:var(--brand-accent); }
+.journal-shell .ph__desc { font-size:14px; margin-top:12px; }
+.journal-shell .footer { border-top:3px double var(--journal-rule); margin:56px 32px 0; }
+.journal-shell .footer__inner { max-width:none; padding:24px 0 40px; }
+.journal-shell .footer__name::after { content:' / THE CY JOURNAL'; font-family:var(--journal-serif); font-size:12px; font-weight:400; letter-spacing:.04em; }
+.journal-shell .chapter { border-top:1px solid var(--brand-line); padding-top:24px; }
+.journal-shell .page > .chapter:first-child { margin-top:12px; }
+.journal-shell .chapter-title { font-family:var(--journal-heading); }
+.journal-shell .journey > article,.journal-shell .kit-card { border-radius:0; box-shadow:none; }
+.journal-shell .channels { border-top:3px double var(--journal-rule); }
+.journal-shell .footer { position:relative; isolation:isolate; }
+.journal-shell .footer::before { content:''; position:absolute; inset:0; z-index:-1; background:url('/images/journal-background.webp') center bottom / cover no-repeat; opacity:.18; pointer-events:none; }
+:root[data-theme='dark'] .journal-shell .footer::before { opacity:.06; }
+.journal-shell .archive-card { border-radius:0; }
+.work-shell.journal-shell { padding-top:0; background-color:var(--brand-ground); }
+.journal-shell .project-doors { max-width:none; margin:24px 32px 0; padding-inline:0; }
+.journal-shell .project-doors a { border-radius:0; background:transparent; border-color:var(--brand-line); color:var(--brand-ink); }
+.journal-shell .project-doors a.active { background:var(--brand-surface); border-color:var(--brand-accent); color:var(--brand-accent); }
+.journal-shell .work-body { max-width:none; margin-inline:32px; border-radius:0; box-shadow:none; border-color:var(--brand-line); background:var(--brand-surface); color:var(--brand-ink); }
+@media(max-width:900px) { .journal-shell .shell__main > div > .page { padding-inline:24px; }.journal-shell .footer { margin-inline:24px; }.journal-shell .project-doors,.journal-shell .work-body { margin-inline:24px; } }

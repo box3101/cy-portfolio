@@ -51,13 +51,14 @@
    다크용 #8dd9f5 은 대비가 모자라기 때문이다.
    ============================================================ */
 :root {
-  --brand-ground: #f5f7fa;
+  --portfolio-rail: 210px;
+  --brand-ground: #f5f3ee;
   --brand-surface: #ffffff;
-  --brand-line: #e2e6ed;
+  --brand-line: #deddd7;
   --brand-ink: #1f2428;
   --brand-ink-muted: #475660;
-  --brand-accent: #2463cf;
-  --brand-accent-rgb: 36, 99, 207;
+  --brand-accent: #294ccc;
+  --brand-accent-rgb: 41, 76, 204;
   --brand-accent-ink: #ffffff;
   --brand-focus: #0e7c86;
 }
