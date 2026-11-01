@@ -30,6 +30,7 @@ await step('사전: anon/authenticated 역할 생성', `
 
 await step('0001_init.sql', read('migrations/0001_init.sql'))
 await step('0002_rls.sql', read('migrations/0002_rls.sql'))
+await step('0003_career_projects.sql', read('migrations/0003_career_projects.sql'))
 await step('seed.sql (1회차)', read('seed.sql'))
 await step('seed.sql (2회차 — 멱등성 확인)', read('seed.sql'))
 

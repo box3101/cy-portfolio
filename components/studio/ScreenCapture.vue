@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { WorkScreen } from '~/data/workScreens'
-defineProps<{ screen: WorkScreen; eager?: boolean }>()
+defineProps<{ screen: WorkScreen; eager?: boolean; hideTitle?: boolean }>()
 </script>
 <template>
   <figure class="screen-capture">
@@ -8,7 +8,7 @@ defineProps<{ screen: WorkScreen; eager?: boolean }>()
       <img :src="screen.src" :alt="screen.alt" :loading="eager ? 'eager' : 'lazy'" decoding="async" />
       <span class="expand">원본 크게 보기 ↗</span>
     </a>
-    <figcaption><span>{{ screen.title }}</span><small>실제 개발 화면 캡처</small></figcaption>
+    <figcaption><span v-if="!hideTitle">{{ screen.title }}</span><small>실제 개발 화면 캡처</small></figcaption>
   </figure>
 </template>
 <style scoped>
