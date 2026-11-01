@@ -38,9 +38,11 @@ try {
   await page.locator('.cta').focus()
   await page.keyboard.press('Enter')
   await page.waitForURL('**/work/proposal-agent')
+  await page.locator('.story-heading').waitFor()
   console.log('CTA navigation passed')
   await page.goBack({ waitUntil: 'domcontentloaded' })
   await page.locator('[data-render-state="ready"]').waitFor()
+  await page.locator('[data-render-state="ready"] canvas').waitFor()
   assert.equal(await page.locator('.story-world canvas').count(), 1)
   assert.equal(await page.locator('.panel-dom article').count(), 3)
 
