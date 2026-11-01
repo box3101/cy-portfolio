@@ -53,7 +53,7 @@ const thumbUrl = (a: Archive) => publicFileUrl('thumbnails', a.thumbnail_path)
 const formatIssued = (d: string | null) => (d ? d.slice(0, 7).replace('-', '.') : null)
 
 useSeoMeta({
-  title: "Archive — Cy's Code Canvas",
+  title: "인증·증빙 자료 — 이찬용",
   description: '웹 접근성·품질 인증서와 심사 결과서, 발표 자료.',
 })
 </script>
@@ -62,11 +62,11 @@ useSeoMeta({
   <div>
     <LayoutPageHeader
       eyebrow="Proof of work"
-      title="Archive"
+      title="인증·증빙 자료"
       description="웹 접근성·품질 인증서와 심사 결과서, 발표 자료."
     />
 
-    <div class="page">
+    <div class="page"><NuxtLink to="/about#credentials" class="archive-back">← 나의 이야기 · 경력 자료</NuxtLink>
       <UiTab
         v-if="archiveList.length"
         :model-value="activeDocType"
@@ -149,6 +149,7 @@ useSeoMeta({
 </template>
 
 <style scoped>
+.archive-back { display:inline-block; margin-bottom:25px; font-size:13px; color:var(--brand-accent); }
 .page {
   max-width: 1180px;
   margin: 0 auto;

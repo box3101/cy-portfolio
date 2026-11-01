@@ -23,7 +23,7 @@ useSeoMeta({ title: () => `${isSi.value ? 'SI 프로젝트' : '전체 작업'} �
   <div>
     <LayoutPageHeader eyebrow="SELECTED WORK" :title="isSi ? 'SI 프로젝트' : '전체 작업'" :description="isSi ? '현장의 요구를 구현한 작업. 각 프로젝트에서 맡은 역할과 실제 화면을 살펴보세요.' : '화면의 디테일부터 업무를 돕는 도구까지, 직접 만들며 쌓아 온 작업입니다.'" />
     <div class="page">
-      <nav class="spaces" aria-label="작업 분야"><NuxtLink to="/projects" :aria-current="!isSi ? 'page' : undefined">전체 작업</NuxtLink><NuxtLink to="/projects?space=si" :aria-current="isSi ? 'page' : undefined">SI 프로젝트</NuxtLink><NuxtLink to="/agents">AI·업무 도구의 이야기 ↗</NuxtLink><a href="https://box3101.github.io/ispark-ui/" target="_blank" rel="noopener noreferrer">ispark-ui Storybook ↗</a><a href="https://github.com/box3101/ispark-ui" target="_blank" rel="noopener noreferrer">소스 코드 · GitHub ↗</a></nav>
+
       <div class="toolbar"><UiTab :model-value="category" :tabs="tabs" aria-label="기술 분류" @update:model-value="setCategory" /><div class="search"><UiInput v-model="keyword" type="search" label="프로젝트 검색" label-hidden placeholder="프로젝트명 · 기술 검색" /></div></div>
       <div v-if="agentStories.length" class="agent-stories"><NuxtLink v-for="story in agentStories" :key="story.slug" :to="`/work/${story.slug}`"><span>{{ story.kind }}</span><h2>{{ story.name }}</h2><p>{{ story.subtitle }}</p><small>만든 이야기 읽기 →</small></NuxtLink></div>
       <div v-if="projectLoadFailed" class="load-error" role="status"><UiEmpty title="프로젝트를 불러오지 못했습니다" description="잠시 후 다시 시도해 주세요. 공개 여부와는 관계없는 연결 오류입니다." /><UiButton variant="secondary" @click="retry">다시 불러오기</UiButton></div>

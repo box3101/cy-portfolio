@@ -13,6 +13,7 @@ useSeoMeta({
   description: () => profile.value?.headline ?? '이찬용 프론트엔드 개발자 소개',
 })
 
+const resumeUrl = computed(() => publicFileUrl('profile', profile.value?.resume_path))
 const skillGroups = computed(() => {
   // 라벨은 영문이다. 히어로의 'Skills' 링크가 이 섹션으로 들어오므로
   // 상위 제목(Skills)과 목소리를 맞춘다. 기술 이름 자체도 대부분 영문이다.
@@ -41,6 +42,7 @@ const skillGroups = computed(() => {
     />
 
     <div class="page">
+      <nav class="about-actions" aria-label="경력 자료"><a v-if="resumeUrl" :href="resumeUrl" target="_blank" rel="noopener noreferrer">이력서 PDF 보기 ↗</a><a href="#career">경력 보기 ↓</a><a href="#credentials">인증·증빙 자료 ↓</a></nav>
       <section class="journey" aria-label="만드는 영역의 확장">
         <article><span>01 / PUBLISHING</span><h2>화면의 디테일을 쌓다.</h2><p>퍼블리싱으로 시작해 공공기관과 기업의 웹 화면을 구현했습니다.</p></article>
         <article><span>02 / FRONTEND</span><h2>제품의 동작을 구현하다.</h2><p>프론트엔드 개발과 디자인 시스템으로 재사용 가능한 UI와 제품을 만듭니다.</p></article>
@@ -48,7 +50,7 @@ const skillGroups = computed(() => {
       </section>
       <p v-if="profile?.bio" v-reveal class="page__bio">{{ profile.bio }}</p>
 
-      <section v-if="careerList.length" v-reveal class="block">
+      <section id="career" v-if="careerList.length" v-reveal class="block">
       <h2>Career</h2>
       <ul class="career">
         <li v-for="c in careerWithProjects" :key="c.id">
@@ -79,6 +81,10 @@ const skillGroups = computed(() => {
       </ul>
     </section>
 
+    <section id="credentials" class="credentials block">
+      <p class="credentials__label">RESUME & CREDENTIALS</p><h2>경력과 작업을 증명하는 자료.</h2>
+      <div class="credentials__grid"><a v-if="resumeUrl" :href="resumeUrl" target="_blank" rel="noopener noreferrer"><span>01 / RESUME</span><h3>이력서</h3><p>경력과 주요 프로젝트를 PDF로 확인하세요.</p><b>이력서 보기 ↗</b></a><NuxtLink to="/archive"><span>{{ resumeUrl ? '02' : '01' }} / PROJECT CREDENTIALS</span><h3>프로젝트 인증·심사 자료</h3><p>웹 접근성·품질 인증서와 프로젝트별 심사결과서입니다.</p><b>자료 보기 →</b></NuxtLink></div>
+    </section>
     <!-- 히어로의 'Skills' 링크가 이 앵커로 들어온다 -->
     <section id="skills" v-if="skillGroups.length" v-reveal="{ delay: 80 }" class="block">
       <h2>Skills</h2>
@@ -109,6 +115,8 @@ const skillGroups = computed(() => {
 </template>
 
 <style scoped>
+.about-actions { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:35px; }.about-actions a { border:1px solid var(--brand-line); border-radius:5px; padding:10px 16px; color:var(--brand-accent); font-size:13px; }.credentials__label { font-size:10px; letter-spacing:.15em; color:var(--brand-accent); }.credentials__grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px; margin-top:24px; }.credentials__grid>a { display:block; padding:28px; border:1px solid var(--brand-line); background:var(--brand-surface); border-radius:8px; text-decoration:none; }.credentials__grid span { font-size:10px; color:var(--brand-accent); }.credentials__grid h3 { margin:15px 0 10px; font-size:21px; }.credentials__grid p { color:var(--brand-ink-muted); font-size:14px; line-height:1.8; }.credentials__grid b { display:block; margin-top:22px; font-size:12px; color:var(--brand-accent); }
+
 .journey { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; margin:0 0 42px; }
 .journey article { border-top:2px solid var(--brand-accent); padding:22px 0; }
 .journey span { color:var(--brand-accent); font-size:10px; letter-spacing:.1em; }
