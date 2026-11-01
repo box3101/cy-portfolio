@@ -38,11 +38,18 @@ const yearsOfExp = computed(() => {
 
 <template>
   <div>
+    <div class="about-intro">
     <LayoutPageHeader
       eyebrow="Who I am"
       title="소개·경력"
       description="웹 퍼블리싱으로 시작해 프론트엔드와 업무 도구를 개발하고 있습니다."
     />
+
+    <figure class="studio-note">
+      <img src="/images/studio-study/architecture.webp" alt="바다가 보이는 밝은 석재 스튜디오" width="1536" height="1024" />
+      <figcaption><span>STUDIO NOTES</span> 생각이 화면이 되는 공간</figcaption>
+    </figure>
+    </div>
 
     <div class="page">
 
@@ -147,6 +154,13 @@ const yearsOfExp = computed(() => {
 </template>
 
 <style scoped>
+.about-intro { display:grid; grid-template-columns:minmax(0,1fr) minmax(240px,30%); align-items:center; gap:32px; padding-right:32px; margin:20px 0 32px; }
+.studio-note { margin:0; }
+.studio-note img { display:block; width:100%; height:180px; object-fit:cover; object-position:center 44%; filter:grayscale(1); opacity:.84; }
+.studio-note figcaption { display:flex; flex-wrap:wrap; gap:6px 12px; padding-top:9px; font-size:10px; color:var(--brand-ink-muted); }
+.studio-note figcaption span { letter-spacing:.12em; }
+@media(max-width:1100px) { .about-intro { grid-template-columns:minmax(0,1fr) 240px; gap:16px; }.studio-note img { height:160px; } }
+@media(max-width:740px) { .about-intro { grid-template-columns:1fr; padding:0; gap:12px; margin:8px 0 28px; }.studio-note { margin:0 24px; }.studio-note img { height:150px; object-position:center 40%; } }
 /* ── 페이지 래퍼 ── */
 .page {
   max-width: 1180px;

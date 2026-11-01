@@ -2,7 +2,7 @@
 .journal-shell {
   --journal-serif: Georgia, 'Times New Roman', serif;
   --journal-heading: var(--font-display);
-  --brand-ground: #f2eee5;
+  --brand-ground: #f8f6f0;
   --brand-surface: #fbf8f1;
   --brand-ink: #292c29;
   --brand-ink-muted: #62645e;
@@ -14,16 +14,19 @@
   --color-text-heading: var(--brand-ink);
   --color-text-primary: var(--brand-ink-muted);
   background-color:var(--brand-ground);
-  background-image:radial-gradient(#8b806c10 .6px,transparent .6px),linear-gradient(90deg,#98876d05,transparent 30%,#fff4 70%,transparent);
-  background-size:4px 4px,100% 100%;
+  background-image:linear-gradient(90deg,#faf8f3a6,#faf8f3b8 45%,#faf8f399),url('/images/journal/paper-light.webp');
+  background-size:cover;
+  background-attachment:fixed;
   color:var(--brand-ink);
 }
 :root[data-theme='dark'] .journal-shell {
   --brand-ground:#1b1d1b; --brand-surface:#242722; --brand-ink:#e9e5d9;
   --brand-ink-muted:#bbbcb0; --brand-line:#41453d; --journal-rule:#85897b;
   background-image:radial-gradient(#c4b79d0a .6px,transparent .6px);
+  background-size:4px 4px;
 }
-.journal-shell .header { background:var(--brand-ground); }
+.journal-shell .header { background:linear-gradient(#f8f6f0b8,#f8f6f0d9),url('/images/journal/paper-light.webp') left top / auto 100vh; }
+:root[data-theme='dark'] .journal-shell .header { background:var(--brand-ground); }
 .journal-shell .shell__main > div > .page { width:100%; max-width:none; padding-inline:32px; }
 .journal-shell .ph { background:transparent; }
 .journal-shell .ph__inner { width:100%; max-width:none; padding-top:28px; padding-bottom:24px; }
@@ -39,7 +42,7 @@
 .journal-shell .journey > article,.journal-shell .kit-card { border-radius:0; box-shadow:none; }
 .journal-shell .channels { border-top:3px double var(--journal-rule); }
 .journal-shell .footer { position:relative; isolation:isolate; }
-.journal-shell .footer::before { content:''; position:absolute; inset:0; z-index:-1; background:url('/images/journal-background.webp') center bottom / cover no-repeat; opacity:.18; pointer-events:none; }
+.journal-shell .footer::before { content:''; position:absolute; inset:0; z-index:-1; background:linear-gradient(transparent,#b7ac9010); pointer-events:none; }
 :root[data-theme='dark'] .journal-shell .footer::before { opacity:.06; }
 .journal-shell .archive-card { border-radius:0; }
 .work-shell.journal-shell { padding-top:0; background-color:var(--brand-ground); }

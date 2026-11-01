@@ -1,0 +1,12 @@
+{
+  "paper-light.webp": {
+    "source": "OpenAI image generation, original asset",
+    "purpose": "Subtle paper and limestone daylight background for interior journal pages",
+    "processing": "WebP encoding at 1536x1024, quality 84",
+    "containsText": false
+  },
+  "aboutPhoto": {
+    "source": "../studio-study/architecture.webp",
+    "presentation": "Existing generated studio illustration, displayed in grayscale via CSS; not a real workplace photo"
+  }
+}

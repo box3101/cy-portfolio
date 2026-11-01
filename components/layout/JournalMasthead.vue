@@ -38,7 +38,7 @@ const edition = computed(() => {
 .journal-masthead__edition>span:nth-child(2) { letter-spacing:.2em; color:var(--brand-ink-muted); }
 .journal-masthead__edition a { color:inherit; text-decoration:none; min-height:24px; display:flex; align-items:center; }
 .journal-masthead__banner { position:relative; isolation:isolate; overflow:hidden; padding:20px 12px 16px; }
-.journal-masthead__banner::before { content:''; position:absolute; inset:0; z-index:-1; background:url('/images/journal-background.webp') center 72% / cover no-repeat; opacity:.85; }
+.journal-masthead__banner::before { content:''; position:absolute; inset:0; z-index:-1; background:url('/images/journal-background.webp') center 72% / cover no-repeat; opacity:.32; }
 .journal-masthead__title { display:block; padding:0; font-family:var(--journal-serif); font-size:clamp(36px,6.4vw,100px); font-weight:700; line-height:1.05; letter-spacing:-.065em; text-align:center; color:inherit; text-decoration:none; white-space:nowrap; }
 .journal-masthead__note { margin:10px 0 0; text-align:center; font-size:11px; letter-spacing:.08em; color:var(--brand-ink-muted); }
 :global([data-theme='dark']) .journal-masthead__banner::before { opacity:.13; }
