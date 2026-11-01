@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UiTab, UiBadge, UiEmpty, UiModal } from '@leechanyong/ispark-ui'
+import { UiTab, UiBadge, UiEmpty, UiModal, UiButton } from '@leechanyong/ispark-ui'
 import type { TabItem } from '@leechanyong/ispark-ui'
 import type { Archive, ArchiveDocType } from '~/types/database'
 import type { DocTypeFilter } from '~/composables/store/useArchiveStore'
@@ -46,6 +46,11 @@ const isViewerOpen = computed({
   },
 })
 
+const route = useRoute()
+watch(() => [route.query.document, archiveList.value] as const, () => {
+  const doc = archiveList.value.find(item => String(item.id) === route.query.document)
+  if (doc) openViewer(doc)
+}, { immediate: true })
 const viewerUrl = computed(() => publicFileUrl('documents', selectedArchive.value?.file_path))
 const thumbUrl = (a: Archive) => publicFileUrl('thumbnails', a.thumbnail_path)
 
@@ -53,7 +58,7 @@ const thumbUrl = (a: Archive) => publicFileUrl('thumbnails', a.thumbnail_path)
 const formatIssued = (d: string | null) => (d ? d.slice(0, 7).replace('-', '.') : null)
 
 useSeoMeta({
-  title: "인증·증빙 자료 — 이찬용",
+  title: "자료실 — 이찬용",
   description: '웹 접근성·품질 인증서와 심사 결과서, 발표 자료.',
 })
 </script>
@@ -62,11 +67,11 @@ useSeoMeta({
   <div>
     <LayoutPageHeader
       eyebrow="Proof of work"
-      title="인증·증빙 자료"
+      title="자료실"
       description="웹 접근성·품질 인증서와 심사 결과서, 발표 자료."
     />
 
-    <div class="page"><NuxtLink to="/about#credentials" class="archive-back">← 나의 이야기 · 경력 자료</NuxtLink>
+    <div class="page"><UiButton as="a" href="/about#credentials" class="archive-back" variant="ghost" size="xlg">← 소개·경력</UiButton>
       <UiTab
         v-if="archiveList.length"
         :model-value="activeDocType"

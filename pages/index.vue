@@ -1,30 +1,39 @@
 <script setup lang="ts">
+import { UiButton } from '@leechanyong/ispark-ui'
+import { portfolioNavigation } from '~/data/navigation'
+const activeExhibit = ref('')
+const sceneReady = ref(false)
 definePageMeta({ layout: 'studio' })
 useSeoMeta({ title: '이찬용 — 생각을 설계하고, 화면으로 만듭니다.', description: '프론트엔드 개발자 이찬용의 디자인 시스템, 제안서 AI 에이전트, SI 프로젝트.' })
 useHead({ link: [{ rel: 'preload', as: 'image', href: '/images/gallery-hero.webp' }] })
 </script>
 <template>
-  <main id="studio-main" class="gallery">
+  <main id="studio-main" class="gallery" :class="{ 'gallery--ready': sceneReady }">
     <img class="gallery-scene" src="/images/gallery-hero.webp" alt="햇살이 비치는 밝은 갤러리의 푸른 유리 전시대" fetchpriority="high" />
+    <ClientOnly><StudioGalleryWorld :active="activeExhibit" @ready="sceneReady = $event" /></ClientOnly>
     <header class="gallery-header">
       <NuxtLink to="/" class="brand" aria-label="이찬용 홈"><b>CY.</b><span>이찬용</span></NuxtLink>
-      <nav aria-label="주요 메뉴"><NuxtLink to="/projects">작업</NuxtLink><NuxtLink to="/about">소개</NuxtLink><NuxtLink to="/contact">연락 ↗</NuxtLink></nav>
+      <nav aria-label="주요 메뉴"><NuxtLink v-for="item in portfolioNavigation" :key="item.to" :to="item.to">{{ item.label }}</NuxtLink></nav>
     </header>
     <section class="gallery-intro">
       <p class="eyebrow">FRONTEND DEVELOPER & AI BUILDER</p>
       <h1>생각을 설계하고,<br />화면으로 만듭니다.</h1>
       <p class="description">기획부터 디자인, 개발까지.<br />직접 만든 제품과 그 과정을 소개합니다.</p>
-      <NuxtLink class="primary-link" to="/work/proposal-agent">제안서 에이전트 보기 <span>↗</span></NuxtLink>
+      <UiButton as="a" href="/work/proposal-agent" variant="primary" size="xlg" class="gallery-cta">제안서 에이전트 보기 ↗</UiButton>
     </section>
     <nav class="exhibits" aria-label="갤러리 작업 선택">
-      <a class="exhibit exhibit--design" href="https://box3101.github.io/ispark-ui/" target="_blank" rel="noopener noreferrer"><span class="number">01</span><div><strong>디자인 시스템</strong><small>ispark-ui · Storybook</small></div><span>↗</span></a>
-      <NuxtLink class="exhibit exhibit--proposal" to="/work/proposal-agent"><span class="number">02</span><div><strong>제안서 AI 에이전트</strong><small>기획 · 디자인 · 개발 이야기</small></div><span>↗</span></NuxtLink>
-      <NuxtLink class="exhibit exhibit--si" to="/projects?space=si"><span class="number">03</span><div><strong>SI 프로젝트</strong><small>현장에서 만든 제품들</small></div><span>↗</span></NuxtLink>
+      <a class="exhibit exhibit--design" @mouseenter="activeExhibit = 'design'" @mouseleave="activeExhibit = ''" @focus="activeExhibit = 'design'" @blur="activeExhibit = ''" href="https://box3101.github.io/ispark-ui/" target="_blank" rel="noopener noreferrer"><span class="number">01</span><div><strong>디자인 시스템</strong><small>ispark-ui · Storybook</small></div><span>↗</span></a>
+      <NuxtLink class="exhibit exhibit--proposal" @mouseenter="activeExhibit = 'proposal'" @mouseleave="activeExhibit = ''" @focus="activeExhibit = 'proposal'" @blur="activeExhibit = ''" to="/work/proposal-agent"><span class="number">02</span><div><strong>제안서 AI 에이전트</strong><small>기획 · 디자인 · 개발 이야기</small></div><span>↗</span></NuxtLink>
+      <NuxtLink class="exhibit exhibit--si" @mouseenter="activeExhibit = 'si'" @mouseleave="activeExhibit = ''" @focus="activeExhibit = 'si'" @blur="activeExhibit = ''" to="/projects?space=si"><span class="number">03</span><div><strong>SI 프로젝트</strong><small>현장에서 만든 제품들</small></div><span>↗</span></NuxtLink>
     </nav>
-    <footer class="gallery-footer"><span>01 / THE WORK GALLERY</span><NuxtLink to="/work/team-agent">TeamAgent 둘러보기 ↗</NuxtLink><NuxtLink to="/projects">전체 작업 보기 ↗</NuxtLink></footer>
+    <p v-if="sceneReady" class="gallery-hint">드래그로 둘러보고, 전시대를 가리켜 보세요</p>
+    <footer class="gallery-footer"><span>01 / THE WORK GALLERY</span><NuxtLink to="/work/team-agent">TeamAgent 둘러보기 ↗</NuxtLink><NuxtLink to="/projects">프로젝트 보기 ↗</NuxtLink></footer>
   </main>
 </template>
 <style scoped>
+.gallery--ready .gallery-scene { opacity:0; }.gallery-scene { transition:opacity .5s; }.gallery-header,.gallery-intro,.exhibits,.gallery-footer { z-index:2; }.gallery-header { position:relative; }.gallery-intro { pointer-events:none; }.gallery-intro :deep(a) { pointer-events:auto; }.gallery-cta { min-height:44px; padding-inline:22px!important; }.gallery-hint { position:absolute; right:5%; bottom:85px; font-size:11px; color:#60718a; pointer-events:none; }.gallery { --color-primary:#294ccc; --color-primary-hover:#1836a6; --color-primary-dark:#1836a6; --color-primary-rgb:41,76,204; }
+@media(max-width:740px) { .gallery-header { flex-wrap:wrap; gap:20px; }.gallery-header nav { width:100%; justify-content:space-between; }.gallery-hint { top:590px; bottom:auto; right:24px; }.exhibits { margin-top:220px; } }
+
 .gallery { position:relative; isolation:isolate; min-height:850px; height:100svh; overflow:hidden; background:#f5f1e9; color:#202734; }
 .gallery-scene { position:absolute; inset:0; z-index:-2; width:100%; height:100%; object-fit:cover; object-position:center; }
 .gallery::before { content:''; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg,#f7f3edaa,transparent 56%); pointer-events:none; }

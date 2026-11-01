@@ -1,14 +1,15 @@
 <script setup lang="ts">
+import { portfolioNavigation } from '~/data/navigation'
 import { workStories } from '~/data/workStories'
 defineProps<{ active?: string }>()
 </script>
 <template>
   <div class="work-shell">
-    <div class="room-world" aria-hidden="true"><ClientOnly><StudioSpatialWorld interior /></ClientOnly></div>
-    <header class="studio-top"><NuxtLink to="/" class="work-brand"><b>CY.</b><span>이찬용</span></NuxtLink><nav aria-label="공통 메뉴"><NuxtLink to="/">← 갤러리로</NuxtLink><NuxtLink to="/projects">전체 작업</NuxtLink><NuxtLink to="/about">나의 이야기</NuxtLink></nav></header>
-    <div class="room-entry"><NuxtLink to="/work/proposal-agent" class="room-name"><span>02 / AGENT STUDIO</span><strong>생각을 도구로 만드는 방.</strong></NuxtLink><p>작업을 선택하고, 실제 화면과 만든 이야기를 살펴보세요.</p></div>
+
+    <header class="studio-top"><NuxtLink to="/" class="work-brand"><b>CY.</b><span>이찬용</span></NuxtLink><nav aria-label="공통 메뉴"><NuxtLink v-for="item in portfolioNavigation" :key="item.to" :to="item.to">{{ item.label }}</NuxtLink></nav></header>
+
     <nav class="project-doors" aria-label="프로젝트 선택"><NuxtLink v-for="(story,index) in workStories" :key="story.slug" :to="`/work/${story.slug}`" :aria-current="active===story.slug?'page':undefined" :class="{active:active===story.slug}"><span>0{{ index+1 }}</span><div><strong>{{ story.name }}</strong><small>{{ story.kind }}</small></div><b>↗</b></NuxtLink></nav>
-    <div class="work-body"><main id="studio-main" class="work-content"><slot /></main><footer class="work-footer"><NuxtLink to="/agents">← 이 방의 모든 작업</NuxtLink><a href="https://box3101.github.io/ispark-ui/" target="_blank" rel="noopener noreferrer">Built with ispark-ui · Storybook ↗</a></footer></div>
+    <div class="work-body"><main id="studio-main" class="work-content"><slot /></main><footer class="work-footer"><NuxtLink to="/agents">← AI 도구 모아보기</NuxtLink><a href="https://box3101.github.io/ispark-ui/" target="_blank" rel="noopener noreferrer">Built with ispark-ui · Storybook ↗</a></footer></div>
   </div>
 </template>
 <style scoped>
@@ -17,4 +18,8 @@ defineProps<{ active?: string }>()
 @media(max-width:1240px) { .work-body { margin-left:24px; margin-right:24px; } }
 @media(max-width:740px) { .studio-top { padding:20px; }.studio-top nav { gap:15px; font-size:10px; }.room-entry { margin-top:30px; padding:0 20px; }.project-doors { padding:0 20px 10px; display:flex; overflow-x:auto; gap:12px; }.project-doors a { flex:0 0 200px; padding:14px; }.project-doors strong { font-size:13px; }.work-body { margin:18px 12px 0; }.work-content { padding:28px 20px 35px; }.work-footer { padding:18px 20px; font-size:9px; }.room-entry p { line-height:1.8; } }
 @media(prefers-reduced-motion:reduce) { .project-doors a { transition:none; }.project-doors a:hover { transform:none; } }
+
+/* 첫 화면 캡처가 먼저 보이도록 상단 안내와 장식을 줄였습니다. */
+.work-shell { background:#f5f3ee; padding-bottom:32px; }.studio-top { color:#273447; max-width:1280px; margin:0 auto; padding:24px 28px; }.project-doors { margin:14px auto 0; gap:12px; perspective:none; }.project-doors a { background:#ffffff; color:#334358; box-shadow:none; backdrop-filter:none; border-color:#dde3eb; border-radius:10px; padding:14px 18px; }.project-doors a:hover { transform:none; background:#f2f6fc; border-color:#b1c7e8; }.project-doors a.active { background:#edf3ff; color:#2458ad; border-color:#acc6ed; }.project-doors a>span { color:#6382a7; }.project-doors small { color:#758396; }.work-body { margin-top:22px; background:#fff; border-color:#e0e5ec; box-shadow:0 12px 35px #273c5710; border-radius:16px; }.work-content { padding:32px 40px 40px; }
+@media(max-width:740px) { .studio-top { padding:20px; flex-wrap:wrap; gap:18px; }.studio-top nav { width:100%; justify-content:space-between; font-size:12px; }.project-doors { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); padding:0 12px; gap:6px; }.project-doors a { padding:12px 8px; justify-content:center; gap:0; }.project-doors a>span,.project-doors small,.project-doors b { display:none; }.project-doors strong { font-size:12px; }.work-content { padding:25px 20px 30px; }.work-body { margin:18px 12px 0; } }
 </style>

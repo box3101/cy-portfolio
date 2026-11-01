@@ -8,15 +8,15 @@ useSeoMeta({ title: 'AI 에이전트 & 업무 도구 — 이찬용', description
 <template>
   <StudioWorkShell>
     <p class="eyebrow">02 / BUILDING USEFUL TOOLS</p>
-    <h1>무엇을, 왜,<br />어떻게 만들었는지.</h1>
-    <p class="lead">업무에 맞는 AI를 구성하고, 생각한 도구를 제품으로.<br />프로젝트를 선택하면 만든 이야기가 열립니다.</p>
+    <h1>직접 만든 AI와 업무 도구.</h1>
+    <p class="lead">프로젝트를 선택하면 첫 화면과 주요 기능을 볼 수 있습니다.</p>
     <div class="story-grid">
       <NuxtLink v-for="(story,index) in workStories" :key="story.slug" :to="`/work/${story.slug}`" class="story-card">
         <div v-if="workScreens[story.slug]?.[0]" class="story-card__image"><img :src="workScreens[story.slug]![0]!.src" :alt="workScreens[story.slug]![0]!.alt" loading="lazy" /><span>실제 개발 화면</span></div>
-        <div class="story-card__body"><span v-if="story.slug==='proposal-agent'" class="solo-label">기획 · UI/UX 디자인 · 개발 / 1인 제작</span><div class="story-card__meta"><span>0{{ index+1 }}</span><UiBadge size="xs" variant="primary">{{ story.kind }}</UiBadge></div><h2>{{ story.name }}</h2><p>{{ story.subtitle }}</p><div class="story-card__footer">만든 이야기 읽기 <span>→</span></div></div>
+        <div class="story-card__body"><span v-if="story.slug==='proposal-agent'" class="solo-label">기획 · UI/UX 디자인 · 개발 / 1인 제작</span><div class="story-card__meta"><span>0{{ index+1 }}</span><UiBadge size="xs" variant="primary">{{ story.kind }}</UiBadge></div><h2>{{ story.name }}</h2><p>{{ story.subtitle }}</p><div class="story-card__footer">화면과 기능 보기 <span>→</span></div></div>
       </NuxtLink>
     </div>
-    <p class="note">실제 개발 캡처와 UI 설계 예시를 구분해 소개합니다. TaskFlow는 업무 관리 도구로 함께 소개합니다.</p>
+    <p class="note">개발 중인 화면을 소개합니다. TaskFlow는 AI 기능이 없는 업무 관리 도구입니다.</p>
   </StudioWorkShell>
 </template>
 <style scoped>

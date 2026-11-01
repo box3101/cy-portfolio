@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UiProgress } from '@leechanyong/ispark-ui'
+import { UiProgress, UiButton, UiBadge } from '@leechanyong/ispark-ui'
 
 const { profile, careerList, careerWithProjects, skillList, handleSelectAbout } = useProfileStore()
 
@@ -9,19 +9,22 @@ await useAsyncData('about', async () => {
 }, { getCachedData: () => undefined })
 
 useSeoMeta({
-  title: "About — Cy's Code Canvas",
+  title: '소개·경력 — 이찬용',
   description: () => profile.value?.headline ?? '이찬용 프론트엔드 개발자 소개',
 })
 
+const { archiveList, handleSelectArchiveList } = useArchiveStore()
+await useAsyncData('about/credentials', async () => { await handleSelectArchiveList(); return true })
+const featuredDocuments = computed(() => [...archiveList.value].sort((a, b) => Number(b.doc_type === '증명서') - Number(a.doc_type === '증명서')).slice(0, 3))
 const resumeUrl = computed(() => publicFileUrl('profile', profile.value?.resume_path))
 const skillGroups = computed(() => {
   // 라벨은 영문이다. 히어로의 'Skills' 링크가 이 섹션으로 들어오므로
   // 상위 제목(Skills)과 목소리를 맞춘다. 기술 이름 자체도 대부분 영문이다.
   const labels: Record<string, string> = {
-    language: 'Language',
-    framework: 'Framework',
-    tool: 'Tools',
-    design: 'Design',
+    language: '개발 언어',
+    framework: '프레임워크',
+    tool: '개발 도구',
+    design: '디자인',
   }
   const groups: { key: string; label: string; items: typeof skillList.value }[] = []
 
@@ -37,21 +40,34 @@ const skillGroups = computed(() => {
   <div>
     <LayoutPageHeader
       eyebrow="Who I am"
-      title="나의 이야기"
+      title="소개·경력"
       description="화면을 만들다 보니, 그 너머도 만들고 싶어졌습니다."
     />
 
     <div class="page">
-      <nav class="about-actions" aria-label="경력 자료"><a v-if="resumeUrl" :href="resumeUrl" target="_blank" rel="noopener noreferrer">이력서 PDF 보기 ↗</a><a href="#career">경력 보기 ↓</a><a href="#credentials">인증·증빙 자료 ↓</a></nav>
+      <section id="credentials" class="career-kit" aria-labelledby="career-kit-title">
+        <div class="kit-heading"><div><p class="credentials__label">경력 자료 모아보기</p><h2 id="career-kit-title">경력과 결과를 한눈에.</h2></div><UiButton as="a" href="/archive" variant="secondary" size="xlg">자료실 보기 →</UiButton></div>
+        <div class="career-kit__grid">
+          <article class="kit-card kit-card--resume"><span class="kit-icon" aria-hidden="true">↗</span><UiBadge variant="primary" size="sm">RESUME</UiBadge><h3>이력서</h3><p>주요 경력과 프로젝트를<br />한 문서로 확인하세요.</p><UiButton v-if="resumeUrl" as="a" :href="resumeUrl" target="_blank" variant="primary" size="xlg">이력서 PDF 열기 ↗</UiButton><p v-else class="kit-note">공개 이력서를 준비하고 있습니다.</p></article>
+          <article class="kit-card"><span class="kit-icon" aria-hidden="true">01</span><p class="credentials__label">CAREER</p><h3>경력 요약</h3><p>{{ careerList.length ? `등록된 ${careerList.length}개 경력과 담당 프로젝트를 살펴보세요.` : '경력과 담당 프로젝트를 아래에서 살펴보세요.' }}</p><UiButton v-if="careerList.length" as="a" href="#career" variant="secondary" size="xlg">경력 살펴보기 ↓</UiButton></article>
+          <article class="kit-card"><span class="kit-icon" aria-hidden="true">02</span><p class="credentials__label">CREDENTIALS</p><h3>인증·심사 자료</h3><p>웹 접근성 인증서와 심사 결과 등<br />프로젝트 관련 자료입니다.</p><UiButton as="a" href="/archive" variant="secondary" size="xlg">{{ archiveList.length ? `공개 자료 ${archiveList.length}건 보기 →` : '자료실 보기 →' }}</UiButton></article>
+        </div>
+        <div v-if="featuredDocuments.length" class="document-previews">
+          <NuxtLink v-for="doc in featuredDocuments" :key="doc.id" :to="{ path: '/archive', query: { document: doc.id } }" class="document-preview">
+            <div class="document-preview__image"><img v-if="doc.thumbnail_path" :src="publicFileUrl('thumbnails', doc.thumbnail_path)!" :alt="`${doc.title} 미리보기`" loading="lazy" /><span v-else aria-hidden="true">PDF</span></div>
+            <div><UiBadge size="xs">{{ doc.doc_type }}</UiBadge><h3>{{ doc.title }}</h3><p v-if="doc.issuer">{{ doc.issuer }}</p><span class="document-open">자료 열기 ↗</span></div>
+          </NuxtLink>
+        </div>
+      </section>
       <section class="journey" aria-label="만드는 영역의 확장">
         <article><span>01 / PUBLISHING</span><h2>화면의 디테일을 쌓다.</h2><p>퍼블리싱으로 시작해 공공기관과 기업의 웹 화면을 구현했습니다.</p></article>
         <article><span>02 / FRONTEND</span><h2>제품의 동작을 구현하다.</h2><p>프론트엔드 개발과 디자인 시스템으로 재사용 가능한 UI와 제품을 만듭니다.</p></article>
-        <article><span>03 / AI BUILDER</span><h2>업무를 돕는 도구로 넓히다.</h2><p>모델과 지식을 연결하는 에이전트, 제안 업무를 돕는 도구로 영역을 넓히고 있습니다.</p><NuxtLink to="/agents">만든 이야기 보기 →</NuxtLink></article>
+        <article><span>03 / AI BUILDER</span><h2>업무를 돕는 도구로 넓히다.</h2><p>모델과 지식을 연결하는 에이전트, 제안 업무를 돕는 도구로 영역을 넓히고 있습니다.</p><NuxtLink to="/agents">프로젝트 살펴보기 →</NuxtLink></article>
       </section>
       <p v-if="profile?.bio" v-reveal class="page__bio">{{ profile.bio }}</p>
 
       <section id="career" v-if="careerList.length" v-reveal class="block">
-      <h2>Career</h2>
+      <h2>주요 경력</h2>
       <ul class="career">
         <li v-for="c in careerWithProjects" :key="c.id">
           <div class="career__period">{{ formatPeriod(c.period_start, c.period_end) }}</div>
@@ -81,13 +97,9 @@ const skillGroups = computed(() => {
       </ul>
     </section>
 
-    <section id="credentials" class="credentials block">
-      <p class="credentials__label">RESUME & CREDENTIALS</p><h2>경력과 작업을 증명하는 자료.</h2>
-      <div class="credentials__grid"><a v-if="resumeUrl" :href="resumeUrl" target="_blank" rel="noopener noreferrer"><span>01 / RESUME</span><h3>이력서</h3><p>경력과 주요 프로젝트를 PDF로 확인하세요.</p><b>이력서 보기 ↗</b></a><NuxtLink to="/archive"><span>{{ resumeUrl ? '02' : '01' }} / PROJECT CREDENTIALS</span><h3>프로젝트 인증·심사 자료</h3><p>웹 접근성·품질 인증서와 프로젝트별 심사결과서입니다.</p><b>자료 보기 →</b></NuxtLink></div>
-    </section>
     <!-- 히어로의 'Skills' 링크가 이 앵커로 들어온다 -->
     <section id="skills" v-if="skillGroups.length" v-reveal="{ delay: 80 }" class="block">
-      <h2>Skills</h2>
+      <h2>사용 기술</h2>
       <div class="skills">
         <div v-for="g in skillGroups" :key="g.key" class="skills__group">
           <h3>{{ g.label }}</h3>
@@ -115,6 +127,13 @@ const skillGroups = computed(() => {
 </template>
 
 <style scoped>
+#career,#credentials,#skills { scroll-margin-top:110px; }
+.career-kit { margin-bottom:48px; }.kit-heading { display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom:24px; }.kit-heading h2 { font-size:clamp(24px,3vw,32px); letter-spacing:-.04em; margin:0; }.kit-heading .credentials__label { margin:0 0 8px; }
+.career-kit__grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }.kit-card { position:relative; padding:28px; background:var(--brand-surface); border:1px solid var(--brand-line); border-radius:16px; display:flex; flex-direction:column; align-items:flex-start; min-height:260px; }.kit-card--resume { background:color-mix(in srgb,var(--brand-accent) 7%,var(--brand-surface)); border-color:color-mix(in srgb,var(--brand-accent) 25%,var(--brand-line)); }.kit-icon { position:absolute; right:24px; top:22px; font-size:24px; color:var(--brand-accent); opacity:.6; }.kit-card h3 { font-size:23px; letter-spacing:-.04em; margin:22px 0 9px; }.kit-card p { font-size:14px; line-height:1.8; color:var(--brand-ink-muted); margin:0 0 24px; }.kit-card :deep(.ui-button),.kit-card :deep(.ui-btn) { margin-top:auto; }.kit-card .credentials__label { font-size:10px; margin:0; }.kit-note { font-size:12px!important; }
+.document-previews { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin-top:20px; }.document-preview { display:grid; grid-template-columns:90px minmax(0,1fr); gap:16px; padding:16px; border:1px solid var(--brand-line); border-radius:12px; background:var(--brand-surface); color:var(--brand-ink); text-decoration:none; transition:border-color .2s; }.document-preview:hover { border-color:var(--brand-accent); }.document-preview__image { display:grid; place-items:center; height:126px; background:var(--brand-ground); border:1px solid var(--brand-line); border-radius:5px; overflow:hidden; }.document-preview img { width:100%; height:100%; object-fit:contain; }.document-preview h3 { font-size:14px; line-height:1.5; margin:8px 0; word-break:keep-all; }.document-preview p { font-size:11px; color:var(--brand-ink-muted); margin:0 0 8px; }.document-open { font-size:11px; color:var(--brand-accent); }
+@media(max-width:960px) { .document-previews { grid-template-columns:1fr; }.career-kit__grid { gap:12px; }.kit-card { padding:22px; } }
+@media(max-width:640px) { .career-kit__grid { grid-template-columns:1fr; }.kit-card { min-height:0; }.kit-heading { align-items:flex-start; flex-direction:column; } }
+
 .about-actions { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:35px; }.about-actions a { border:1px solid var(--brand-line); border-radius:5px; padding:10px 16px; color:var(--brand-accent); font-size:13px; }.credentials__label { font-size:10px; letter-spacing:.15em; color:var(--brand-accent); }.credentials__grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px; margin-top:24px; }.credentials__grid>a { display:block; padding:28px; border:1px solid var(--brand-line); background:var(--brand-surface); border-radius:8px; text-decoration:none; }.credentials__grid span { font-size:10px; color:var(--brand-accent); }.credentials__grid h3 { margin:15px 0 10px; font-size:21px; }.credentials__grid p { color:var(--brand-ink-muted); font-size:14px; line-height:1.8; }.credentials__grid b { display:block; margin-top:22px; font-size:12px; color:var(--brand-accent); }
 
 .journey { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; margin:0 0 42px; }

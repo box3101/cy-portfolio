@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UiEmpty } from '@leechanyong/ispark-ui'
+import { UiEmpty, UiButton } from '@leechanyong/ispark-ui'
 
 const { profile, handleSelectProfile } = useProfileStore()
 
@@ -9,15 +9,15 @@ await useAsyncData('contact', async () => {
 }, { getCachedData: () => undefined })
 
 useSeoMeta({
-  title: "Contact — Cy's Code Canvas",
+  title: '협업 문의 — 이찬용',
   description: '이찬용에게 연락하기',
 })
 
 const channels = computed(() =>
   [
-    { label: 'Email', value: profile.value?.email, href: profile.value?.email ? `mailto:${profile.value.email}` : null },
+    { label: '이메일', value: profile.value?.email, href: profile.value?.email ? `mailto:${profile.value.email}` : null },
     { label: 'GitHub', value: profile.value?.github_url?.replace(/^https?:\/\//, ''), href: profile.value?.github_url },
-    { label: 'Blog', value: profile.value?.blog_url?.replace(/^https?:\/\//, ''), href: profile.value?.blog_url },
+    { label: '블로그', value: profile.value?.blog_url?.replace(/^https?:\/\//, ''), href: profile.value?.blog_url },
   ].filter((c): c is { label: string; value: string; href: string } => Boolean(c.href && c.value)),
 )
 </script>
@@ -26,7 +26,7 @@ const channels = computed(() =>
   <div>
     <LayoutPageHeader
       eyebrow="Get in touch"
-      title="Contact"
+      title="협업 문의"
       description="새로운 기회나 협업 제안은 언제든 환영합니다."
     />
 
@@ -34,7 +34,7 @@ const channels = computed(() =>
       <ul v-if="channels.length" v-reveal="{ delay: 80 }" class="channels">
       <li v-for="c in channels" :key="c.label">
         <span class="channels__label">{{ c.label }}</span>
-        <a :href="c.href" target="_blank" rel="noopener noreferrer">{{ c.value }}</a>
+        <div class="channel-action"><a :href="c.href" target="_blank" rel="noopener noreferrer">{{ c.value }}</a><UiButton as="a" :href="c.href" target="_blank" variant="secondary" size="xlg">{{ c.label === '이메일' ? '메일 보내기' : '방문하기' }} ↗</UiButton></div>
       </li>
     </ul>
 
@@ -44,6 +44,7 @@ const channels = computed(() =>
 </template>
 
 <style scoped>
+.channel-action { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; min-width:0; }
 .page {
   max-width: 1180px;
   margin: 0 auto;

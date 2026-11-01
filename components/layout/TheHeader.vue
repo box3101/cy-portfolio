@@ -1,13 +1,9 @@
 <script setup lang="ts">
+import { UiButton } from '@leechanyong/ispark-ui'
+import { portfolioNavigation } from '~/data/navigation'
 const { toggleTheme, restoreTheme } = useTheme()
 
-const navItems = [
-  { to: '/', label: '골목으로' },
-  { to: '/agents', label: 'AI·업무 도구' },
-  { to: '/projects', label: '전체 작업' },
-  { to: '/about', label: '나의 이야기' },
-  { to: '/contact', label: '연락' },
-]
+const navItems = portfolioNavigation
 
 const route = useRoute()
 const isActive = (to: string) => (to === '/' ? route.path === '/' : route.path.startsWith(to))
@@ -36,9 +32,9 @@ onMounted(() => restoreTheme())
         </NuxtLink>
       </nav>
 
-      <button type="button" class="theme-btn" aria-label="테마 전환" @click="toggleTheme">
+      <UiButton variant="ghost" size="xlg" icon-only aria-label="테마 전환" @click="toggleTheme">
         <span aria-hidden="true">◐</span>
-      </button>
+      </UiButton>
     </div>
   </header>
 </template>
