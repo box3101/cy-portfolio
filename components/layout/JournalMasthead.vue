@@ -48,4 +48,11 @@ const edition = computed(() => {
 .journal-masthead__folio b { color:var(--brand-accent); font-weight:600; }
 @media(max-width:900px) { .journal-masthead { padding:20px 24px 0; }.journal-masthead__title { font-size:clamp(36px,8.6vw,76px); } }
 @media(max-width:600px) { .journal-masthead__edition>span:nth-child(2) { display:none; }.journal-masthead__folio { font-size:9px; gap:8px; flex-wrap:wrap; }.journal-masthead__banner { padding:20px 0 16px; }.journal-masthead__title { font-size:clamp(28px,8.6vw,50px); }.journal-masthead__note { font-size:9px; letter-spacing:0; } }
+
+.journal-masthead { padding:18px 40px 0; }
+.journal-masthead__banner { padding:24px 0 20px; }
+.journal-masthead__banner::before { display:none; }
+.journal-masthead__title { font-size:clamp(40px,6.4vw,100px); letter-spacing:-.055em; }
+.journal-masthead__note { font-size:10px; margin-top:8px; }
+@media(max-width:740px) { .journal-masthead { padding:16px 20px 0; }.journal-masthead__title { font-size:clamp(27px,7.2vw,48px); } }
 </style>

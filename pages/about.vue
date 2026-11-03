@@ -37,7 +37,7 @@ const yearsOfExp = computed(() => {
 </script>
 
 <template>
-  <div>
+  <div class="about-newspaper">
     <div class="about-intro">
     <LayoutPageHeader
       eyebrow="Who I am"
@@ -77,10 +77,11 @@ const yearsOfExp = computed(() => {
       </section>
 
       <!-- ── Chapter 02: Career ── -->
-      <section id="career" v-if="careerList.length" v-reveal class="chapter">
+      <section id="career" class="chapter career-section">
+        <div class="career-main">
         <div class="chapter-label"><span>02 — Career</span></div>
         <h2 class="chapter-title">주요 경력</h2>
-        <ul class="career">
+        <ul v-if="careerList.length" class="career">
           <li v-for="c in careerWithProjects" :key="c.id">
             <div class="career__period">{{ formatPeriod(c.period_start, c.period_end) }}</div>
             <div class="career__body">
@@ -103,6 +104,21 @@ const yearsOfExp = computed(() => {
             </div>
           </li>
         </ul>
+        <p v-else class="career-empty">경력 정보를 불러오지 못했습니다. 잠시 후 다시 확인해 주세요.</p>
+        </div>
+        <aside class="project-notes" aria-labelledby="project-notes-title">
+          <h2 id="project-notes-title">PROJECT NOTES</h2>
+          <NuxtLink to="/work/proposal-agent" class="project-note">
+            <h3>제안서 AI 에이전트 <span aria-hidden="true">↗</span></h3>
+            <div class="project-note__art"><img src="/images/work/proposal-main.png" alt="제안서 AI 에이전트 작업 화면" loading="lazy" width="640" height="360" /></div>
+            <p>RFP 분석부터 스토리·목차 작성까지, 제안 업무의 흐름을 연결하는 AI 도구를 만들고 있습니다.</p>
+          </NuxtLink>
+          <NuxtLink to="/projects/ispark-ui" class="project-note">
+            <h3>ispark-ui 디자인 시스템 <span aria-hidden="true">↗</span></h3>
+            <div class="project-note__art project-note__art--system" aria-hidden="true"><span class="type-specimen">Aa<span>가나다</span></span><span class="component-specimen"><i></i><i></i><i></i><i></i><b>Button ↗</b><em>＋</em></span></div>
+            <p>사내 제품 전반에서 사용하는 UI를 설계하고 배포합니다. 일관된 화면과 재사용 가능한 컴포넌트를 만듭니다.</p>
+          </NuxtLink>
+        </aside>
       </section>
 
       <!-- ── Chapter 04: Credentials + CTA ── -->
@@ -518,4 +534,57 @@ const yearsOfExp = computed(() => {
     border-bottom: 1px solid var(--brand-line);
   }
 }
+
+/* A compact editorial spread, with live career data in the main column. */
+.about-intro { margin:24px 40px 28px; padding:28px 24px 32px; grid-template-columns:minmax(0,1fr) 128px; gap:40px; border-bottom:1px solid var(--brand-line); }
+.about-intro :deep(.ph) { background:transparent; }
+.about-intro :deep(.ph__inner) { padding:0; }
+.profile-note img { filter:grayscale(1); mix-blend-mode:multiply; }
+.profile-note figcaption { font-size:9px; }
+.about-newspaper .page { padding:0 40px 48px; }
+.chapter { margin-top:36px; }
+.chapter-label { margin-bottom:12px; }
+.chapter-title { font-family:var(--journal-heading); font-weight:800; font-size:clamp(30px,3.1vw,46px); line-height:1.4; margin-bottom:22px; }
+.journey article { padding:14px 18px 12px 0; }
+.journey article:not(:last-child) { margin-right:20px; }
+.journey h3 { font-family:var(--journal-heading); font-size:24px; font-weight:800; margin:12px 0 8px; }
+.journey p { font-size:14px; color:var(--brand-ink); line-height:1.75; margin-bottom:0; word-break:keep-all; }
+.career-section { display:grid; grid-template-columns:minmax(0,2.25fr) minmax(240px,1fr); gap:28px; border-top:4px double var(--journal-rule) !important; padding-top:24px; }
+.career-main { min-width:0; }
+.career { gap:32px; }
+.career > li { grid-template-columns:116px minmax(0,1fr); gap:20px; }
+.career__body { border-left:1px solid var(--brand-line); padding-left:22px; }
+.career__body h3 { font-family:var(--journal-heading); font-size:23px; font-weight:800; }
+.career__desc { color:var(--brand-ink); font-size:14px; line-height:1.8; }
+.proj__title { font-family:var(--journal-heading); font-size:17px; font-weight:700; line-height:1.6; }
+.proj__item { position:relative; border-left:1px solid var(--brand-line); }
+.proj__item::before { content:''; position:absolute; left:-2px; top:5px; width:3px; height:18px; background:var(--brand-accent); }
+.proj__points { padding-left:0; list-style:none; color:var(--brand-ink); line-height:1.85; }
+.project-notes { position:sticky; top:24px; align-self:start; border-left:1px solid var(--journal-rule); padding-left:24px; }
+.project-notes > h2 { font-family:var(--journal-serif); font-size:18px; letter-spacing:.13em; margin:0; padding:0 0 10px; border-bottom:1px solid var(--journal-rule); }
+.project-note { display:block; padding:18px 0; color:var(--brand-ink); text-decoration:none; border-bottom:1px solid var(--brand-line); }
+.project-note:last-child { border-bottom:0; }
+.project-note h3 { display:flex; justify-content:space-between; gap:8px; font-family:var(--journal-heading); font-size:22px; font-weight:800; line-height:1.5; margin:0 0 12px; }
+.project-note h3 > span { font-family:var(--font-body); font-size:16px; }
+.project-note:hover h3 { color:var(--brand-accent); }
+.project-note:focus-visible { outline:2px solid var(--brand-accent); outline-offset:5px; }
+.project-note p { font-size:14px; line-height:1.85; margin:10px 0 0; word-break:keep-all; }
+.project-note__art { position:relative; overflow:hidden; aspect-ratio:1.85; background:color-mix(in srgb,var(--brand-ink) 8%,var(--brand-surface)); }
+.project-note__art::after { content:''; position:absolute; inset:0; pointer-events:none; background-image:radial-gradient(var(--brand-ink) .5px,transparent .8px); background-size:3px 3px; opacity:.18; }
+.project-note__art img { width:100%; height:100%; object-fit:cover; object-position:top; filter:grayscale(1) contrast(.9); mix-blend-mode:multiply; }
+.project-note__art--system { display:flex; align-items:center; justify-content:center; gap:14px; padding:18px; }
+.type-specimen { padding:12px; background:var(--brand-surface); border:1px solid var(--brand-line); font:italic 44px var(--journal-serif); transform:rotate(-6deg); box-shadow:3px 4px 0 #00000010; }
+.type-specimen span { display:block; font:15px var(--journal-heading); text-align:center; }
+.component-specimen { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; flex:1; max-width:126px; }
+.component-specimen i { aspect-ratio:1; border-radius:50%; background:var(--brand-ink); opacity:.8; }
+.component-specimen i:nth-child(2) { opacity:.5; }.component-specimen i:nth-child(3) { opacity:.3; }.component-specimen i:nth-child(4) { opacity:.1; }
+.component-specimen b { grid-column:span 3; border:1px solid var(--brand-line); background:var(--brand-surface); padding:12px 4px; font:12px var(--font-body); text-align:center; }
+.component-specimen em { border:1px dashed var(--journal-rule); display:grid; place-items:center; font-style:normal; }
+.career-empty { color:var(--brand-ink-muted); line-height:1.8; }
+@media(max-width:740px) { .about-intro { padding:20px 4px 24px; } }
+@media(max-width:740px) { .project-notes { position:static; } }
+.chapter--cta { padding-top:24px; }
+.kit-card { min-height:230px; background:transparent; }
+@media(max-width:1150px) { .career > li { grid-template-columns:1fr; gap:8px; }.career__body { padding-left:14px; }.career-section { gap:20px; }.project-notes { padding-left:20px; } }
+@media(max-width:740px) { .about-intro { margin:20px 20px 24px; grid-template-columns:minmax(0,1fr) 80px; gap:14px; }.profile-note { width:auto; margin:0; }.profile-note figcaption { display:none; }.about-newspaper .page { padding:0 20px 32px; }.chapter-title { font-size:30px; }.journey article { padding:16px 0; }.journey h3 { font-size:22px; }.career-section { grid-template-columns:1fr; }.project-notes { border-left:0; border-top:3px double var(--journal-rule); padding:20px 0 0; }.project-note__art { max-height:240px; }.chapter { margin-top:28px; } }
 </style>

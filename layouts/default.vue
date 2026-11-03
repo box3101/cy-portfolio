@@ -15,11 +15,13 @@ await useAsyncData('layout/profile', async () => {
     <a class="shell__skip" href="#portfolio-main">본문으로 건너뛰기</a>
     <LayoutTheCursor />
     <LayoutTheHeader />
+    <div class="journal-paper">
     <LayoutJournalMasthead />
     <main id="portfolio-main" class="shell__main">
       <slot />
     </main>
     <LayoutTheFooter />
+    </div>
   </div>
 </template>
 

@@ -30,7 +30,7 @@
 .journal-shell .shell__main > div > .page { width:100%; max-width:none; padding-inline:32px; }
 .journal-shell .ph { background:transparent; }
 .journal-shell .ph__inner { width:100%; max-width:none; padding-top:28px; padding-bottom:24px; }
-.journal-shell .ph__title { font-family:var(--journal-heading); font-size:clamp(30px,3.4vw,48px); letter-spacing:-.045em; font-weight:750; line-height:1.35; }
+.journal-shell .ph__title { font-family:var(--journal-heading); font-size:clamp(32px,4.5vw,68px); letter-spacing:-.045em; font-weight:750; line-height:1.35; }
 .journal-shell .ph__eyebrow { font-size:9px; margin-bottom:10px; color:var(--brand-accent); }
 .journal-shell .ph__desc { font-size:14px; margin-top:12px; }
 .journal-shell .footer { border-top:3px double var(--journal-rule); margin:56px 32px 0; }
@@ -51,3 +51,15 @@
 .journal-shell .project-doors a.active { background:var(--brand-surface); border-color:var(--brand-accent); color:var(--brand-accent); }
 .journal-shell .work-body { max-width:none; margin-inline:32px; border-radius:0; box-shadow:none; border-color:var(--brand-line); background:var(--brand-surface); color:var(--brand-ink); }
 @media(max-width:900px) { .journal-shell .shell__main > div > .page { padding-inline:24px; }.journal-shell .footer { margin-inline:24px; }.journal-shell .project-doors,.journal-shell .work-body { margin-inline:24px; } }
+
+/* Centered newsprint sheet; the navigation rail remains outside the page. */
+@font-face { font-family:'Journal Serif KR'; src:url('/fonts/journal/noto-serif-kr.woff2') format('woff2'); font-style:normal; font-weight:200 900; font-display:swap; }
+.shell.journal-shell { --journal-heading:'Journal Serif KR',Batang,serif; --journal-serif:Georgia,'Journal Serif KR',serif; --brand-line:#c9c2b3; --journal-rule:#777064; background-color:#ded8cd; background-image:linear-gradient(#d7cdbc77,#d7cdbc77),url('/images/journal/paper-light.webp'); background-size:auto,cover; }
+.journal-paper { width:calc(100% - 48px); max-width:1440px; margin:24px auto; flex:1; background-color:#f6f0e4; background-image:linear-gradient(#fffaf14d,#fffaf14d),url('/images/journal/paper-light.webp'); background-size:auto,cover; border:1px solid #c7bfae66; box-shadow:0 3px 18px #463c2914; }
+.journal-paper .shell__main > .about-newspaper > .page { max-width:1440px; padding-inline:40px; }
+.journal-paper .chapter-title { font-family:var(--journal-heading); }
+.journal-paper { background-attachment:fixed; }
+:root[data-theme='dark'] .shell.journal-shell { background-color:#141612; background-image:none; --brand-line:#41453d; --journal-rule:#85897b; }
+:root[data-theme='dark'] .journal-paper { background:var(--brand-ground); border-color:var(--brand-line); }
+@media(max-width:900px) { .journal-paper { width:calc(100% - 32px); margin:16px auto; } }
+@media(max-width:740px) { .journal-paper { width:calc(100% - 20px); margin:10px auto; }.journal-paper .shell__main > .about-newspaper > .page { padding-inline:20px; } }

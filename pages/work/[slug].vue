@@ -28,15 +28,32 @@ useSeoMeta({ title: `${story.name} — 이찬용`, description: story.intro })
 </script>
 <template>
   <StudioWorkShell :active="story.slug">
-    <header class="story-heading"><UiBadge variant="primary" size="sm">{{ story.kind }}</UiBadge><h1>{{ story.name }}</h1><p>{{ story.intro }}</p></header>
-    <UiTab :model-value="activeTab" :tabs="tabs" align="left" aria-label="프로젝트 소개" @update:model-value="changeTab" />
+    <header class="story-heading">
+      <h1>{{ story.slug === 'proposal-agent' ? '제안서 AI 에이전트' : story.name }}</h1>
+      <p>{{ story.slug === 'proposal-agent' ? 'RFP 분석부터 제안의 스토리까지, 복잡한 업무를 하나의 흐름으로.' : story.subtitle }}</p>
+    </header>
+    <dl class="article-meta">
+      <div><dt>{{ story.slug === 'proposal-agent' ? 'ROLE' : 'TYPE' }}</dt><dd>{{ story.slug === 'proposal-agent' ? '기획 · UI/UX · 프론트엔드' : story.kind }}</dd></div>
+      <div><dt>STACK</dt><dd>{{ story.stack.join(' · ') }}</dd></div>
+      <div><dt>{{ story.slug === 'proposal-agent' ? 'STATUS' : 'PROJECT' }}</dt><dd>{{ story.slug === 'proposal-agent' ? '개발 중' : story.name }}</dd></div>
+    </dl>
+    <StudioScreenCapture v-if="heroScreen" :screen="heroScreen" eager class="entry-screen" />
+    <UiTab class="article-index" :model-value="activeTab" :tabs="tabs" align="left" aria-label="프로젝트 소개" @update:model-value="changeTab" />
     <section class="tab-content" :aria-label="tabs.find(tab => tab.value === activeTab)?.label">
       <template v-if="activeTab === 'overview'">
-        <StudioScreenCapture v-if="heroScreen" :screen="heroScreen" eager class="entry-screen" />
-        <div class="overview"><div><h2>어떤 도구인가요?</h2><p>{{ story.why[1] }}</p><p>{{ story.decision }}</p><UiButton variant="primary" size="xlg" @click="changeTab('implementation')">구현 포인트 보기 →</UiButton></div><aside v-if="heroScreen"><h3>주요 기능</h3><ul><li v-for="point in heroScreen.points" :key="point">{{ point }}</li></ul></aside></div>
-        <div class="project-facts">
-          <div><h3>담당 업무</h3><p>{{ story.role }}</p><p class="scope">{{ story.scope }}</p></div>
-          <div><h3>사용 기술</h3><div class="stack"><UiBadge v-for="item in story.stack" :key="item" size="sm">{{ item }}</UiBadge></div><UiButton v-if="story.link" as="a" :href="story.link.url" target="_blank" rel="noopener noreferrer" variant="secondary">{{ story.link.label }} ↗</UiButton></div>
+        <div class="overview">
+          <article>
+            <h2>{{ story.slug === 'proposal-agent' ? '많은 자료보다, 중요한 판단을 돕는 도구' : story.subtitle }}</h2>
+            <p v-for="paragraph in story.why" :key="paragraph">{{ paragraph }}</p>
+            <blockquote>{{ story.slug === 'proposal-agent' ? 'AI의 제안과 사용자의 판단이 함께 남도록.' : story.decision }}</blockquote>
+            <button class="article-more" type="button" @click="changeTab('implementation')">구현 과정 읽기 →</button>
+          </article>
+          <aside class="article-notes">
+            <h2>PROJECT NOTES</h2>
+            <section><h3>담당 범위</h3><p>{{ story.role }}</p><p class="scope">{{ story.scope }}</p></section>
+            <section v-if="heroScreen"><h3>핵심 기능</h3><ul><li v-for="point in heroScreen.points" :key="point">{{ point }}</li></ul></section>
+            <section v-if="story.link"><h3>관련 링크</h3><a :href="story.link.url" target="_blank" rel="noopener noreferrer">{{ story.link.label }} ↗</a></section>
+          </aside>
         </div>
       </template>
       <template v-else-if="activeTab === 'implementation'">
@@ -64,4 +81,51 @@ useSeoMeta({ title: `${story.name} — 이찬용`, description: story.intro })
 .lead { margin:0; max-width:80ch; }
 .implementation-notes { margin-top:24px; padding-top:24px; }
 @media(max-width:740px) { .overview,.features>article,.implementation-notes,.project-facts { grid-template-columns:1fr; }.story-end { flex-wrap:wrap; }.tab-content { padding-top:24px; }.overview,.project-facts { gap:20px; }.feature-copy { padding:16px; }.next-label { display:none; } }
+
+/* Newspaper feature article. Product screenshots retain their original colors. */
+.story-heading { margin:0 0 24px; }
+.story-heading h1 { font-family:var(--journal-heading); font-size:clamp(38px,5.7vw,82px); font-weight:800; line-height:1.3; margin:0 0 12px; letter-spacing:-.055em; }
+.story-heading p { max-width:none; font-family:var(--journal-heading); font-size:clamp(17px,1.9vw,26px); font-weight:500; color:var(--brand-ink); line-height:1.65; }
+.article-meta { display:flex; flex-wrap:wrap; gap:16px 28px; justify-content:space-between; padding:18px 4px; margin:0 0 24px; border-block:1px solid var(--journal-rule); }
+.article-meta > div { display:flex; align-items:baseline; gap:14px; }
+.article-meta dt { font:700 16px var(--journal-serif); }
+.article-meta dd { margin:0; font-size:14px; }
+.entry-screen { margin:0 0 26px; }
+.entry-screen :deep(.screen-link),.features :deep(.screen-link) { border-radius:0; box-shadow:none; border-color:var(--journal-rule); }
+.article-index :deep(.ui-tab-inner) { display:flex; justify-content:center; width:100%; }
+.article-index :deep(.ui-tab-item) { flex:1; max-width:280px; padding:20px 12px; background:transparent; font-size:17px; color:var(--brand-ink); }
+.article-index :deep(.ui-tab-item.is-active) { color:var(--brand-accent); }
+.article-index :deep(.ui-tab-item-label) { white-space:nowrap; }
+@media(max-width:740px) { .article-index :deep(.ui-tab-item) { font-size:12px; padding:16px 4px; } }
+:deep(.screen-link) { border:1px solid var(--journal-rule); border-radius:0; box-shadow:none; }
+:deep(.screen-capture figcaption) { justify-content:flex-start; flex-wrap:wrap; gap:8px 16px; color:var(--brand-ink); line-height:1.6; }
+.entry-screen :deep(figcaption)::before { content:'FIG. 01 —'; font-family:var(--journal-serif); font-weight:700; }
+:deep(.screen-capture small) { color:var(--brand-ink-muted); white-space:normal; }
+:deep(.expand) { border-radius:0; }
+:deep(.ui-tab) { border-top:1px solid var(--journal-rule); }
+:deep([role='tablist']) { display:flex; justify-content:center; }
+:deep([role='tab']) { font-size:16px; padding:18px 28px; }
+.tab-content { border-top:4px double var(--brand-ink); padding:30px 0; }
+h2,h3 { font-family:var(--journal-heading); color:var(--brand-ink); }
+h2 { font-weight:800; }
+p,ul { color:var(--brand-ink); }
+.overview { grid-template-columns:minmax(0,2.2fr) minmax(240px,1fr); gap:32px; }
+.overview > article { min-width:0; }
+.overview h2 { font-size:clamp(24px,2.2vw,32px); line-height:1.55; }
+.overview p { font-size:16px; line-height:1.95; margin:0 0 16px; }
+.overview blockquote { margin:24px 0; padding:0 0 0 20px; border-left:3px solid var(--brand-accent); color:var(--brand-accent); font-family:var(--journal-heading); font-size:clamp(19px,2vw,26px); font-weight:600; line-height:1.7; }
+.overview .article-notes { padding:0 0 0 28px; border:0; border-left:1px solid var(--journal-rule); border-radius:0; background:transparent; }
+.article-notes > h2 { font-family:var(--journal-serif); font-size:22px; letter-spacing:.02em; margin:0; padding-bottom:12px; }
+.article-notes section { border-top:1px solid var(--journal-rule); padding:20px 0; }
+.article-notes h3 { font-size:21px; font-weight:700; }
+.article-notes p { font-size:14px; line-height:1.85; }
+.article-notes .scope { color:var(--brand-ink-muted); font-size:12px; }
+.article-notes ul { padding-left:18px; font-size:14px; }
+.article-notes li::marker { color:var(--brand-accent); }
+.article-notes a,.article-more { color:var(--brand-accent); font-size:14px; text-decoration:none; }
+.article-more { padding:8px 0; min-height:44px; border:0; background:transparent; cursor:pointer; }
+.feature-copy { background:transparent; border:0; border-left:1px solid var(--brand-line); border-radius:0; }
+.story-end { border-top:1px solid var(--journal-rule); }
+.story-end a { color:var(--brand-accent); }
+@media(max-width:740px) { .story-heading h1 { font-size:clamp(30px,8vw,48px); }.story-heading p { font-size:17px; }.article-meta { gap:12px; }.article-meta > div { width:100%; }.article-meta dt { min-width:58px; font-size:13px; }.article-meta dd { font-size:12px; }.overview { grid-template-columns:1fr; gap:24px; }.overview .article-notes { border-left:0; border-top:3px double var(--journal-rule); padding:20px 0 0; }.overview p { font-size:15px; }:deep([role='tab']) { font-size:12px; padding:16px 10px; }.tab-content { padding-top:24px; }.feature-copy { padding:16px 0 0; border-left:0; border-top:1px solid var(--brand-line); } }
 </style>

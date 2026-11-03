@@ -1,0 +1,8 @@
+{
+  "family": "Noto Serif KR",
+  "source": "https://github.com/google/fonts/tree/main/ofl/notoserifkr",
+  "license": "SIL Open Font License 1.1; see OFL.txt",
+  "coverage": "Complete upstream font including all 11,172 modern Hangul syllables. No text-based subsetting.",
+  "weights": "200?900 variable",
+  "conversion": "Lossless WOFF2 compression with fontTools"
+}

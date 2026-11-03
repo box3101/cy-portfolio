@@ -1,30 +1,35 @@
 <script setup lang="ts">
-import JournalMasthead from '~/components/layout/JournalMasthead.vue'
-import { portfolioNavigation } from '~/data/navigation'
+import '~/assets/css/journal.css'
 import { workStories } from '~/data/workStories'
 defineProps<{ active?: string }>()
 </script>
 <template>
-  <div class="work-shell journal-shell">
-
+  <div class="shell work-shell journal-shell">
     <LayoutTheHeader />
-    <JournalMasthead />
-
-    <nav class="project-doors" aria-label="프로젝트 선택"><NuxtLink v-for="(story,index) in workStories" :key="story.slug" :to="`/work/${story.slug}`" :aria-current="active===story.slug?'page':undefined" :class="{active:active===story.slug}"><span>0{{ index+1 }}</span><div><strong>{{ story.name }}</strong><small>{{ story.kind }}</small></div><b>↗</b></NuxtLink></nav>
-    <div class="work-body"><main id="studio-main" class="work-content"><slot /></main><footer class="work-footer"><span>이찬용 · 프로젝트 기록</span><a href="https://box3101.github.io/ispark-ui/" target="_blank" rel="noopener noreferrer">UI 컴포넌트 · Storybook ↗</a></footer></div>
+    <div class="journal-paper special-edition">
+      <header class="special-masthead"><span>PROJECT SPECIAL</span><NuxtLink to="/projects" aria-label="프로젝트 목록으로">THE CY JOURNAL.</NuxtLink><span>01 / AI BUILDER</span></header>
+      <nav class="project-doors" aria-label="프로젝트 선택"><NuxtLink v-for="story in workStories" :key="story.slug" :to="`/work/${story.slug}`" :aria-current="active === story.slug ? 'page' : undefined" :class="{ active: active === story.slug }">{{ story.name }}</NuxtLink></nav>
+      <main id="studio-main" class="work-content"><slot /></main>
+      <footer class="work-footer"><span>이찬용 · 프로젝트 기록</span><a href="https://box3101.github.io/ispark-ui/" target="_blank" rel="noopener noreferrer">UI 컴포넌트 · Storybook ↗</a></footer>
+    </div>
   </div>
 </template>
 <style scoped>
-.work-shell { min-height:100dvh; padding-bottom:55px; isolation:isolate; background:#07132180; }.room-world { position:fixed; inset:0; z-index:-2; background:radial-gradient(ellipse at 50% 40%,#30455e,#071321 80%); }.studio-top { display:flex; align-items:center; justify-content:space-between; padding:28px 4vw; color:#e5edf5; }.work-brand { display:flex; align-items:center; gap:13px; text-decoration:none; }.work-brand b { font-size:30px; letter-spacing:-2px; }.work-brand span { font-size:13px; }.studio-top nav { display:flex; gap:28px; font-size:12px; }.studio-top a { color:inherit; text-decoration:none; }.room-entry { max-width:1180px; margin:25px auto 28px; padding:0 24px; text-shadow:0 2px 20px #000; }.room-name { display:block; color:#fff; text-decoration:none; }.room-name span { display:block; color:#a1d7ef; font-size:10px; letter-spacing:.18em; margin-bottom:14px; }.room-name strong { font-size:clamp(26px,3vw,40px); font-weight:600; letter-spacing:-.04em; }.room-entry p { color:#c6d6e5; font-size:12px; margin-top:12px; }.project-doors { max-width:1180px; margin:0 auto 24px; padding:0 24px; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:15px; perspective:1000px; }.project-doors a { display:flex; align-items:center; gap:16px; padding:18px 22px; color:#e5edf5; border:1px solid #adcfe84d; background:linear-gradient(120deg,#17324bdd,#071625e6); backdrop-filter:blur(14px); border-radius:5px; box-shadow:0 7px 0 #050c16,0 13px 24px #0004; text-decoration:none; transition:transform .2s,border-color .2s; }.project-doors a:hover { transform:translateY(-4px); border-color:#8dd9f5; }.project-doors a.active { border-color:#8dd9f5; background:#214965e8; }.project-doors a>span { color:#8dd9f5; font-size:11px; }.project-doors strong { display:block; font-size:15px; font-weight:600; }.project-doors small { display:block; margin-top:4px; font-size:10px; color:#9fb9cc; }.project-doors b { margin-left:auto; font-size:18px; font-weight:400; }
-.work-body { position:relative; max-width:1180px; margin:34px auto 0; color:#142338; background:#f8f8f5f7; border:1px solid #c3d0dc; border-radius:10px; box-shadow:0 12px 0 #0c1b2a,0 30px 80px #0006; --color-primary:#2265df; --color-primary-hover:#174cb3; --color-primary-dark:#174cb3; --color-primary-rgb:34,101,223; --color-primary-bg:#edf3ff; --color-background:#f8f8f5; --color-surface:#fff; --color-text-heading:#142338; --color-text-primary:#41526a; --color-text-secondary:#5b6a7e; --color-border:#dce3eb; --color-border-light:#e8edf3; --color-bg-elevated:#fff; --color-text-muted:#66778d; }.work-content { padding:45px 48px 55px; word-break:keep-all; overflow-wrap:anywhere; }.work-footer { padding:20px 48px; display:flex; justify-content:space-between; gap:20px; border-top:1px solid #dde5ed; color:#667a93; font-size:11px; }.work-footer a { color:inherit; text-decoration:none; }
-@media(max-width:1240px) { .work-body { margin-left:24px; margin-right:24px; } }
-@media(max-width:740px) { .studio-top { padding:20px; }.studio-top nav { gap:15px; font-size:10px; }.room-entry { margin-top:30px; padding:0 20px; }.project-doors { padding:0 20px 10px; display:flex; overflow-x:auto; gap:12px; }.project-doors a { flex:0 0 200px; padding:14px; }.project-doors strong { font-size:13px; }.work-body { margin:18px 12px 0; }.work-content { padding:28px 20px 35px; }.work-footer { padding:18px 20px; font-size:9px; }.room-entry p { line-height:1.8; } }
-@media(prefers-reduced-motion:reduce) { .project-doors a { transition:none; }.project-doors a:hover { transform:none; } }
-
-/* 첫 화면 캡처가 먼저 보이도록 상단 안내와 장식을 줄였습니다. */
-.work-shell { background:#f5f3ee; padding-bottom:32px; }.studio-top { color:#273447; max-width:1280px; margin:0 auto; padding:24px 28px; }.project-doors { margin:14px auto 0; gap:12px; perspective:none; }.project-doors a { background:#ffffff; color:#334358; box-shadow:none; backdrop-filter:none; border-color:#dde3eb; border-radius:10px; padding:14px 18px; }.project-doors a:hover { transform:none; background:#f2f6fc; border-color:#b1c7e8; }.project-doors a.active { background:#edf3ff; color:#2458ad; border-color:#acc6ed; }.project-doors a>span { color:#6382a7; }.project-doors small { color:#758396; }.work-body { margin-top:22px; background:#fff; border-color:#e0e5ec; box-shadow:0 12px 35px #273c5710; border-radius:16px; }.work-content { padding:32px 40px 40px; }
-@media(max-width:740px) { .studio-top { padding:20px; flex-wrap:wrap; gap:18px; }.studio-top nav { width:100%; justify-content:space-between; font-size:12px; }.project-doors { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); padding:0 12px; gap:6px; }.project-doors a { padding:12px 8px; justify-content:center; gap:0; }.project-doors a>span,.project-doors small,.project-doors b { display:none; }.project-doors strong { font-size:12px; }.work-content { padding:25px 20px 30px; }.work-body { margin:18px 12px 0; } }
-
-.work-shell { padding-left:var(--portfolio-rail); padding-top:32px; background:var(--brand-ground); color:var(--brand-ink); }
-@media(max-width:900px) { .work-shell { padding-left:0; padding-top:0; } }
+.work-shell { min-height:100dvh; padding:1px 0 1px var(--portfolio-rail); color:var(--brand-ink); }
+.special-edition { padding:40px 48px 0; }
+.special-masthead { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:24px; border-block:5px double var(--brand-ink); padding:20px 4px; }
+.special-masthead > span { font:700 13px var(--journal-serif); white-space:nowrap; }
+.special-masthead > span:last-child { text-align:right; }
+.special-masthead > a { color:inherit; text-decoration:none; font:700 clamp(32px,4.2vw,68px)/1.1 var(--journal-serif); letter-spacing:-.055em; white-space:nowrap; }
+.special-edition .project-doors { display:flex; justify-content:center; flex-wrap:wrap; gap:0; margin:0; padding:0; border-bottom:1px solid var(--journal-rule); }
+.special-edition .project-doors a { position:relative; padding:22px 32px; border:0; border-radius:0; background:transparent; color:var(--brand-ink); font-family:var(--journal-heading); font-size:19px; font-weight:700; text-decoration:none; }
+.special-edition .project-doors a + a::before { content:'/'; position:absolute; left:0; color:var(--brand-ink-muted); font-weight:400; }
+.special-edition .project-doors a.active { color:var(--brand-accent); }
+.special-edition .project-doors a.active::after { content:''; position:absolute; height:4px; bottom:0; left:24px; right:24px; background:var(--brand-accent); }
+.work-content { padding:28px 0 32px; min-width:0; word-break:keep-all; overflow-wrap:anywhere; }
+.work-footer { display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; padding:20px 0 28px; border-top:3px double var(--journal-rule); font-size:12px; color:var(--brand-ink-muted); }
+.work-footer a { color:inherit; text-decoration:none; }
+@media(max-width:1150px) { .special-masthead { gap:12px; }.special-masthead > span { font-size:10px; }.special-masthead > a { font-size:42px; }.special-edition { padding:28px 32px 0; } }
+@media(max-width:900px) { .work-shell { padding:0 0 1px; } }
+@media(max-width:740px) { .special-edition { padding:20px 20px 0; }.special-masthead { grid-template-columns:1fr 1fr; gap:12px; padding:14px 0; }.special-masthead > a { grid-column:1/-1; grid-row:1; text-align:center; font-size:clamp(25px,6.8vw,42px); }.special-masthead > span { font-size:9px; }.special-edition .project-doors { justify-content:space-between; }.special-edition .project-doors a { font-family:var(--font-body); font-size:12px; padding:18px 4px; }.special-edition .project-doors a + a::before { display:none; }.special-edition .project-doors a.active::after { left:0; right:0; }.work-content { padding-top:24px; } }
 </style>
